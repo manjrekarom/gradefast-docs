@@ -1,0 +1,41 @@
+.. _aggregate-recipe:
+
+Aggregating gradefast results
+-----------------------------
+
+Gradefast provides utilities for combining, joining, and adding results
+in result_groups.
+
+Combining multiple result groups
+................................
+
+You have obtained a result_group from a specific test that you ran on
+some share of submissions. You were being supported by other theme developers
+or TAs all this while who ran same tests on other half of the entire batch of
+submissions. Now you have to club their result groups and finally upload all
+of that to the portal.
+
+You can do that by using :attr:`~gradefast.Aggregate.combine()`
+
+.. literalinclude:: ../../examples/recipes/aggregate_result.py
+    :lines: 1-15, 22-33
+
+Find total of result dictionary parameters
+..........................................
+
+To report a final grade, you would want to add result dictionary parameters
+in the result group. You can do that by using
+:attr:`~gradefast.Aggregate.add()`
+
+.. literalinclude:: ../../examples/recipes/aggregate_result.py
+    :lines: 1-15, 34-44
+
+Joining result groups from different tests
+..........................................
+
+If your submission consisted of different files that you evaluated using
+multiple tests, you may want to join results of teams to get a one compiled
+result. You can do that by using :attr:`~gradefast.Aggregate.join()`
+
+.. literalinclude:: ../../examples/recipes/aggregate_result.py
+    :lines: 1-9, 16-21, 45-

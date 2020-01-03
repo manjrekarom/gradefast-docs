@@ -1,0 +1,332 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Aggregating gradefast results &mdash; Gradefast 0.1.12 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Transforming result group obtained from evaluation" href="transform.html" />
+    <link rel="prev" title="Writing tests that evaluate a downloaded submission" href="test.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Gradefast
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.12
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../what_is_gradefast.html">What is Gradefast?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/index.html">Notes</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Recipes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="submission.html">Loading student submissions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="test.html">Writing tests that evaluate a downloaded submission</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Aggregating gradefast results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#combining-multiple-result-groups">Combining multiple result groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#find-total-of-result-dictionary-parameters">Find total of result dictionary parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#joining-result-groups-from-different-tests">Joining result groups from different tests</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="transform.html">Transforming result group obtained from evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="type-conversion.html">Converting between gradefast objects and python types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serialize-deserialize.html">Saving gradefast objects as JSON and CSV for later use</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Api Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Download and Install</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Gradefast</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Recipes</a> &raquo;</li>
+        
+      <li>Aggregating gradefast results</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/recipes/aggregate.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="aggregating-gradefast-results">
+<span id="aggregate-recipe"></span><h1>Aggregating gradefast results<a class="headerlink" href="#aggregating-gradefast-results" title="Permalink to this headline">¶</a></h1>
+<p>Gradefast provides utilities for combining, joining, and adding results
+in result_groups.</p>
+<div class="section" id="combining-multiple-result-groups">
+<h2>Combining multiple result groups<a class="headerlink" href="#combining-multiple-result-groups" title="Permalink to this headline">¶</a></h2>
+<p>You have obtained a result_group from a specific test that you ran on
+some share of submissions. You were being supported by other theme developers
+or TAs all this while who ran same tests on other half of the entire batch of
+submissions. Now you have to club their result groups and finally upload all
+of that to the portal.</p>
+<p>You can do that by using <code class="xref py py-attr docutils literal notranslate"><span class="pre">combine()</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gradefast.result</span> <span class="k">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">ResultGroup</span>
+<span class="kn">from</span> <span class="nn">gradefast.aggregate</span> <span class="k">import</span> <span class="n">Aggregate</span>
+
+<span class="n">result_group1</span> <span class="o">=</span> <span class="n">ResultGroup</span><span class="p">(</span><span class="s1">&#39;Task1&#39;</span><span class="p">,</span> <span class="s1">&#39;HungryBird&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="n">Result</span><span class="p">(</span><span class="mi">762</span><span class="p">,</span> <span class="s1">&#39;bag&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;waypoint&#39;</span><span class="p">:</span> <span class="mf">5.7</span><span class="p">}),</span>
+    <span class="n">Result</span><span class="p">(</span><span class="mi">65</span><span class="p">,</span> <span class="s1">&#39;bag&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;waypoint&#39;</span><span class="p">:</span> <span class="mf">2.1</span><span class="p">}),</span>
+    <span class="n">Result</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="s1">&#39;bag&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s1">&#39;waypoint&#39;</span><span class="p">:</span> <span class="mf">14.6</span><span class="p">}),</span>
+<span class="p">])</span>
+
+<span class="n">result_group2</span> <span class="o">=</span> <span class="n">ResultGroup</span><span class="p">(</span><span class="s1">&#39;Task1&#39;</span><span class="p">,</span> <span class="s1">&#39;HungryBird&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="n">Result</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;bag&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s1">&#39;waypoint&#39;</span><span class="p">:</span> <span class="mf">1.9</span><span class="p">}),</span>
+    <span class="n">Result</span><span class="p">(</span><span class="mi">69</span><span class="p">,</span> <span class="s1">&#39;bag&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="mi">27</span><span class="p">,</span> <span class="s1">&#39;waypoint&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">}),</span>
+    <span class="n">Result</span><span class="p">(</span><span class="mi">703</span><span class="p">,</span> <span class="s1">&#39;bag&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;waypoint&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">}),</span>
+<span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">Aggregate</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">result_group1</span><span class="p">,</span> <span class="n">result_group2</span><span class="p">))</span>
+<span class="c1"># evaluates to</span>
+<span class="c1"># ResultGroup(task_name: Task1, theme_name: HungryBird, dict_of_results: {762: Result(team_id:</span>
+<span class="c1"># 762, file: bag, result_dict: {&#39;pid&#39;: 20, &#39;waypoint&#39;: 5.7}, exec_time: 0, pkg_path: , comment: </span>
+<span class="c1"># ), 65: Result(team_id: 65, file: bag, result_dict: {&#39;pid&#39;: 30, &#39;waypoint&#39;: 2.1}, exec_time: 0,</span>
+<span class="c1"># pkg_path: , comment: ), 18: Result(team_id: 18, file: bag, result_dict: {&#39;pid&#39;: 50, </span>
+<span class="c1"># &#39;waypoint&#39;: 14.6}, exec_time: 0, pkg_path: , comment: ), 12: Result(team_id: 12, file: bag, </span>
+<span class="c1"># result_dict: {&#39;pid&#39;: 11, &#39;waypoint&#39;: 1.9}, exec_time: 0, pkg_path: , comment: ), 69: Result</span>
+<span class="c1"># (team_id: 69, file: bag, result_dict: {&#39;pid&#39;: 27, &#39;waypoint&#39;: 12}, exec_time: 0, pkg_path: , </span>
+<span class="c1"># comment: ), 703: Result(team_id: 703, file: bag, result_dict: {&#39;pid&#39;: 5, &#39;waypoint&#39;: 0.8}, </span>
+<span class="c1"># exec_time: 0, pkg_path: , comment: )})</span>
+
+</pre></div>
+</div>
+</div>
+<div class="section" id="find-total-of-result-dictionary-parameters">
+<h2>Find total of result dictionary parameters<a class="headerlink" href="#find-total-of-result-dictionary-parameters" title="Permalink to this headline">¶</a></h2>
+<p>To report a final grade, you would want to add result dictionary parameters
+in the result group. You can do that by using
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">add()</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gradefast.result</span> <span class="k">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">ResultGroup</span>
+<span class="kn">from</span> <span class="nn">gradefast.aggregate</span> <span class="k">import</span> <span class="n">Aggregate</span>
+
+<span class="n">result_group1</span> <span class="o">=</span> <span class="n">ResultGroup</span><span class="p">(</span><span class="s1">&#39;Task1&#39;</span><span class="p">,</span> <span class="s1">&#39;HungryBird&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="n">Result</span><span class="p">(</span><span class="mi">762</span><span class="p">,</span> <span class="s1">&#39;bag&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;waypoint&#39;</span><span class="p">:</span> <span class="mf">5.7</span><span class="p">}),</span>
+    <span class="n">Result</span><span class="p">(</span><span class="mi">65</span><span class="p">,</span> <span class="s1">&#39;bag&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;waypoint&#39;</span><span class="p">:</span> <span class="mf">2.1</span><span class="p">}),</span>
+    <span class="n">Result</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="s1">&#39;bag&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s1">&#39;waypoint&#39;</span><span class="p">:</span> <span class="mf">14.6</span><span class="p">}),</span>
+<span class="p">])</span>
+
+<span class="n">result_group2</span> <span class="o">=</span> <span class="n">ResultGroup</span><span class="p">(</span><span class="s1">&#39;Task1&#39;</span><span class="p">,</span> <span class="s1">&#39;HungryBird&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="n">Result</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;bag&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s1">&#39;waypoint&#39;</span><span class="p">:</span> <span class="mf">1.9</span><span class="p">}),</span>
+    <span class="n">Result</span><span class="p">(</span><span class="mi">69</span><span class="p">,</span> <span class="s1">&#39;bag&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="mi">27</span><span class="p">,</span> <span class="s1">&#39;waypoint&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">}),</span>
+    <span class="n">Result</span><span class="p">(</span><span class="mi">703</span><span class="p">,</span> <span class="s1">&#39;bag&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;waypoint&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">}),</span>
+<span class="p">])</span>
+
+<span class="c1"># note that if you pass multiple result groups, they are combined before adding</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Aggregate</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">result_group1</span><span class="p">,</span> <span class="n">result_group2</span><span class="p">))</span>
+<span class="c1"># ResultGroup(task_name: Task1, theme_name: HungryBird, dict_of_results: {762: Result(team_id:</span>
+<span class="c1"># 762, file: bag, result_dict: {&#39;total&#39;: 25.7}, exec_time: 0, pkg_path: , comment: ), 65: Result</span>
+<span class="c1"># (team_id: 65, file: bag, result_dict: {&#39;total&#39;: 32.1}, exec_time: 0, pkg_path: , comment: ), </span>
+<span class="c1"># 18: Result(team_id: 18, file: bag, result_dict: {&#39;total&#39;: 64.6}, exec_time: 0, pkg_path: , </span>
+<span class="c1"># comment: ), 12: Result(team_id: 12, file: bag, result_dict: {&#39;total&#39;: 12.9}, exec_time: 0, </span>
+<span class="c1"># pkg_path: , comment: ), 69: Result(team_id: 69, file: bag, result_dict: {&#39;total&#39;: 39}, </span>
+<span class="c1"># exec_time: 0, pkg_path: , comment: ), 703: Result(team_id: 703, file: bag, result_dict: </span>
+<span class="c1"># {&#39;total&#39;: 5.8}, exec_time: 0, pkg_path: , comment: )})</span>
+
+</pre></div>
+</div>
+</div>
+<div class="section" id="joining-result-groups-from-different-tests">
+<h2>Joining result groups from different tests<a class="headerlink" href="#joining-result-groups-from-different-tests" title="Permalink to this headline">¶</a></h2>
+<p>If your submission consisted of different files that you evaluated using
+multiple tests, you may want to join results of teams to get a one compiled
+result. You can do that by using <code class="xref py py-attr docutils literal notranslate"><span class="pre">join()</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gradefast.result</span> <span class="k">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">ResultGroup</span>
+<span class="kn">from</span> <span class="nn">gradefast.aggregate</span> <span class="k">import</span> <span class="n">Aggregate</span>
+
+<span class="n">result_group1</span> <span class="o">=</span> <span class="n">ResultGroup</span><span class="p">(</span><span class="s1">&#39;Task1&#39;</span><span class="p">,</span> <span class="s1">&#39;HungryBird&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="n">Result</span><span class="p">(</span><span class="mi">762</span><span class="p">,</span> <span class="s1">&#39;bag&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;waypoint&#39;</span><span class="p">:</span> <span class="mf">5.7</span><span class="p">}),</span>
+    <span class="n">Result</span><span class="p">(</span><span class="mi">65</span><span class="p">,</span> <span class="s1">&#39;bag&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;waypoint&#39;</span><span class="p">:</span> <span class="mf">2.1</span><span class="p">}),</span>
+    <span class="n">Result</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="s1">&#39;bag&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s1">&#39;waypoint&#39;</span><span class="p">:</span> <span class="mf">14.6</span><span class="p">}),</span>
+<span class="p">])</span>
+
+<span class="n">result_group3</span> <span class="o">=</span> <span class="n">ResultGroup</span><span class="p">(</span><span class="s1">&#39;Task1&#39;</span><span class="p">,</span> <span class="s1">&#39;HungryBird&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="n">Result</span><span class="p">(</span><span class="mi">762</span><span class="p">,</span> <span class="s1">&#39;py&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;comments&#39;</span><span class="p">:</span> <span class="mf">5.5</span><span class="p">,</span> <span class="s1">&#39;complexity&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">}),</span>
+    <span class="n">Result</span><span class="p">(</span><span class="mi">65</span><span class="p">,</span> <span class="s1">&#39;py&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;comments&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;complexity&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}),</span>
+    <span class="n">Result</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="s1">&#39;py&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;comments&#39;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span> <span class="s1">&#39;complexity&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">}),</span>
+<span class="p">])</span>
+
+<span class="c1"># results from different tests joined</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Aggregate</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result_group1</span><span class="p">,</span> <span class="n">result_group3</span><span class="p">))</span>
+<span class="c1"># ResultGroup(task_name: Task1, theme_name: HungryBird, dict_of_results: {65: Result(team_id: 65,</span>
+<span class="c1"># file: [&#39;py&#39;, &#39;bag&#39;], result_dict: {&#39;comments&#39;: 7, &#39;complexity&#39;: 3, &#39;pid&#39;: 30, &#39;waypoint&#39;: 2.1},</span>
+<span class="c1"># exec_time: [0, 0], pkg_path: [&#39;&#39;, &#39;&#39;], comment: [&#39;&#39;, &#39;&#39;]), 18: Result(team_id: 18, file: [&#39;py&#39;,</span>
+<span class="c1"># &#39;bag&#39;], result_dict: {&#39;comments&#39;: 2.0, &#39;complexity&#39;: 9, &#39;pid&#39;: 50, &#39;waypoint&#39;: 14.6}, </span>
+<span class="c1"># exec_time: [0, 0], pkg_path: [&#39;&#39;, &#39;&#39;], comment: [&#39;&#39;, &#39;&#39;]), 762: Result(team_id: 762, file: </span>
+<span class="c1"># [&#39;py&#39;, &#39;bag&#39;], result_dict: {&#39;comments&#39;: 5.5, &#39;complexity&#39;: 5, &#39;pid&#39;: 20, &#39;waypoint&#39;: 5.7}, </span>
+<span class="c1"># exec_time: [0, 0], pkg_path: [&#39;&#39;, &#39;&#39;], comment: [&#39;&#39;, &#39;&#39;])})</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="transform.html" class="btn btn-neutral float-right" title="Transforming result group obtained from evaluation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="test.html" class="btn btn-neutral float-left" title="Writing tests that evaluate a downloaded submission" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Omkar Manjrekar
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

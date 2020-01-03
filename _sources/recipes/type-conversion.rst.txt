@@ -1,0 +1,27 @@
+.. _type-conversion-recipe:
+
+Converting between gradefast objects and python types
+------------------------------------------------------
+
+You can convert gradefast objects into primitive python types like dictionaries
+and list of dictionaries. Most of these methods start with a `to_<type>` and
+`from_<type>`.
+
+Converting a result and a result group
+.......................................
+
+Gradefast provides to_dict methods to convert objects to dictionary. It is
+done to ensure interoperability with other python frameworks like pandas. You
+can then use the dictionary with other python packages and module like json
+module or pandas module.
+
+.. literalinclude:: ../../examples/recipes/type_conversion.py
+    :lines: 1-21
+
+A dictionary can be nested. One may want a non-nested dictionary represntation
+like when you need to serialize the results into a csv. If your particular use
+case has such a requirement you can use these methods.
+
+.. literalinclude:: ../../examples/recipes/type_conversion.py
+    :lines: 22-
+

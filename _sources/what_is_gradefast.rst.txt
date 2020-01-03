@@ -1,0 +1,42 @@
+
+What is Gradefast?
+==================
+
+.. Outine
+.. Brief description of what is gradefast meant for?
+.. Full description of what will gradefast do and not do?
+.. Flow
+.. Concerns or limitations?
+.. Direct them to next guide
+
+Gradefast is a python framework that lets you evaluate a batch of programming assignments on 
+your computer. The assignments need not necessarily be in python. It also provides utilities
+to download, extract, and upload results back to a web portal.
+
+The complexity of assignments can vary from simple programming assignments like implementantion
+of quicksort to implementation of PID controller of a drone in ROS-VREP. The framework requires
+you to return only a result dictionary, feedback as comment and 
+
+.. image:: ../assets/gradefast-system.png
+    :align: center
+    :scale: 70% 
+
+
+Core features
+-------------
+1. Downloading submission files from web portal to your computer
+2. Automatic unzipping of downloaded zips
+3. Running a test script on each submission that returns a result
+4. Aggregation of results
+5. Uploading results back to portal
+
+Useful utilities
+--------------------
+1. Timing all execution
+2. Logging of output and exceptions for review
+3. Serialization of important data like submission and result
+4. Analysis (read EDA) of results [todo]
+5. Adding memory limits [todo]
+6. Checkpointing [todo]
+7. Security of environment [todo]
+8. Plagiarism check [todo]

@@ -1,0 +1,620 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Utils Module &mdash; Gradefast 0.1.12 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Download and Install" href="../installation.html" />
+    <link rel="prev" title="Result Module" href="result.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Gradefast
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.12
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../what_is_gradefast.html">What is Gradefast?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/index.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes/index.html">Recipes</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Api Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="submission.html">Submission Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="test.html">Test Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command.html">Command Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluate.html">Evaluate Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aggregate.html">Aggregate Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="result.html">Result Module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Utils Module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Download and Install</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Gradefast</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Api Reference</a> &raquo;</li>
+        
+      <li>Utils Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/utils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-gradefast.utils">
+<span id="utils-module"></span><h1>Utils Module<a class="headerlink" href="#module-gradefast.utils" title="Permalink to this headline">¶</a></h1>
+<p>Utility classes and methods for developer in a hurry</p>
+<dl class="function">
+<dt id="gradefast.utils.setup_logger">
+<code class="sig-prename descclassname">gradefast.utils.</code><code class="sig-name descname">setup_logger</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">log_file</em>, <em class="sig-param">level=20</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/utils.html#setup_logger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.utils.setup_logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function setup as many loggers as you want</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="gradefast.utils.Downloader">
+<em class="property">class </em><code class="sig-prename descclassname">gradefast.utils.</code><code class="sig-name descname">Downloader</code><span class="sig-paren">(</span><em class="sig-param">cookie, types=['zip', 'png'], storage_location='./', extract=False, keep_original=True, retry=True, retry_times=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/utils.html#Downloader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.utils.Downloader" title="Permalink to this definition">¶</a></dt>
+<dd><p>A utility that downloads items given in <a class="reference internal" href="submission.html#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a>
+from web to disk</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cookie</strong> (<em>str</em>) – HTTP session cookie to get authorized to the web portal</p></li>
+<li><p><strong>storage_location</strong> (<em>str</em>) – Location to store downloaded files. A folder is created inside of it
+for each team_id. Default is ‘./’</p></li>
+<li><p><strong>extract</strong> (<em>bool</em>) – Whether to extract zip items after downloading. Default is False</p></li>
+<li><p><strong>keep_original</strong> (<em>bool</em>) – Deletes zip files after unzip successful. Default is True</p></li>
+<li><p><strong>retry</strong> (<em>bool</em>) – Retry download if it fails. Default is True</p></li>
+<li><p><strong>retry_times</strong> (<em>int</em>) – Retry retry_times until the file is downloaded. Default is 2 i.e. 2 times</p></li>
+<li><p><strong>todo</strong> (<em>.</em>) – Keep or delete files after deletion and retry on fail is not yet implemented</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="gradefast.utils.Downloader.cookie">
+<code class="sig-name descname">cookie</code><a class="headerlink" href="#gradefast.utils.Downloader.cookie" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.utils.Downloader.storage_location">
+<code class="sig-name descname">storage_location</code><a class="headerlink" href="#gradefast.utils.Downloader.storage_location" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.utils.Downloader.extract">
+<code class="sig-name descname">extract</code><a class="headerlink" href="#gradefast.utils.Downloader.extract" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.utils.Downloader.keep_original">
+<code class="sig-name descname">keep_original</code><a class="headerlink" href="#gradefast.utils.Downloader.keep_original" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.utils.Downloader.retry">
+<code class="sig-name descname">retry</code><a class="headerlink" href="#gradefast.utils.Downloader.retry" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.utils.Downloader.retry_times">
+<code class="sig-name descname">retry_times</code><a class="headerlink" href="#gradefast.utils.Downloader.retry_times" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.utils.Downloader.get_extension">
+<em class="property">static </em><code class="sig-name descname">get_extension</code><span class="sig-paren">(</span><em class="sig-param">url</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/utils.html#Downloader.get_extension"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.utils.Downloader.get_extension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find extension of a file from its download url</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>url</strong> (<em>str</em>) – Download url of a file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Extension of the downloadable file</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.utils.Downloader.get_extension_from_header">
+<em class="property">static </em><code class="sig-name descname">get_extension_from_header</code><span class="sig-paren">(</span><em class="sig-param">response</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/utils.html#Downloader.get_extension_from_header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.utils.Downloader.get_extension_from_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns extension of file being downloaded from its response headers</p>
+<p>Checks content-disposition header to find filename and extracts extension
+from it</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>response</strong> (<cite>requests.response</cite>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Extension of file being downloaded</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.utils.Downloader.parent_folder_name">
+<em class="property">static </em><code class="sig-name descname">parent_folder_name</code><span class="sig-paren">(</span><em class="sig-param">task_name</em>, <em class="sig-param">theme_name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/utils.html#Downloader.parent_folder_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.utils.Downloader.parent_folder_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds name of the parent folder inside storage_location where all files
+will be downloaded.</p>
+<p>New task downloads get saved inside a newly created folder named by timestamp.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task_name</strong> (<em>str</em>) – </p></li>
+<li><p><strong>theme_name</strong> (<em>str</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.utils.Downloader.create_storage_directory">
+<em class="property">static </em><code class="sig-name descname">create_storage_directory</code><span class="sig-paren">(</span><em class="sig-param">dir_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/utils.html#Downloader.create_storage_directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.utils.Downloader.create_storage_directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create storage directory if it doesn’t exist</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dir_path</strong> (<em>str</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If true then directory is successfully created</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.utils.Downloader.create_team_folder">
+<em class="property">static </em><code class="sig-name descname">create_team_folder</code><span class="sig-paren">(</span><em class="sig-param">team_id</em>, <em class="sig-param">dir_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/utils.html#Downloader.create_team_folder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.utils.Downloader.create_team_folder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create folder for each team by naming it with team_id</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>team_id</strong> (<em>int</em>) – </p></li>
+<li><p><strong>dir_path</strong> (<em>str</em>) – Directory inside which to create the team folder</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns path of team folder which was successfully created</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.utils.Downloader.download_file_item">
+<em class="property">static </em><code class="sig-name descname">download_file_item</code><span class="sig-paren">(</span><em class="sig-param">cookie</em>, <em class="sig-param">submission</em>, <em class="sig-param">file_item_name</em>, <em class="sig-param">download_directory</em>, <em class="sig-param">file_name=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/utils.html#Downloader.download_file_item"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.utils.Downloader.download_file_item" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads and saves a file item</p>
+<p>Initiates a network request to download and save file following the naming
+convention. The information about file url is picked up from a
+<a class="reference internal" href="submission.html#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cookie</strong> (<em>str</em>) – HTTP session cookie to authenticate to the web page</p></li>
+<li><p><strong>submission</strong> (<cite>:class:~gradefast.submission.Submission</cite>) – </p></li>
+<li><p><strong>file_item_name</strong> (<em>str</em>) – Name of file item being downloaded. The information is also present in
+<a class="reference internal" href="submission.html#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a></p></li>
+<li><p><strong>download_directory</strong> (<em>str</em>) – Path of the download directory</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – Save file with a particular name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Full path of the downloaded file</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.utils.Downloader.extract_if_zip">
+<em class="property">static </em><code class="sig-name descname">extract_if_zip</code><span class="sig-paren">(</span><em class="sig-param">team_id</em>, <em class="sig-param">zip_item_name</em>, <em class="sig-param">final_submission_group</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/utils.html#Downloader.extract_if_zip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.utils.Downloader.extract_if_zip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts if the file under consideration is a zip file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>team_id</strong> (<em>int</em>) – </p></li>
+<li><p><strong>zip_item_name</strong> (<em>str</em>) – Name of the zip item. e.g. “task1_archive”</p></li>
+<li><p><strong>final_submission_group</strong> (<a class="reference internal" href="submission.html#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.utils.Downloader.download">
+<code class="sig-name descname">download</code><span class="sig-paren">(</span><em class="sig-param">submission_group</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/utils.html#Downloader.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.utils.Downloader.download" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads submission_group files to disk</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>submissions</strong> (<a class="reference internal" href="submission.html#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>final_submission_group</strong> (<a class="reference internal" href="submission.html#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a>) – Updated <a class="reference internal" href="submission.html#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a> with <cite>path</cite> and
+<cite>downloaded</cite> attribute set in <cite>dict_of_submissions</cite>.</p></li>
+<li><p><strong>download_directory</strong> (<em>str</em>) – Path to download directory</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="gradefast.utils.Extracter">
+<em class="property">class </em><code class="sig-prename descclassname">gradefast.utils.</code><code class="sig-name descname">Extracter</code><a class="reference internal" href="../_modules/gradefast/utils.html#Extracter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.utils.Extracter" title="Permalink to this definition">¶</a></dt>
+<dd><p>A utility that extracts standalone zips or zip items from
+<a class="reference internal" href="submission.html#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a> from web to disk</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cookie</strong> (<em>str</em>) – HTTP session cookie to get access to the portal</p></li>
+<li><p><strong>storage_location</strong> (<em>str</em>) – Location to store downloaded files. A folder is created for each id</p></li>
+<li><p><strong>extract</strong> (<em>bool</em>) – Extracts zip files</p></li>
+<li><p><strong>keep_original</strong> (<em>bool</em>) – Deletes zip files after unzip successful</p></li>
+<li><p><strong>retry</strong> (<em>bool</em>) – Retry download if it fails</p></li>
+<li><p><strong>retry_times</strong> (<em>int</em>) – Retry retry_times until the file is downloaded</p></li>
+<li><p><strong>todo</strong> (<em>.</em>) – Keep or delete files after deletion and retry on fail is not yet implemented</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="gradefast.utils.Extracter.cookie">
+<code class="sig-name descname">cookie</code><a class="headerlink" href="#gradefast.utils.Extracter.cookie" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.utils.Extracter.storage_location">
+<code class="sig-name descname">storage_location</code><a class="headerlink" href="#gradefast.utils.Extracter.storage_location" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.utils.Extracter.extract">
+<code class="sig-name descname">extract</code><a class="reference internal" href="../_modules/gradefast/utils.html#Extracter.extract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.utils.Extracter.extract" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.utils.Extracter.keep_original">
+<code class="sig-name descname">keep_original</code><a class="headerlink" href="#gradefast.utils.Extracter.keep_original" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.utils.Extracter.retry">
+<code class="sig-name descname">retry</code><a class="headerlink" href="#gradefast.utils.Extracter.retry" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.utils.Extracter.retry_times">
+<code class="sig-name descname">retry_times</code><a class="headerlink" href="#gradefast.utils.Extracter.retry_times" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.utils.Extracter.get_default_unzip_path">
+<em class="property">static </em><code class="sig-name descname">get_default_unzip_path</code><span class="sig-paren">(</span><em class="sig-param">zip_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/utils.html#Extracter.get_default_unzip_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.utils.Extracter.get_default_unzip_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns default name of a zip item from it’s path</p>
+<p>An extracted zip item is named as &lt;team-id&gt;_&lt;file_item_name&gt;_unzippped</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>zip_path</strong> (<em>str</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.utils.Extracter.extract_file">
+<em class="property">static </em><code class="sig-name descname">extract_file</code><span class="sig-paren">(</span><em class="sig-param">zip_path</em>, <em class="sig-param">extract_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/utils.html#Extracter.extract_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.utils.Extracter.extract_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts a single zip placing the contents at extract_path</p>
+<p>Inside extract path directory the contents inside the zip are stored.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>zip_path</strong> (<em>str</em>) – Path to zip file</p></li>
+<li><p><strong>extract_path</strong> (<em>str</em>) – Full path of directory to unzip the archive at</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If zip was extracted to the location</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<em class="property">static </em><code class="sig-name descname">extract</code><span class="sig-paren">(</span><em class="sig-param">submission_group</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/utils.html#Extracter.extract"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Extracts all zip items found in <a class="reference internal" href="submission.html#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a>
+and stores them in the specific team folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>submission_group</strong> (<a class="reference internal" href="submission.html#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="gradefast.utils.combine_list_elements">
+<code class="sig-prename descclassname">gradefast.utils.</code><code class="sig-name descname">combine_list_elements</code><span class="sig-paren">(</span><em class="sig-param">*items</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/utils.html#combine_list_elements"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.utils.combine_list_elements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combines items into a single list of items</p>
+<p>Items can contain a single item of any type or a list of items. If combined
+list evaluates to a single item, only an item is returned else a list of items
+is returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Combined list of items</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../installation.html" class="btn btn-neutral float-right" title="Download and Install" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="result.html" class="btn btn-neutral float-left" title="Result Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Omkar Manjrekar
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

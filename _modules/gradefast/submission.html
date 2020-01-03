@@ -1,0 +1,1185 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>gradefast.submission &mdash; Gradefast 0.1.12 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Gradefast
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.12
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../what_is_gradefast.html">What is Gradefast?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notes/index.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../recipes/index.html">Recipes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">Api Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Download and Install</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Gradefast</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>gradefast.submission</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for gradefast.submission</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Contains :class:`Submission` and :class:`SubmissionGroup` classes that represent `submission` </span>
+<span class="sd">of a single `team` (or student) and `many teams` (or many students), respectively.</span>
+
+<span class="sd">:class:`LoadSubmissions` is a utility class to quickly populate a :class:`SubmissionGroup` from</span>
+<span class="sd">sources like `web portal`, `filesystem` or `databases`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">fnmatch</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">listdir</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">isfile</span><span class="p">,</span> <span class="n">join</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span> <span class="k">as</span> <span class="nn">urllib2</span>
+<span class="kn">from</span> <span class="nn">urllib.response</span> <span class="k">import</span> <span class="n">addinfourl</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="k">import</span> <span class="n">BeautifulSoup</span>
+
+<span class="kn">from</span> <span class="nn">gradefast</span> <span class="k">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">gradefast</span> <span class="k">import</span> <span class="n">logconfig</span>
+<span class="kn">from</span> <span class="nn">gradefast.exceptions</span> <span class="k">import</span> <span class="o">*</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logconfig</span><span class="o">.</span><span class="n">configure_and_get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Submission"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.Submission">[docs]</a><span class="k">class</span> <span class="nc">Submission</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a team (or student) submission information</span>
+
+<span class="sd">    A :class:`Submission` contains information about a team&#39;s uploaded task items like images, </span>
+<span class="sd">    text files or zips, on the web, filesystem or databases. Gradefast uses this information </span>
+<span class="sd">    in utility classes like :class:`~gradefast.utils.Download` to download files locally. It </span>
+<span class="sd">    also uses it to search and provide files to a :class:`~gradefast.test.GFTest` when executed </span>
+<span class="sd">    from within an :class:`~gradefast.test.Evaluate` </span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    team_id : int</span>
+<span class="sd">        Identifier of a team (or student)</span>
+
+<span class="sd">    items : dict</span>
+<span class="sd">        Dictionary of uploaded items. ``e.g. {&#39;zip&#39;: {&#39;url&#39;: &#39;https://e-yantra.org/some.zip&#39;}, </span>
+<span class="sd">        &#39;png&#39;: {&#39;url&#39;: &#39;https://e-yantra.org/some.zip&#39;}}``</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    team_id : int</span>
+<span class="sd">        Identifier of a team (or student)</span>
+<span class="sd">        </span>
+<span class="sd">    items : dict</span>
+<span class="sd">        Dictionary of uploaded items. ``e.g. {&#39;zip&#39;: {&#39;url&#39;: &#39;https://e-yantra.org/some.zip&#39;}, </span>
+<span class="sd">        &#39;png&#39;: {&#39;url&#39;: &#39;https://e-yantra.org/some.zip&#39;}}``</span>
+<span class="sd">    </span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. doctest::</span>
+
+<span class="sd">        &gt;&gt;&gt; team_id = 75</span>
+<span class="sd">        &gt;&gt;&gt; items =  {&#39;png&#39;: {&#39;url&#39;: &#39;http://eyntra.org/test.png&#39;, &#39;path&#39;: &#39;path/to/png.png&#39;},</span>
+<span class="sd">        ... &#39;zoo&#39;: {&#39;url&#39;: &#39;http://eyntra.org/zoo.txt&#39;, &#39;path&#39;: &#39;path/to/zoo.txt&#39;}}</span>
+<span class="sd">        &gt;&gt;&gt; Submission(team_id, items)</span>
+<span class="sd">        Submission({&#39;team_id&#39;: 75, &#39;items&#39;: {&#39;png&#39;: {&#39;url&#39;: &#39;http://eyntra.org/test.png&#39;, &#39;path&#39;:</span>
+<span class="sd">        &#39;path/to/png.png&#39;}, &#39;zoo&#39;: {&#39;url&#39;: &#39;http://eyntra.org/zoo.txt&#39;, &#39;path&#39;: &#39;path/to/zoo.txt&#39;}}})</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">team_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="c1"># Identified by team id. Should be a number</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">team_id</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">team_id</span> <span class="o">=</span> <span class="n">team_id</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">team_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">utils</span><span class="o">.</span><span class="n">is_string_number</span><span class="p">(</span><span class="n">team_id</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">team_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">team_id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Dictionary of items uploaded and their metadata like path on filesystems</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;team_id should be a number&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="n">items</span>
+    
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Submission(&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">object_equality</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Submission.to_dict"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.Submission.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts from :class:`Submission` to a :class:`dict`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. doctest::</span>
+
+<span class="sd">            &gt;&gt;&gt; team_id = 75</span>
+<span class="sd">            &gt;&gt;&gt; items =  {&#39;png&#39;: {&#39;url&#39;: &#39;http://eyntra.org/test.png&#39;, &#39;path&#39;: &#39;path/to/png.png&#39;},</span>
+<span class="sd">            ... &#39;zoo&#39;: {&#39;url&#39;: &#39;http://eyntra.org/zoo.txt&#39;, &#39;path&#39;: &#39;path/to/zoo.txt&#39;}}</span>
+<span class="sd">            &gt;&gt;&gt; submission = Submission(team_id, items)</span>
+<span class="sd">            &gt;&gt;&gt; submission.to_dict()</span>
+<span class="sd">            {&#39;team_id&#39;: 75, &#39;items&#39;: {&#39;png&#39;: {&#39;url&#39;: &#39;http://eyntra.org/test.png&#39;, &#39;path&#39;:</span>
+<span class="sd">            &#39;path/to/png.png&#39;}, &#39;zoo&#39;: {&#39;url&#39;: &#39;http://eyntra.org/zoo.txt&#39;, &#39;path&#39;: &#39;path/to/zoo.txt&#39;}}}</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span></div>
+
+<div class="viewcode-block" id="Submission.from_dict"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.Submission.from_dict">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="n">submission_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a :class:`Submission` from a :class:`dict`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        submission_dict: dict</span>
+<span class="sd">            Should contain `keys` `team_id`, and `items`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`Submission`</span>
+<span class="sd">            A :class:`Submission` built from the submission dictionary</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. doctest::</span>
+
+<span class="sd">            &gt;&gt;&gt; submission_dict = {&#39;team_id&#39;: 75, &#39;items&#39;: {&#39;png&#39;: {&#39;url&#39;: &#39;http://eyntra.org/</span>
+<span class="sd">            ... test.png&#39;, &#39;path&#39;: &#39;path/to/png.png&#39;}, &#39;zoo&#39;: {&#39;url&#39;: &#39;http://eyntra.org/zoo.txt&#39;, </span>
+<span class="sd">            ... &#39;path&#39;: &#39;path/to/zoo.txt&#39;}}}</span>
+<span class="sd">            &gt;&gt;&gt; Submission.from_dict(submission_dict)</span>
+<span class="sd">            Submission({&#39;team_id&#39;: 75, &#39;items&#39;: {&#39;png&#39;: {&#39;url&#39;: &#39;http://eyntra.org/test.png&#39;,</span>
+<span class="sd">            &#39;path&#39;: &#39;path/to/png.png&#39;}, &#39;zoo&#39;: {&#39;url&#39;: &#39;http://eyntra.org/zoo.txt&#39;, &#39;path&#39;:</span>
+<span class="sd">            &#39;path/to/zoo.txt&#39;}}})</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Submission</span><span class="p">(</span><span class="n">submission_dict</span><span class="p">[</span><span class="s1">&#39;team_id&#39;</span><span class="p">],</span> <span class="n">submission_dict</span><span class="p">[</span><span class="s1">&#39;items&#39;</span><span class="p">])</span></div></div>
+
+<div class="viewcode-block" id="SubmissionGroup"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.SubmissionGroup">[docs]</a><span class="k">class</span> <span class="nc">SubmissionGroup</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Groups many :class:`Submission` together</span>
+
+<span class="sd">    A :class:`SubmissionGroup` clubs multiple :class:`Submission` together and includes </span>
+<span class="sd">    additional information like ``task_name`` and ``theme_name``. </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    task_name: str</span>
+
+<span class="sd">    theme_name: str</span>
+
+<span class="sd">    submissions: list, dict</span>
+<span class="sd">        List or dictionary of submissions. If dictionary, key should be a team_id </span>
+<span class="sd">        and value should be a :class:`Submission`</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    task_name: str</span>
+
+<span class="sd">    theme_name: str</span>
+
+<span class="sd">    dict_of_submissions: dict</span>
+<span class="sd">        A dictionary of submissions where `key` is a team_id and `value` is a :class:`Submission`</span>
+
+<span class="sd">    Warnings</span>
+<span class="sd">    ---------    </span>
+<span class="sd">    :class:`SubmisisonGroup` is an iterator. Try not to mutate it and expect it to work fabulously thereafter.</span>
+<span class="sd">    </span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. doctest::</span>
+
+<span class="sd">        &gt;&gt;&gt; team_id1 = 75</span>
+<span class="sd">        &gt;&gt;&gt; items1 = {&#39;png&#39;: {&#39;url&#39;: &#39;someurl&#39;, &#39;downloaded&#39;: True}, &#39;py&#39;: {&#39;url&#39;: &#39;hello&#39;, &#39;latest&#39;: True}}</span>
+<span class="sd">        &gt;&gt;&gt; submission1 = Submission(team_id1, items1)</span>
+
+<span class="sd">        &gt;&gt;&gt; team_id2 = 987</span>
+<span class="sd">        &gt;&gt;&gt; items2 = {&#39;ipynb&#39;: {&#39;url&#39;: &#39;pqwdm&#39;, &#39;downloaded&#39;: False}, &#39;png&#39;: {&#39;url&#39;: &#39;uuhsnad&#39;}}</span>
+<span class="sd">        &gt;&gt;&gt; submission2 = Submission(team_id2, items2)</span>
+
+<span class="sd">        &gt;&gt;&gt; team_id3 = 453</span>
+<span class="sd">        &gt;&gt;&gt; items3 = {&#39;py&#39;: {&#39;url&#39;: &#39;gnlkj&#39;, &#39;downloaded&#39;: False}, &#39;ipynb&#39;: {}}</span>
+<span class="sd">        &gt;&gt;&gt; submission3 = Submission(team_id3, items3)</span>
+
+<span class="sd">        &gt;&gt;&gt; SubmissionGroup(&#39;Task0&#39;, &#39;Homecoming&#39;, {submission.team_id: submission</span>
+<span class="sd">        ... for submission in [submission1, submission2, submission3]})</span>
+<span class="sd">        SubmissionGroup(task_name: Task0, theme_name: Homecoming, dict_of_submissions: {75:</span>
+<span class="sd">        Submission({&#39;team_id&#39;: 75, &#39;items&#39;: {&#39;png&#39;: {&#39;url&#39;: &#39;someurl&#39;, &#39;downloaded&#39;: True},</span>
+<span class="sd">        &#39;py&#39;: {&#39;url&#39;: &#39;hello&#39;, &#39;latest&#39;: True}}}), 987: Submission({&#39;team_id&#39;: 987, &#39;items&#39;:</span>
+<span class="sd">        {&#39;ipynb&#39;: {&#39;url&#39;: &#39;pqwdm&#39;, &#39;downloaded&#39;: False}, &#39;png&#39;: {&#39;url&#39;: &#39;uuhsnad&#39;}}}), 453:</span>
+<span class="sd">        Submission({&#39;team_id&#39;: 453, &#39;items&#39;: {&#39;py&#39;: {&#39;url&#39;: &#39;gnlkj&#39;, &#39;downloaded&#39;: False},</span>
+<span class="sd">        &#39;ipynb&#39;: {}}})})</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">theme_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">submissions</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task_name</span> <span class="o">=</span> <span class="n">task_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">theme_name</span> <span class="o">=</span> <span class="n">theme_name</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">submissions</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="n">submissions</span> <span class="o">=</span> <span class="p">{</span><span class="nb">int</span><span class="p">(</span><span class="n">submission</span><span class="o">.</span><span class="n">team_id</span><span class="p">)</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">submission</span><span class="o">.</span><span class="n">team_id</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span> 
+            <span class="k">else</span> <span class="n">submission</span><span class="o">.</span><span class="n">team_id</span><span class="p">:</span> <span class="n">submission</span> <span class="k">for</span> <span class="n">submission</span> <span class="ow">in</span> <span class="n">submissions</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_submissions</span> <span class="o">=</span> <span class="n">submissions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_iter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_of_submissions</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+    
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_of_submissions</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_curr_idx</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_iter</span><span class="p">)</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_idx</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_submissions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_idx</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_iter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_of_submissions</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">StopIteration</span>
+    
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">team_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Submission</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">team_id</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
+                <span class="n">dict_of_submissions</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">*</span><span class="n">team_id</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">team_id</span><span class="o">.</span><span class="n">stop</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">dict_of_submissions</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span>
+                <span class="k">return</span> <span class="n">SubmissionGroup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">task_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theme_name</span><span class="p">,</span> <span class="n">dict_of_submissions</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">team_id</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_submissions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">team_id</span><span class="p">)</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_submissions</span><span class="p">[</span><span class="n">team_id</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_submissions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">team_id</span><span class="p">))</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_submissions</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">team_id</span><span class="p">)]</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">team_id</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_submissions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">team_id</span><span class="p">)</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_submissions</span><span class="p">[</span><span class="n">team_id</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_submissions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">team_id</span><span class="p">))</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_submissions</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">team_id</span><span class="p">)]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">object_equality</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;SubmissionGroup(task_name: </span><span class="si">{}</span><span class="s2">, theme_name: </span><span class="si">{}</span><span class="s2">, dict_of_submissions: </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">task_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theme_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_submissions</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+
+    <span class="c1"># TODO: need to safely remove this</span>
+    <span class="k">def</span> <span class="nf">find_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">team_id</span><span class="p">):</span>
+        <span class="c1"># find submission quickly by exploiting the fact that submissions are stored in sorted order</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_submissions</span><span class="p">[</span><span class="n">team_id</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="SubmissionGroup.from_dict"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.SubmissionGroup.from_dict">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="n">group_dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a :class:`SubmissionGroup` from a :class:`dict`</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        group_dict: dict</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`SubmissionGroup`</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. doctest::</span>
+
+<span class="sd">            &gt;&gt;&gt; submission_group_dict = {&#39;task_name&#39;: &#39;Task0&#39;, &#39;theme_name&#39;: &#39;Homecoming&#39;,</span>
+<span class="sd">            ... &#39;dict_of_submissions&#39;: {75: {&#39;team_id&#39;: 75, &#39;items&#39;: {&#39;png&#39;: {&#39;url&#39;: &#39;someurl&#39;,</span>
+<span class="sd">            ... &#39;downloaded&#39;: True}, &#39;py&#39;: {&#39;url&#39;: &#39;hello&#39;, &#39;latest&#39;: True}}}, 987: {&#39;team_id&#39;: 987,</span>
+<span class="sd">            ... &#39;items&#39;: {&#39;ipynb&#39;: {&#39;url&#39;: &#39;pqwdm&#39;, &#39;downloaded&#39;: False}, &#39;png&#39;: {&#39;url&#39;: &#39;uuhsnad&#39;}}},</span>
+<span class="sd">            ... 453: {&#39;team_id&#39;: 453, &#39;items&#39;: {&#39;py&#39;: {&#39;url&#39;: &#39;gnlkj&#39;, &#39;downloaded&#39;: False}, &#39;ipynb&#39;:</span>
+<span class="sd">            ... {}}}}}</span>
+<span class="sd">            &gt;&gt;&gt; SubmissionGroup.from_dict(submission_group_dict)</span>
+<span class="sd">            SubmissionGroup(task_name: Task0, theme_name: Homecoming, dict_of_submissions: {75:</span>
+<span class="sd">            Submission({&#39;team_id&#39;: 75, &#39;items&#39;: {&#39;png&#39;: {&#39;url&#39;: &#39;someurl&#39;, &#39;downloaded&#39;: True},</span>
+<span class="sd">            &#39;py&#39;: {&#39;url&#39;: &#39;hello&#39;, &#39;latest&#39;: True}}}), 987: Submission({&#39;team_id&#39;: 987, &#39;items&#39;:</span>
+<span class="sd">            {&#39;ipynb&#39;: {&#39;url&#39;: &#39;pqwdm&#39;, &#39;downloaded&#39;: False}, &#39;png&#39;: {&#39;url&#39;: &#39;uuhsnad&#39;}}}), 453:</span>
+<span class="sd">            Submission({&#39;team_id&#39;: 453, &#39;items&#39;: {&#39;py&#39;: {&#39;url&#39;: &#39;gnlkj&#39;, &#39;downloaded&#39;: False},</span>
+<span class="sd">            &#39;ipynb&#39;: {}}})})</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dict_of_submissions</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">team_id</span><span class="p">,</span> <span class="n">submission</span> <span class="ow">in</span> <span class="n">group_dict</span><span class="p">[</span><span class="s1">&#39;dict_of_submissions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">team_id</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+                <span class="n">dict_of_submissions</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">team_id</span><span class="p">)]</span> <span class="o">=</span> <span class="n">Submission</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">submission</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dict_of_submissions</span><span class="p">[</span><span class="n">team_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">Submission</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">submission</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">SubmissionGroup</span><span class="p">(</span><span class="n">group_dict</span><span class="p">[</span><span class="s1">&#39;task_name&#39;</span><span class="p">],</span> <span class="n">group_dict</span><span class="p">[</span><span class="s1">&#39;theme_name&#39;</span><span class="p">],</span> <span class="n">dict_of_submissions</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SubmissionGroup.to_dict"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.SubmissionGroup.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts from :class:`SubmissionGroup` to a :class:`dict`</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. doctest::</span>
+
+<span class="sd">            &gt;&gt;&gt; submission_group.to_dict()</span>
+<span class="sd">            {&#39;task_name&#39;: &#39;Task0&#39;, &#39;theme_name&#39;: &#39;Homecoming&#39;, &#39;dict_of_submissions&#39;: {75:</span>
+<span class="sd">            {&#39;team_id&#39;: 75, &#39;items&#39;: {&#39;png&#39;: {&#39;url&#39;: &#39;someurl&#39;, &#39;downloaded&#39;: True}, &#39;py&#39;:</span>
+<span class="sd">            {&#39;url&#39;: &#39;hello&#39;, &#39;latest&#39;: True}}}, 987: {&#39;team_id&#39;: 987, &#39;items&#39;: {&#39;ipynb&#39;:</span>
+<span class="sd">            {&#39;url&#39;: &#39;pqwdm&#39;, &#39;downloaded&#39;: False}, &#39;png&#39;: {&#39;url&#39;: &#39;uuhsnad&#39;}}}, 453: {&#39;team_id&#39;:</span>
+<span class="sd">            453, &#39;items&#39;: {&#39;py&#39;: {&#39;url&#39;: &#39;gnlkj&#39;, &#39;downloaded&#39;: False}, &#39;ipynb&#39;: {}}}}}</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">group_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">group_dict</span><span class="p">[</span><span class="s1">&#39;task_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_name</span>
+        <span class="n">group_dict</span><span class="p">[</span><span class="s1">&#39;theme_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">theme_name</span>
+        <span class="n">group_dict</span><span class="p">[</span><span class="s1">&#39;dict_of_submissions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># print(self.dict_of_submissions)</span>
+        <span class="k">for</span> <span class="n">team_id</span><span class="p">,</span> <span class="n">submission</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_submissions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">group_dict</span><span class="p">[</span><span class="s1">&#39;dict_of_submissions&#39;</span><span class="p">][</span><span class="n">team_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">submission</span><span class="o">.</span><span class="vm">__dict__</span>
+
+        <span class="k">return</span> <span class="n">group_dict</span></div>
+
+<div class="viewcode-block" id="SubmissionGroup.from_json"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.SubmissionGroup.from_json">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a :class:`SubmissionGroup` from a json file</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_path: str</span>
+<span class="sd">            Path to json file</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`SubmissionGroup`</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. doctest::</span>
+
+<span class="sd">            &gt;&gt;&gt; SubmissionGroup.from_json(&#39;path/to/json/file&#39;)</span>
+<span class="sd">            SubmissionGroup(task_name: Task0, theme_name: Homecoming, dict_of_submissions: {75:</span>
+<span class="sd">            Submission({&#39;team_id&#39;: 75, &#39;items&#39;: {&#39;png&#39;: {&#39;url&#39;: &#39;someurl&#39;, &#39;downloaded&#39;: True},</span>
+<span class="sd">            &#39;py&#39;: {&#39;url&#39;: &#39;hello&#39;, &#39;latest&#39;: True}}}), 987: Submission({&#39;team_id&#39;: 987, &#39;items&#39;:</span>
+<span class="sd">            {&#39;ipynb&#39;: {&#39;url&#39;: &#39;pqwdm&#39;, &#39;downloaded&#39;: False}, &#39;png&#39;: {&#39;url&#39;: &#39;uuhsnad&#39;}}}), 453:</span>
+<span class="sd">            Submission({&#39;team_id&#39;: 453, &#39;items&#39;: {&#39;py&#39;: {&#39;url&#39;: &#39;gnlkj&#39;, &#39;downloaded&#39;: False},</span>
+<span class="sd">            &#39;ipynb&#39;: {}}})})</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;submission.json&#39;</span><span class="p">)</span>
+        <span class="c1"># print(file_path)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+            <span class="n">group_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">SubmissionGroup</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">group_dict</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SubmissionGroup.to_json"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.SubmissionGroup.to_json">[docs]</a>    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save a :class:`SubmissionGroup` object to json file</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        save_path: str</span>
+<span class="sd">            Path to json file or directory</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. doctest::</span>
+
+<span class="sd">            &gt;&gt;&gt; submission_group.to_json(&#39;path/to/json/file&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">save_path</span><span class="p">):</span>
+            <span class="n">save_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s1">&#39;submission.json&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s1">&#39;w+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+            <span class="n">group_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">group_dict</span><span class="p">,</span> <span class="n">json_file</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="LoadSubmissions"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.LoadSubmissions">[docs]</a><span class="k">class</span> <span class="nc">LoadSubmissions</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A utility class to load submission information from web portal, filesystem or databases</span>
+
+<span class="sd">    Use this class to populate information about submission from web page or filesystem. Unless </span>
+<span class="sd">    you want to create only a few :class:`Submission` objects for testing, :attr:`~LoadSubmissions.get_submissions()`</span>
+<span class="sd">    of this class should be the preferred way to load and create a :class:`SubmissionGroup`.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        :class:`LoadSubmissions` is never instantiated directly. Use either :attr:`LoadSubmissions.from_url`</span>
+<span class="sd">        or :attr:`LoadSubmissions.from_fs` </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cookie: str, optional</span>
+<span class="sd">        HTTP cookie obtained from the logged in session on the web portal.</span>
+<span class="sd">    task_url: str, optional</span>
+<span class="sd">        Url of the web page showing information to download files. </span>
+<span class="sd">        ``e.g. &#39;http://old.e-yantra.org/admin/grade/task0&#39;``</span>
+<span class="sd">    task_name: str, optional</span>
+<span class="sd">    theme_name: str, optional</span>
+<span class="sd">    fs_location: str, optional</span>
+<span class="sd">        Filesystem location where the downloaded files were stored. You can use this option for </span>
+<span class="sd">        testing by creating the directory structure according to downloading conventions</span>
+<span class="sd">    types: list, optional</span>
+<span class="sd">        List of items to download from all the items available. ``e.g. [&#39;zip&#39;, </span>
+<span class="sd">        &#39;png2&#39;, &#39;txt1&#39;]``. Default is [&#39;zip&#39;]</span>
+<span class="sd">    after_date: Union[str, datetime], optional</span>
+<span class="sd">        If specified, submissions uploaded only at or after provided datetime or date string will</span>
+<span class="sd">        be considered in submission_group</span>
+<span class="sd">    before_date: Union[str, datetime], optional</span>
+<span class="sd">        If specified, submissions uploaded only at or before provided datetime or date string will</span>
+<span class="sd">        be considered in submission_group</span>
+<span class="sd">    scraper: str, :class:`Scraper`, optional</span>
+<span class="sd">        If &#39;default&#39;, then use :class:`DefaultScraper`, else use provided :class:`Scraper`</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cookie: str</span>
+<span class="sd">        HTTP cookie obtained from the logged in session on the web portal</span>
+<span class="sd">    task_url: str</span>
+<span class="sd">        Url of the web page showing information to download files. </span>
+<span class="sd">        ``e.g. &#39;http://old.e-yantra.org/admin/grade/task0&#39;``</span>
+<span class="sd">    task_name: str</span>
+<span class="sd">    theme_name: str</span>
+<span class="sd">    fs_location: str</span>
+<span class="sd">        Filesystem location where the downloaded files were stored. You can use this option for </span>
+<span class="sd">        testing by creating the directory structure according to downloading conventions</span>
+<span class="sd">    types: list</span>
+<span class="sd">        List of items to download from all the items available. ``e.g. [&#39;zip&#39;, &#39;png2&#39;, &#39;txt1&#39;]``</span>
+<span class="sd">    after_date: Union[str, datetime]</span>
+<span class="sd">        If specified, submissions uploaded only at or after provided datetime or date string will</span>
+<span class="sd">        be considered in submission_group</span>
+<span class="sd">    before_date: Union[str, datetime]</span>
+<span class="sd">        If specified, submissions uploaded only at or before provided datetime or date string will</span>
+<span class="sd">        be considered in submission_group</span>
+<span class="sd">    scraper: str, :class:`Scraper`</span>
+<span class="sd">        If &#39;default&#39;, then use :class:`DefaultScraper`, else use provided :class:`Scraper`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cookie</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">task_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> 
+    <span class="n">theme_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">fs_location</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">types</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;zip&#39;</span><span class="p">],</span> <span class="n">after_date</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="n">before_date</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">scraper</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;default2019&#39;</span><span class="p">):</span>
+        <span class="c1"># Top level LoadSubmissions</span>
+        <span class="c1"># Not supposed to be used directly</span>
+        <span class="c1"># Use either LoadSubmissions.from_fs or LoadSubmissions.from_url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cookie</span> <span class="o">=</span> <span class="n">cookie</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task_url</span> <span class="o">=</span> <span class="n">task_url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task_name</span> <span class="o">=</span> <span class="n">task_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">theme_name</span> <span class="o">=</span> <span class="n">theme_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fs_location</span> <span class="o">=</span> <span class="n">fs_location</span>
+        <span class="c1"># file types to download</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">types</span> <span class="o">=</span> <span class="n">types</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">after_date</span> <span class="o">=</span> <span class="n">after_date</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">before_date</span> <span class="o">=</span> <span class="n">before_date</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scraper</span> <span class="o">=</span> <span class="n">scraper</span>
+
+<div class="viewcode-block" id="LoadSubmissions.from_url"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.LoadSubmissions.from_url">[docs]</a>    <span class="nd">@staticmethod</span>    
+    <span class="k">def</span> <span class="nf">from_url</span><span class="p">(</span><span class="n">task_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cookie</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">theme_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">types</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;zip&#39;</span><span class="p">],</span> 
+    <span class="n">before_date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">datetime</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">after_date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">datetime</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> 
+    <span class="n">scraper</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;default2019&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a :class:`LoadSubmissions` object with information necessary to fetch submissions</span>
+<span class="sd">        from a webpage</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        task_url: str</span>
+<span class="sd">        cookie: str</span>
+<span class="sd">        task_name: str</span>
+<span class="sd">        theme_name: str</span>
+<span class="sd">        types: list</span>
+<span class="sd">        before_date: Union[str, datetime]</span>
+<span class="sd">        after_date: Union[str, datetime]</span>
+<span class="sd">        scraper: str or :class:`Scraper`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`LoadSubmissions`</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. doctest::</span>
+
+<span class="sd">            &gt;&gt;&gt; task_url = &#39;http://old.e-yantra.org/admin/grade/task0&#39;</span>
+<span class="sd">            &gt;&gt;&gt; task_name = &#39;Task0&#39;</span>
+<span class="sd">            &gt;&gt;&gt; theme_name = &#39;Homecoming&#39;</span>
+<span class="sd">            &gt;&gt;&gt; types = [&#39;png&#39;, &#39;ipynb&#39;, &#39;txt&#39;]</span>
+<span class="sd">            &gt;&gt;&gt; scraper = &#39;default2019&#39;</span>
+<span class="sd">            &gt;&gt;&gt; cookie = {&#39;name&#39;: &#39;eyrc18_session&#39;, &#39;value&#39;: </span>
+<span class="sd">            ... eyJpdiI6Ikk1T1JtRnl3WFdlM2l5TXBDc0RITHc9PSIsInZhbHVlIjoiemZ0b2JzaEh...DE1ZiJ9&#39;}</span>
+<span class="sd">            &gt;&gt;&gt; LoadSubmissions.from_url(task_url, cookie, task_name, </span>
+<span class="sd">            ... theme_name, types=types, method=method)</span>
+<span class="sd">            &lt;gradefast.submission.LoadSubmissions object at 0x7ff510f4d550&gt;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Constructor used to create submission objects from url</span>
+        <span class="k">return</span> <span class="n">LoadSubmissions</span><span class="p">(</span><span class="n">task_url</span><span class="o">=</span><span class="n">task_url</span><span class="p">,</span> <span class="n">task_name</span><span class="o">=</span><span class="n">task_name</span><span class="p">,</span> <span class="n">cookie</span><span class="o">=</span><span class="n">cookie</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="n">types</span><span class="p">,</span> 
+        <span class="n">before_date</span><span class="o">=</span><span class="n">before_date</span><span class="p">,</span> <span class="n">after_date</span><span class="o">=</span><span class="n">after_date</span><span class="p">,</span> <span class="n">scraper</span><span class="o">=</span><span class="n">scraper</span><span class="p">,</span> <span class="n">theme_name</span><span class="o">=</span><span class="n">theme_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LoadSubmissions.from_fs"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.LoadSubmissions.from_fs">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_fs</span><span class="p">(</span><span class="n">fs_location</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">theme_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a :class:`LoadSubmissions` object with information necessary to fetch submissions</span>
+<span class="sd">        from a filesystem location</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        fs_location: str</span>
+<span class="sd">        task_name: str</span>
+<span class="sd">        theme_name: str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`LoadSubmissions`</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. doctest::</span>
+
+<span class="sd">            &gt;&gt;&gt; LoadSubmissions.from_fs(&#39;Task2&#39;, &#39;Planter Bot&#39;, &#39;tests/resources/HC_TASK0&#39;)</span>
+<span class="sd">            &lt;gradefast.submission.LoadSubmissions object at 0x7ff510f4fe4&gt;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Constructor used to create submission objects from fs</span>
+        <span class="k">return</span> <span class="n">LoadSubmissions</span><span class="p">(</span><span class="n">fs_location</span><span class="o">=</span><span class="n">fs_location</span><span class="p">,</span> <span class="n">theme_name</span><span class="o">=</span><span class="n">theme_name</span><span class="p">,</span> <span class="n">task_name</span><span class="o">=</span><span class="n">task_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LoadSubmissions.get_file_item_name"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.LoadSubmissions.get_file_item_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_file_item_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">team_id</span><span class="p">,</span> <span class="n">file_full_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns file item name from full file path</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_full_path: str</span>
+<span class="sd">            Full path of the submission item</span>
+<span class="sd">        </span>
+<span class="sd">        Notes</span>
+<span class="sd">        ------</span>
+
+<span class="sd">        In gradefast, all submission file items are named as &lt;team_id&gt;_&lt;file_item_name&gt;.&lt;extension&gt;.</span>
+<span class="sd">        For an unzipped folder, the extension part is excluded. &lt;team_id&gt; is always a :class:`int`.</span>
+<span class="sd">        </span>
+<span class="sd">        Following are some examples of files: 4_zip.zip, 98_png.png, 257_txt3.txt, 36_text_file.txt,</span>
+<span class="sd">        8_test_task_1a.py</span>
+
+<span class="sd">        For the same files, following are the file_item_names: zip, png, txt3, text_file, test_task_1a.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            file_item_name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># remember all the extensions and file names with that particular extension</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_full_path</span><span class="p">)</span>
+        <span class="n">file_extension</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_full_path</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">matches</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">_(.+)</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">team_id</span><span class="p">,</span> <span class="n">file_extension</span><span class="p">),</span> <span class="n">file_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">matches</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">matches</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="n">file_item_name</span> <span class="o">=</span> <span class="n">matches</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;Exception when attempting to extract &quot;file_item_name&quot;&#39;</span>\
+            <span class="o">+</span> <span class="s1">&#39; for team_id: </span><span class="si">{}</span><span class="s1"> from </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">team_id</span><span class="p">,</span> <span class="n">file_name</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="c1"># includes a &quot;.&quot; in extension like &quot;.zip&quot;</span>
+        <span class="k">return</span> <span class="n">file_item_name</span></div>
+
+<div class="viewcode-block" id="LoadSubmissions.make_submissions_from_fs"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.LoadSubmissions.make_submissions_from_fs">[docs]</a>    <span class="k">def</span> <span class="nf">make_submissions_from_fs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a :class:`SubmissionGroup` from given file system location where</span>
+<span class="sd">        the submission files are downloaded</span>
+
+<span class="sd">        Assumes that files and extracted folders are named according to gradefast&#39;s </span>
+<span class="sd">        convention. Gradefast falls back to using this method if there is no submission_group.json</span>
+<span class="sd">        in the provided :attr:`fs_location` attribute.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`SubmissionGroup`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">list_of_submissions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">dir_item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fs_location</span><span class="p">)):</span>
+            <span class="c1"># convention 1: names of folders are team ids</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">is_string_number</span><span class="p">(</span><span class="n">dir_item</span><span class="p">):</span>
+                <span class="k">continue</span>    
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Attempting make submissions from fs on team-id: </span><span class="si">{}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dir_item</span><span class="p">)</span> \
+                <span class="o">+</span> <span class="s1">&#39;and path </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fs_location</span><span class="p">,</span> <span class="n">dir_item</span><span class="p">))))</span>
+            <span class="n">team_id</span> <span class="o">=</span> <span class="n">dir_item</span>
+
+            <span class="c1"># go inside the folder and store the file_paths of downloaded items for offline working</span>
+            <span class="c1"># go over the items of the student team submission</span>
+            <span class="c1"># and build items dictionary</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">team_item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fs_location</span><span class="p">,</span> <span class="n">dir_item</span><span class="p">))):</span>
+                <span class="n">file_full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fs_location</span><span class="p">,</span> <span class="n">dir_item</span><span class="p">,</span> <span class="n">team_item</span><span class="p">)</span>
+                <span class="n">file_item_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file_item_name</span><span class="p">(</span><span class="n">team_id</span><span class="p">,</span> <span class="n">file_full_path</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">file_item_name</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">items</span><span class="p">[</span><span class="n">file_item_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="n">file_full_path</span><span class="p">,</span> <span class="s1">&#39;downloaded&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+                
+            <span class="n">submission</span> <span class="o">=</span> <span class="n">Submission</span><span class="p">(</span><span class="n">team_id</span><span class="p">,</span> <span class="n">items</span><span class="p">)</span>
+            <span class="n">list_of_submissions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">submission</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">SubmissionGroup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">task_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theme_name</span><span class="p">,</span> <span class="n">list_of_submissions</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LoadSubmissions.get_submissions"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.LoadSubmissions.get_submissions">[docs]</a>    <span class="k">def</span> <span class="nf">get_submissions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a :class:`SubmissionGroup` after populating it with information from</span>
+<span class="sd">        webpage or filesystem</span>
+
+<span class="sd">        Based on the method used for fetching, `url` or `fs`, the resulting :class:`SubmissionGroup`</span>
+<span class="sd">        will differ. For example, a :class:`SubmissionGroup` created from manually made directory</span>
+<span class="sd">        structure won&#39;t contain a url key in :attr:`~Submission.items` </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`SubmissionGroup`</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. doctest::</span>
+
+<span class="sd">            &gt;&gt;&gt; load_submissions.get_submissions() # calling get_submissions() on load_submissions object</span>
+<span class="sd">            SubmissionGroup(...)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># list of submission objects</span>
+        <span class="n">list_of_submissions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_url</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scraper</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">scraper</span> <span class="o">==</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scraper</span> <span class="o">=</span> <span class="n">DefaultScraper</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">scraper</span> <span class="o">==</span> <span class="s1">&#39;default2019&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scraper</span> <span class="o">=</span> <span class="n">DefaultScraper2019</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># TODO (manjrekarom): Use custom scraper</span>
+                <span class="k">pass</span>
+
+            <span class="n">all_submission_info_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scraper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">task_url</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cookie</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">,</span>
+            <span class="n">before_date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">before_date</span><span class="p">,</span> <span class="n">after_date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">after_date</span><span class="p">)</span><span class="o">.</span><span class="n">scrape</span><span class="p">()</span>
+            
+            <span class="c1"># fill all data inside the submission object</span>
+            <span class="c1"># TODO:</span>
+            <span class="k">for</span> <span class="n">team_id</span><span class="p">,</span> <span class="n">info_dict</span> <span class="ow">in</span> <span class="n">all_submission_info_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="c1"># convert team_id into number</span>
+                <span class="n">list_of_submissions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Submission</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">team_id</span><span class="p">),</span> <span class="n">info_dict</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">fs_location</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="c1"># convert submissions array to json array</span>
+            <span class="n">submission_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fs_location</span><span class="p">)</span>
+            <span class="c1"># if path is not file</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">submission_file_path</span><span class="p">):</span>
+                <span class="c1"># then look if theres a file in the directory names submission.json</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="s1">&#39;submission.json&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">listdir</span><span class="p">(</span><span class="n">submission_file_path</span><span class="p">))</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">submission_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fs_location</span><span class="p">,</span> <span class="s1">&#39;submission.json&#39;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">SubmissionGroup</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">submission_file_path</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># else fall back to making submission_group by looking at downloaded</span>
+                    <span class="c1"># files</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_submissions_from_fs</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># else make a submission_group from the file and return </span>
+                <span class="k">return</span> <span class="n">SubmissionGroup</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">submission_file_path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;Neither URL nor File location found.Try again&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">CannotMakeSubmissionsFS</span><span class="p">()</span>
+        
+        <span class="k">return</span> <span class="n">SubmissionGroup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">task_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theme_name</span><span class="p">,</span> <span class="n">list_of_submissions</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Scraper"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.Scraper">[docs]</a><span class="k">class</span> <span class="nc">Scraper</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cookie</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">types</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;zip&#39;</span><span class="p">,</span> <span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="s1">&#39;ipynb&#39;</span><span class="p">],</span>
+    <span class="n">before_date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">datetime</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">after_date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">datetime</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task_url</span> <span class="o">=</span> <span class="n">task_url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cookie</span> <span class="o">=</span> <span class="n">cookie</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">types</span> <span class="o">=</span> <span class="n">types</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">before_date</span> <span class="o">=</span> <span class="n">before_date</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">after_date</span> <span class="o">=</span> <span class="n">after_date</span>
+
+<div class="viewcode-block" id="Scraper.scrape"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.Scraper.scrape">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">scrape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Scrapes important information from the page as a dictionary</span>
+<span class="sd">        </span>
+<span class="sd">        The dictionary contains team_id as key and all information</span>
+<span class="sd">        as a dictionary again if needed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div></div>
+
+<span class="k">class</span> <span class="nc">NoRedirectHandler</span><span class="p">(</span><span class="n">urllib2</span><span class="o">.</span><span class="n">HTTPRedirectHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">http_error_302</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">headers</span><span class="p">):</span>
+        <span class="n">infourl</span> <span class="o">=</span> <span class="n">addinfourl</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">get_full_url</span><span class="p">())</span>
+        <span class="n">infourl</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="n">infourl</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="k">return</span> <span class="n">infourl</span>
+
+    <span class="n">http_error_300</span> <span class="o">=</span> <span class="n">http_error_302</span>
+    <span class="n">http_error_301</span> <span class="o">=</span> <span class="n">http_error_302</span>
+    <span class="n">http_error_303</span> <span class="o">=</span> <span class="n">http_error_302</span>
+    <span class="n">http_error_307</span> <span class="o">=</span> <span class="n">http_error_302</span>
+
+<div class="viewcode-block" id="DefaultScraper"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.DefaultScraper">[docs]</a><span class="k">class</span> <span class="nc">DefaultScraper</span><span class="p">(</span><span class="n">Scraper</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cookie</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">types</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;zip&#39;</span><span class="p">],</span>
+    <span class="n">before_date</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">after_date</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">task_url</span><span class="p">,</span> <span class="n">cookie</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="n">types</span><span class="p">,</span> <span class="n">before_date</span><span class="o">=</span><span class="n">before_date</span><span class="p">,</span> <span class="n">after_date</span><span class="o">=</span><span class="n">after_date</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DefaultScraper.download"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.DefaultScraper.download">[docs]</a>    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Downloads and returns a given web_page after parsing it with bs4. </span>
+<span class="sd">        </span>
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ServerOrScraperException</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`BeautifulSoup`</span>
+<span class="sd">            Web page after parsing it with beautiful soup 4</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># if cookie is expired or invalid, the server makes a redirect</span>
+        <span class="c1"># we can check if the server redirected and throw an exception</span>
+        
+        <span class="c1"># data.task_url = &#39;http://23.253.205.190/eyrc18/public/admin/grade/task0&#39;</span>
+        <span class="c1"># data.task_url = &#39;http://23.253.205.190/eyrc18/public/admin/grade/task1b&#39;</span>
+        <span class="n">opener</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">build_opener</span><span class="p">(</span><span class="n">NoRedirectHandler</span><span class="p">())</span>
+        <span class="n">opener</span><span class="o">.</span><span class="n">addheaders</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Cookie&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cookie</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cookie</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]))</span>
+        <span class="n">web_page</span> <span class="o">=</span> <span class="n">opener</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">task_url</span><span class="p">)</span>
+        <span class="c1"># check if cookie is valid? or the request succeeded</span>
+        <span class="c1"># 2xx is correct code</span>
+        <span class="k">if</span> <span class="n">web_page</span><span class="o">.</span><span class="n">getcode</span><span class="p">()</span> <span class="o">/</span> <span class="mi">100</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ServerOrScraperException</span><span class="p">()</span>
+        
+        <span class="n">html_response</span> <span class="o">=</span> <span class="n">web_page</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">encoding</span> <span class="o">=</span> <span class="n">web_page</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get_content_charset</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="n">decoded_html</span> <span class="o">=</span> <span class="n">html_response</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">decoded_html</span></div>
+
+<div class="viewcode-block" id="DefaultScraper.compare_dates"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.DefaultScraper.compare_dates">[docs]</a>    <span class="k">def</span> <span class="nf">compare_dates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date1</span><span class="p">,</span> <span class="n">date2</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;greater&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns greater or smaller date</span>
+
+<span class="sd">        If default=&#39;greater&#39;, checks if date1 is greater than date2 and</span>
+<span class="sd">        returns True</span>
+
+<span class="sd">        If default=&#39;small&#39;, checks if date1 is smaller than date2 and</span>
+<span class="sd">        returns True</span>
+
+<span class="sd">        If default=&#39;equal&#39;, checks if date1 is equal to date2 and</span>
+<span class="sd">        returns True</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        date1: :class:`datetime`</span>
+<span class="sd">        date2: :class:`datetime`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">date1</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date1</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span> 
+        <span class="n">date2</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date2</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span> 
+        
+        <span class="k">if</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;greater&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">date1</span> <span class="o">&gt;</span> <span class="n">date2</span>
+        <span class="k">if</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;smaller&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">date1</span> <span class="o">&lt;</span> <span class="n">date2</span>
+        <span class="k">if</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;equal&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">date1</span> <span class="o">==</span> <span class="n">date2</span></div>
+
+<div class="viewcode-block" id="DefaultScraper.parse_info_as_dict"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.DefaultScraper.parse_info_as_dict">[docs]</a>    <span class="k">def</span> <span class="nf">parse_info_as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_item_atags_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;latest&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse information from HTML markups of file_item atags as a dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">info_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">method</span><span class="o">==</span><span class="s1">&#39;latest&#39;</span><span class="p">:</span>
+            <span class="n">date_compare</span> <span class="o">=</span> <span class="s1">&#39;greater&#39;</span>
+        <span class="c1"># if method==&#39;old&#39;:</span>
+        <span class="c1">#     date_compare = &#39;smaller&#39;</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">atag</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">file_item_atags_list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">atag</span><span class="o">.</span><span class="n">get_text</span><span class="p">(),</span> <span class="s1">&#39;False&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;False&#39;</span><span class="p">:</span>
+                <span class="c1"># &quot;png&quot; = &quot;http://...&quot;</span>
+                <span class="n">info_dict</span><span class="p">[</span><span class="n">atag</span><span class="o">.</span><span class="n">get_text</span><span class="p">()]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="n">atag</span><span class="p">[</span><span class="s1">&#39;href&#39;</span><span class="p">],</span> <span class="s1">&#39;upload_time&#39;</span><span class="p">:</span> <span class="n">atag</span><span class="p">[</span><span class="s1">&#39;data-tooltip&#39;</span><span class="p">]}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">compare_dates</span><span class="p">(</span><span class="n">atag</span><span class="p">[</span><span class="s1">&#39;data-tooltip&#39;</span><span class="p">],</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">atag</span><span class="o">.</span><span class="n">get_text</span><span class="p">()][</span><span class="s1">&#39;upload_time&#39;</span><span class="p">],</span> 
+                <span class="n">method</span><span class="o">=</span><span class="n">date_compare</span><span class="p">):</span>
+                <span class="c1"># if url[&#39;data-tooltip&#39;] &gt; latest_urls[url.get_text()][&#39;data-tooltip&#39;]: </span>
+                    <span class="n">info_dict</span><span class="p">[</span><span class="n">atag</span><span class="o">.</span><span class="n">get_text</span><span class="p">()][</span><span class="s1">&#39;url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">atag</span><span class="p">[</span><span class="s1">&#39;href&#39;</span><span class="p">]</span>
+                    <span class="n">info_dict</span><span class="p">[</span><span class="n">atag</span><span class="o">.</span><span class="n">get_text</span><span class="p">()][</span><span class="s1">&#39;upload_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">atag</span><span class="p">[</span><span class="s1">&#39;data-tooltip&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">info_dict</span></div>
+        
+<div class="viewcode-block" id="DefaultScraper.parse"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.DefaultScraper.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">web_page</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parses required (as much as) information from the given webpage</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parsed_web_page</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">web_page</span><span class="p">,</span> <span class="s1">&#39;html.parser&#39;</span><span class="p">)</span>
+        <span class="c1"># button (a tags actually) that says &quot;GRADE&quot;</span>
+        <span class="n">grade_team_atags_list</span> <span class="o">=</span> <span class="n">parsed_web_page</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span><span class="p">:</span> <span class="s1">&#39;gradeTeam&#39;</span><span class="p">})</span>
+        <span class="n">all_submission_info</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># for each of the teams do this</span>
+        <span class="k">for</span> <span class="n">grade_team_atag</span> <span class="ow">in</span> <span class="n">grade_team_atags_list</span><span class="p">:</span>
+            <span class="c1"># buttons (a tags actually) with names like &quot;TXT&quot;, &quot;PNG&quot;, etc</span>
+            <span class="n">file_item_atags_list</span> <span class="o">=</span> <span class="n">grade_team_atag</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span><span class="p">:</span> <span class="s1">&#39;waves-effect&#39;</span><span class="p">})</span>
+            <span class="c1"># filter file_item_atags_list</span>
+            <span class="n">filtered_file_items_atags_list</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">file_item_atag</span><span class="p">:</span> 
+            <span class="n">file_item_atag</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">,</span> <span class="n">file_item_atags_list</span><span class="p">)</span>
+            <span class="c1"># get {&quot;png&quot;: {&quot;url&quot;: ..., &quot;upload_time&quot;: ...}, &quot;zip&quot;: {...}}</span>
+            <span class="n">info_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_info_as_dict</span><span class="p">(</span><span class="n">filtered_file_items_atags_list</span><span class="p">)</span>
+            <span class="c1"># add team id and info dict: {&quot;4&quot;: {&quot;png&quot;: {&quot;url&quot;: ..., &quot;upload_time&quot;: ...}, &quot;zip&quot;: {...}}}</span>
+            <span class="n">all_submission_info</span><span class="p">[</span><span class="n">grade_team_atag</span><span class="p">[</span><span class="s1">&#39;data-teamid&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">info_dict</span>
+        <span class="k">return</span> <span class="n">all_submission_info</span></div>
+
+    <span class="c1"># TODO: Accept team_ids and file urls </span>
+    <span class="c1"># also incorporate other data like time of download etc</span>
+<div class="viewcode-block" id="DefaultScraper.scrape"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.DefaultScraper.scrape">[docs]</a>    <span class="k">def</span> <span class="nf">scrape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Scrape submission information from theme uploads page</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># download html page</span>
+        <span class="n">web_page</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">web_page</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="DefaultScraper2019"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.DefaultScraper2019">[docs]</a><span class="k">class</span> <span class="nc">DefaultScraper2019</span><span class="p">(</span><span class="n">Scraper</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cookie</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">types</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;zip&#39;</span><span class="p">],</span>
+    <span class="n">before_date</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">after_date</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">task_url</span><span class="p">,</span> <span class="n">cookie</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="n">types</span><span class="p">,</span> <span class="n">before_date</span><span class="o">=</span><span class="n">before_date</span><span class="p">,</span>
+        <span class="n">after_date</span><span class="o">=</span><span class="n">after_date</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DefaultScraper2019.download"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.DefaultScraper2019.download">[docs]</a>    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Downloads and returns a given web_page after parsing it with bs4. </span>
+<span class="sd">        </span>
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ServerOrScraperException</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`BeautifulSoup`</span>
+<span class="sd">            Web page after parsing it with beautiful soup 4</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># if cookie is expired or invalid, the server makes a redirect</span>
+        <span class="c1"># we can check if the server redirected and throw an exception</span>
+        
+        <span class="c1"># data.task_url = &#39;http://23.253.205.190/eyrc18/public/admin/grade/task0&#39;</span>
+        <span class="c1"># data.task_url = &#39;http://23.253.205.190/eyrc18/public/admin/grade/task1b&#39;</span>
+        <span class="n">opener</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">build_opener</span><span class="p">(</span><span class="n">NoRedirectHandler</span><span class="p">())</span>
+        <span class="n">opener</span><span class="o">.</span><span class="n">addheaders</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Cookie&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cookie</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cookie</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]))</span>
+        <span class="n">web_page</span> <span class="o">=</span> <span class="n">opener</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">task_url</span><span class="p">)</span>
+        <span class="c1"># check if cookie is valid? or the request succeeded</span>
+        <span class="c1"># 2xx is correct code</span>
+        <span class="k">if</span> <span class="n">web_page</span><span class="o">.</span><span class="n">getcode</span><span class="p">()</span> <span class="o">/</span> <span class="mi">100</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ServerOrScraperException</span><span class="p">()</span>
+        
+        <span class="n">html_response</span> <span class="o">=</span> <span class="n">web_page</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">encoding</span> <span class="o">=</span> <span class="n">web_page</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get_content_charset</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="n">decoded_html</span> <span class="o">=</span> <span class="n">html_response</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">decoded_html</span></div>
+
+<div class="viewcode-block" id="DefaultScraper2019.compare_dates"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.DefaultScraper2019.compare_dates">[docs]</a>    <span class="k">def</span> <span class="nf">compare_dates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date1</span><span class="p">,</span> <span class="n">date2</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;greater&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns greater or smaller date</span>
+
+<span class="sd">        If default=&#39;greater&#39;, checks if date1 is greater than date2 and</span>
+<span class="sd">        returns True</span>
+
+<span class="sd">        If default=&#39;small&#39;, checks if date1 is smaller than date2 and</span>
+<span class="sd">        returns True</span>
+
+<span class="sd">        If default=&#39;equal&#39;, checks if date1 is equal to date2 and</span>
+<span class="sd">        returns True</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        date1: :class:`datetime`</span>
+<span class="sd">        date2: :class:`datetime`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">date1</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date1</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span> 
+        <span class="n">date2</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date2</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span> 
+        
+        <span class="k">if</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;greater&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">date1</span> <span class="o">&gt;</span> <span class="n">date2</span>
+        <span class="k">if</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;smaller&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">date1</span> <span class="o">&lt;</span> <span class="n">date2</span>
+        <span class="k">if</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;equal&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">date1</span> <span class="o">==</span> <span class="n">date2</span></div>
+
+    <span class="k">def</span> <span class="nf">is_date_between_before_after</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_to_compare</span><span class="p">,</span> <span class="n">before_date</span><span class="p">,</span> <span class="n">after_date</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">date_to_compare</span><span class="p">,</span> <span class="n">datetime</span><span class="p">):</span>
+            <span class="n">date_to_compare</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_to_compare</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">before_date</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">before_date</span><span class="p">,</span> <span class="n">datetime</span><span class="p">):</span>
+                <span class="n">before_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">before_date</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">date_to_compare</span> <span class="o">&lt;=</span> <span class="n">before_date</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">after_date</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>    
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">after_date</span><span class="p">,</span> <span class="n">datetime</span><span class="p">):</span>
+                <span class="n">after_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">after_date</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">date_to_compare</span> <span class="o">&gt;=</span> <span class="n">after_date</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="DefaultScraper2019.parse_info_as_dict"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.DefaultScraper2019.parse_info_as_dict">[docs]</a>    <span class="k">def</span> <span class="nf">parse_info_as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_item_atags_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;latest&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse information from HTML markups of file_item atags as a dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">info_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">method</span><span class="o">==</span><span class="s1">&#39;latest&#39;</span><span class="p">:</span>
+            <span class="n">date_compare</span> <span class="o">=</span> <span class="s1">&#39;greater&#39;</span>
+        <span class="c1"># if method==&#39;old&#39;:</span>
+        <span class="c1">#     date_compare = &#39;smaller&#39;</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">atag</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">file_item_atags_list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_date_between_before_after</span><span class="p">(</span><span class="n">atag</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">before_date</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">after_date</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">atag</span><span class="o">.</span><span class="n">get_text</span><span class="p">(),</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># &quot;png&quot; = &quot;http://...&quot;</span>
+                <span class="n">info_dict</span><span class="p">[</span><span class="n">atag</span><span class="o">.</span><span class="n">get_text</span><span class="p">()]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="n">atag</span><span class="p">[</span><span class="s1">&#39;href&#39;</span><span class="p">],</span> <span class="s1">&#39;upload_time&#39;</span><span class="p">:</span> <span class="n">atag</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">compare_dates</span><span class="p">(</span><span class="n">atag</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">],</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">atag</span><span class="o">.</span><span class="n">get_text</span><span class="p">()][</span><span class="s1">&#39;upload_time&#39;</span><span class="p">],</span> 
+                <span class="n">method</span><span class="o">=</span><span class="n">date_compare</span><span class="p">):</span>
+                <span class="c1"># if url[&#39;data-tooltip&#39;] &gt; latest_urls[url.get_text()][&#39;data-tooltip&#39;]: </span>
+                    <span class="n">info_dict</span><span class="p">[</span><span class="n">atag</span><span class="o">.</span><span class="n">get_text</span><span class="p">()][</span><span class="s1">&#39;url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">atag</span><span class="p">[</span><span class="s1">&#39;href&#39;</span><span class="p">]</span>
+                    <span class="n">info_dict</span><span class="p">[</span><span class="n">atag</span><span class="o">.</span><span class="n">get_text</span><span class="p">()][</span><span class="s1">&#39;upload_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">atag</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">info_dict</span></div>
+        
+<div class="viewcode-block" id="DefaultScraper2019.parse"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.DefaultScraper2019.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">web_page</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parses required (as much as) information from the given webpage</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parsed_web_page</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">web_page</span><span class="p">,</span> <span class="s1">&#39;html.parser&#39;</span><span class="p">)</span>
+        <span class="c1"># button (a tags actually) that says &quot;GRADE&quot;</span>
+        <span class="n">grade_team_atags_list</span> <span class="o">=</span> <span class="n">parsed_web_page</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span><span class="p">:</span> <span class="s1">&#39;gradeTeam&#39;</span><span class="p">})</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;All teams to grade </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">grade_team_atags_list</span><span class="p">))</span>
+        <span class="n">all_submission_info</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># for each of the teams do this</span>
+        <span class="k">for</span> <span class="n">grade_team_atag</span> <span class="ow">in</span> <span class="n">grade_team_atags_list</span><span class="p">:</span>
+            <span class="c1"># buttons (a tags actually) with names like &quot;TXT&quot;, &quot;PNG&quot;, etc</span>
+            <span class="n">file_item_atags_list</span> <span class="o">=</span> <span class="n">grade_team_atag</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span><span class="p">:</span> <span class="s1">&#39;btn-outline-success&#39;</span><span class="p">})</span>
+            <span class="c1"># filter file_item_atags_list</span>
+            <span class="n">filtered_file_items_atags_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">file_item_atag</span><span class="p">:</span> 
+            <span class="n">file_item_atag</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">,</span> <span class="n">file_item_atags_list</span><span class="p">))</span>
+            <span class="c1"># get {&quot;png&quot;: {&quot;url&quot;: ..., &quot;upload_time&quot;: ...}, &quot;zip&quot;: {...}}</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Team id: </span><span class="si">{}</span><span class="s1"> Filtered teams with types, the items are </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">grade_team_atag</span><span class="p">[</span><span class="s1">&#39;data-teamid&#39;</span><span class="p">],</span> <span class="n">filtered_file_items_atags_list</span><span class="p">))</span>
+            <span class="n">info_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_info_as_dict</span><span class="p">(</span><span class="n">filtered_file_items_atags_list</span><span class="p">)</span>
+            <span class="c1"># add team id and info dict: {&quot;4&quot;: {&quot;png&quot;: {&quot;url&quot;: ..., &quot;upload_time&quot;: ...}, &quot;zip&quot;: {...}}}</span>
+            <span class="n">all_submission_info</span><span class="p">[</span><span class="n">grade_team_atag</span><span class="p">[</span><span class="s1">&#39;data-teamid&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">info_dict</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">all_submission_info</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">all_submission_info</span></div>
+
+    <span class="c1"># TODO: Accept team_ids and file urls </span>
+    <span class="c1"># also incorporate other data like time of download etc</span>
+<div class="viewcode-block" id="DefaultScraper2019.scrape"><a class="viewcode-back" href="../../api/submission.html#gradefast.submission.DefaultScraper2019.scrape">[docs]</a>    <span class="k">def</span> <span class="nf">scrape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Scrape submission information from theme uploads page</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># download html page</span>
+        <span class="n">web_page</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">download</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">web_page</span><span class="p">)</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">doctest</span>
+    <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Omkar Manjrekar
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

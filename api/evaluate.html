@@ -1,0 +1,355 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Evaluate Module &mdash; Gradefast 0.1.12 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Aggregate Module" href="aggregate.html" />
+    <link rel="prev" title="Command Module" href="command.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Gradefast
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.12
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../what_is_gradefast.html">What is Gradefast?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/index.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes/index.html">Recipes</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Api Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="submission.html">Submission Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="test.html">Test Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command.html">Command Module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Evaluate Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aggregate.html">Aggregate Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="result.html">Result Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">Utils Module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Download and Install</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Gradefast</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Api Reference</a> &raquo;</li>
+        
+      <li>Evaluate Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/evaluate.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-gradefast.evaluate">
+<span id="evaluate-module"></span><h1>Evaluate Module<a class="headerlink" href="#module-gradefast.evaluate" title="Permalink to this headline">¶</a></h1>
+<p>Evaluate module provides <a class="reference internal" href="#gradefast.evaluate.Evaluate" title="gradefast.evaluate.Evaluate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluate</span></code></a> to execute a <a class="reference internal" href="test.html#gradefast.test.GFTest" title="gradefast.test.GFTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">GFTest</span></code></a>
+on a <a class="reference internal" href="submission.html#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a></p>
+<dl class="class">
+<dt id="gradefast.evaluate.Evaluate">
+<em class="property">class </em><code class="sig-prename descclassname">gradefast.evaluate.</code><code class="sig-name descname">Evaluate</code><span class="sig-paren">(</span><em class="sig-param">test</em>, <em class="sig-param">result_path='./'</em>, <em class="sig-param">clean=True</em>, <em class="sig-param">timeout=10</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/evaluate.html#Evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.evaluate.Evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allows evaluating a <a class="reference internal" href="test.html#gradefast.test.GFTest" title="gradefast.test.GFTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">GFTest</span></code></a> on a
+<a class="reference internal" href="submission.html#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">gradefast.submission.SubmissionGroup</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test</strong> (<a class="reference internal" href="test.html#gradefast.test.GFTest" title="gradefast.test.GFTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">GFTest</span></code></a>) – </p></li>
+<li><p><strong>result_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to persist the <a class="reference internal" href="result.html#gradefast.result.ResultGroup" title="gradefast.result.ResultGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultGroup</span></code></a> as json file.
+Default is ‘./’</p></li>
+<li><p><strong>clean</strong> (<em>bool</em><em>, </em><em>optional</em>) – Cleans or resets state of the test working directory after running test on
+each <code class="xref py py-class docutils literal notranslate"><span class="pre">Submisison</span></code></p></li>
+<li><p><strong>timeout</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum time to run the test for. Default is 10 seconds</p></li>
+<li><p><strong>todo</strong> (<em>.</em>) – Clean option is yet to be implemented</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="gradefast.evaluate.Evaluate.test">
+<code class="sig-name descname">test</code><a class="headerlink" href="#gradefast.evaluate.Evaluate.test" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="test.html#gradefast.test.GFTest" title="gradefast.test.GFTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">GFTest</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.evaluate.Evaluate.result_path">
+<code class="sig-name descname">result_path</code><a class="headerlink" href="#gradefast.evaluate.Evaluate.result_path" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.evaluate.Evaluate.clean">
+<code class="sig-name descname">clean</code><a class="headerlink" href="#gradefast.evaluate.Evaluate.clean" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.evaluate.Evaluate.timeout">
+<code class="sig-name descname">timeout</code><a class="headerlink" href="#gradefast.evaluate.Evaluate.timeout" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">evaluate</span> <span class="o">=</span> <span class="n">Evaluate</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">result_path</span><span class="o">=</span><span class="s1">&#39;./generated/&#39;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="go">&lt;gradefast.evaluate.Evaluate object at 0x7ff50d76af60&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result_group</span><span class="p">,</span> <span class="n">exceptions</span> <span class="o">=</span> <span class="n">evaluate</span><span class="p">(</span><span class="n">submission_group</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="gradefast.evaluate.Evaluate.pkg_setup">
+<code class="sig-name descname">pkg_setup</code><span class="sig-paren">(</span><em class="sig-param">submission</em>, <em class="sig-param">test</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/evaluate.html#Evaluate.pkg_setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.evaluate.Evaluate.pkg_setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mount package given in <a class="reference internal" href="test.html#gradefast.test.GFTest" title="gradefast.test.GFTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">GFTest</span></code></a> when evaluating a
+particular <a class="reference internal" href="submission.html#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>submission</strong> (<a class="reference internal" href="submission.html#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a>) – </p></li>
+<li><p><strong>test</strong> (<a class="reference internal" href="test.html#gradefast.test.GFTest" title="gradefast.test.GFTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">GFTest</span></code></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.evaluate.Evaluate.run_test">
+<code class="sig-name descname">run_test</code><span class="sig-paren">(</span><em class="sig-param">file_path</em>, <em class="sig-param">submission</em>, <em class="sig-param">test</em>, <em class="sig-param">conn</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/evaluate.html#Evaluate.run_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.evaluate.Evaluate.run_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs a <a class="reference internal" href="test.html#gradefast.test.GFTest" title="gradefast.test.GFTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">GFTest</span></code></a> on a particular
+<a class="reference internal" href="submission.html#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<em>str</em>) – </p></li>
+<li><p><strong>submission</strong> (<a class="reference internal" href="submission.html#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a>) – </p></li>
+<li><p><strong>test</strong> (<a class="reference internal" href="test.html#gradefast.test.GFTest" title="gradefast.test.GFTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">GFTest</span></code></a>) – </p></li>
+<li><p><strong>conn</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Connection</span></code>) – A child connection object to send data back to parent</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.evaluate.Evaluate.make_pkg_full_path">
+<code class="sig-name descname">make_pkg_full_path</code><span class="sig-paren">(</span><em class="sig-param">submission</em>, <em class="sig-param">test</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/evaluate.html#Evaluate.make_pkg_full_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.evaluate.Evaluate.make_pkg_full_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns full path of the package from the information contained in
+<a class="reference internal" href="submission.html#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a> and <a class="reference internal" href="test.html#gradefast.test.GFTest" title="gradefast.test.GFTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">GFTest</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>submission</strong> (<a class="reference internal" href="submission.html#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a>) – </p></li>
+<li><p><strong>test</strong> (<a class="reference internal" href="test.html#gradefast.test.GFTest" title="gradefast.test.GFTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">GFTest</span></code></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Full path of the package</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="aggregate.html" class="btn btn-neutral float-right" title="Aggregate Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="command.html" class="btn btn-neutral float-left" title="Command Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Omkar Manjrekar
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

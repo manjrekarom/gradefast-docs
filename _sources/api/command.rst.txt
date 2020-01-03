@@ -1,0 +1,6 @@
+Command Module
+--------------
+
+.. automodule:: gradefast.command
+    :members:
+    :member-order: bysource

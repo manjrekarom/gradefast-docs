@@ -1,0 +1,816 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>gradefast.utils &mdash; Gradefast 0.1.12 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Gradefast
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.12
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../what_is_gradefast.html">What is Gradefast?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notes/index.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../recipes/index.html">Recipes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">Api Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Download and Install</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Gradefast</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>gradefast.utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for gradefast.utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Utility classes and methods for developer in a hurry</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">zipfile</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="k">import</span> <span class="n">urlparse</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">halo</span> <span class="k">import</span> <span class="n">Halo</span>
+
+<span class="kn">from</span> <span class="nn">gradefast</span> <span class="k">import</span> <span class="n">logconfig</span>
+<span class="kn">from</span> <span class="nn">gradefast.exceptions</span> <span class="k">import</span> <span class="o">*</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logconfig</span><span class="o">.</span><span class="n">configure_and_get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="setup_logger"><a class="viewcode-back" href="../../api/utils.html#gradefast.utils.setup_logger">[docs]</a><span class="k">def</span> <span class="nf">setup_logger</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">log_file</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Function setup as many loggers as you want&#39;&#39;&#39;</span>
+
+    <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">log_file</span><span class="p">)</span>        
+    <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">logger</span></div>
+
+<span class="c1"># TODO (manjrekarom):</span>
+<span class="c1"># 1. Retry feature not implemented</span>
+<div class="viewcode-block" id="Downloader"><a class="viewcode-back" href="../../api/utils.html#gradefast.utils.Downloader">[docs]</a><span class="k">class</span> <span class="nc">Downloader</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A utility that downloads items given in :class:`~gradefast.submission.SubmissionGroup`</span>
+<span class="sd">    from web to disk</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cookie: str</span>
+<span class="sd">        HTTP session cookie to get authorized to the web portal</span>
+
+<span class="sd">    storage_location: str</span>
+<span class="sd">        Location to store downloaded files. A folder is created inside of it</span>
+<span class="sd">        for each team_id. Default is &#39;./&#39;</span>
+
+<span class="sd">    extract: bool</span>
+<span class="sd">        Whether to extract zip items after downloading. Default is False</span>
+
+<span class="sd">    keep_original: bool</span>
+<span class="sd">        Deletes zip files after unzip successful. Default is True</span>
+
+<span class="sd">    retry: bool</span>
+<span class="sd">        Retry download if it fails. Default is True</span>
+
+<span class="sd">    retry_times: int</span>
+<span class="sd">        Retry retry_times until the file is downloaded. Default is 2 i.e. 2 times</span>
+
+<span class="sd">    .. todo:</span>
+
+<span class="sd">        Keep or delete files after deletion and retry on fail is not yet implemented</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cookie: str</span>
+
+<span class="sd">    storage_location: str</span>
+<span class="sd">    </span>
+<span class="sd">    extract: bool</span>
+<span class="sd">    </span>
+<span class="sd">    keep_original: bool</span>
+<span class="sd">    </span>
+<span class="sd">    retry: bool</span>
+<span class="sd">    </span>
+<span class="sd">    retry_times: int</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cookie</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;zip&#39;</span><span class="p">,</span> <span class="s1">&#39;png&#39;</span><span class="p">],</span> <span class="n">storage_location</span> <span class="o">=</span> <span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="n">extract</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+    <span class="n">keep_original</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">retry</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">retry_times</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cookie</span> <span class="o">=</span> <span class="n">cookie</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">types</span> <span class="o">=</span> <span class="n">types</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storage_location</span> <span class="o">=</span> <span class="n">storage_location</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extract</span> <span class="o">=</span> <span class="n">extract</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keep_original</span> <span class="o">=</span> <span class="n">keep_original</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">retry</span> <span class="o">=</span> <span class="n">retry</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">retry_times</span> <span class="o">=</span> <span class="n">retry_times</span>
+
+<div class="viewcode-block" id="Downloader.get_extension"><a class="viewcode-back" href="../../api/utils.html#gradefast.utils.Downloader.get_extension">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_extension</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find extension of a file from its download url</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        url: str</span>
+<span class="sd">            Download url of a file</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            Extension of the downloadable file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">o</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;\.([\w_]*)$&quot;</span><span class="p">)</span>
+        <span class="n">matches</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">matches</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">matches</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Downloader.get_extension_from_header"><a class="viewcode-back" href="../../api/utils.html#gradefast.utils.Downloader.get_extension_from_header">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_extension_from_header</span><span class="p">(</span><span class="n">response</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns extension of file being downloaded from its response headers</span>
+
+<span class="sd">        Checks content-disposition header to find filename and extracts extension</span>
+<span class="sd">        from it</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        response: `requests.response`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            Extension of file being downloaded</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">content_disposition_header</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s1">&#39;content-disposition&#39;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;There is no content disposition header to fetch downloaded</span><span class="se">\&#39;</span><span class="s1">s file extension&#39;</span><span class="p">)</span>
+        <span class="n">content_disposition_list</span> <span class="o">=</span> <span class="n">content_disposition_header</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;filename=(.*)$&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">content_disposition_list</span><span class="p">:</span>
+            <span class="n">matches</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">matches</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">extension</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">matches</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">suffix</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                <span class="n">extension</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">c</span> <span class="o">!=</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="n">extension</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">extension</span></div>
+<div class="viewcode-block" id="Downloader.parent_folder_name"><a class="viewcode-back" href="../../api/utils.html#gradefast.utils.Downloader.parent_folder_name">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">parent_folder_name</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">theme_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Builds name of the parent folder inside storage_location where all files</span>
+<span class="sd">        will be downloaded.</span>
+
+<span class="sd">        New task downloads get saved inside a newly created folder named by timestamp. </span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        task_name: str</span>
+<span class="sd">        </span>
+<span class="sd">        theme_name: str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">directory_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">theme_name</span><span class="p">,</span> 
+        <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y_%m_</span><span class="si">%d</span><span class="s2">-%H_%M&quot;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">directory_name</span></div>
+
+<div class="viewcode-block" id="Downloader.create_storage_directory"><a class="viewcode-back" href="../../api/utils.html#gradefast.utils.Downloader.create_storage_directory">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">create_storage_directory</span><span class="p">(</span><span class="n">dir_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create storage directory if it doesn&#39;t exist</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dir_path: str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            If true then directory is successfully created</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dir_path</span><span class="p">):</span>
+            <span class="c1"># file permission</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="mo">0o755</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Downloader.create_team_folder"><a class="viewcode-back" href="../../api/utils.html#gradefast.utils.Downloader.create_team_folder">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">create_team_folder</span><span class="p">(</span><span class="n">team_id</span><span class="p">,</span> <span class="n">dir_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create folder for each team by naming it with team_id</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        team_id: int</span>
+
+<span class="sd">        dir_path: str</span>
+<span class="sd">            Directory inside which to create the team folder</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            Returns path of team folder which was successfully created</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">team_id</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="n">team_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">team_id</span><span class="p">)</span>
+
+        <span class="n">team_folder_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="n">team_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">team_folder_path</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">team_folder_path</span><span class="p">,</span> <span class="mo">0o755</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">team_folder_path</span><span class="p">)</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">download_summary</span><span class="p">(</span><span class="n">downloaded_submission_group</span><span class="p">,</span> <span class="n">file_path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="Downloader.download_file_item"><a class="viewcode-back" href="../../api/utils.html#gradefast.utils.Downloader.download_file_item">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">download_file_item</span><span class="p">(</span><span class="n">cookie</span><span class="p">,</span> <span class="n">submission</span><span class="p">,</span> <span class="n">file_item_name</span><span class="p">,</span> <span class="n">download_directory</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Downloads and saves a file item</span>
+
+<span class="sd">        Initiates a network request to download and save file following the naming</span>
+<span class="sd">        convention. The information about file url is picked up from a </span>
+<span class="sd">        :class:`~gradefast.submission.Submission`</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cookie: str</span>
+<span class="sd">            HTTP session cookie to authenticate to the web page</span>
+
+<span class="sd">        submission: `:class:~gradefast.submission.Submission`</span>
+
+<span class="sd">        file_item_name: str</span>
+<span class="sd">            Name of file item being downloaded. The information is also present in </span>
+<span class="sd">            :class:`~gradefast.submission.Submission`</span>
+
+<span class="sd">        download_directory: str</span>
+<span class="sd">            Path of the download directory</span>
+
+<span class="sd">        file_name: str</span>
+<span class="sd">            Save file with a particular name</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            Full path of the downloaded file</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">team_id</span> <span class="o">=</span> <span class="n">submission</span><span class="o">.</span><span class="n">team_id</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">team_id</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="n">team_id_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">team_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">download_directory</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">download_directory</span><span class="p">,</span> <span class="mo">0o755</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;name&#39;</span> <span class="ow">in</span> <span class="n">cookie</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="s1">&#39;value&#39;</span> <span class="ow">in</span> <span class="n">cookie</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">cookie</span> <span class="o">=</span> <span class="p">{</span><span class="n">cookie</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]:</span> <span class="n">cookie</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]}</span>
+        
+        <span class="c1"># download file</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">submission</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">file_item_name</span><span class="p">][</span><span class="s1">&#39;url&#39;</span><span class="p">],</span> 
+        <span class="n">allow_redirects</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cookies</span><span class="o">=</span><span class="n">cookie</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Attempting download for file with url: </span><span class="si">{}</span><span class="s1">&#39;</span>\
+            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">submission</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">file_item_name</span><span class="p">][</span><span class="s1">&#39;url&#39;</span><span class="p">]))</span>
+        
+        <span class="c1"># get extension of the final url obtained after redirection</span>
+        <span class="n">file_extension</span> <span class="o">=</span> <span class="n">Downloader</span><span class="o">.</span><span class="n">get_extension</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">file_extension</span> <span class="o">=</span> <span class="n">Downloader</span><span class="o">.</span><span class="n">get_extension_from_header</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot identify extension of the file, does the url&quot;</span>   \
+            <span class="s2">&quot;not have extension? Check content-disposition for filename=&lt;xyz&gt;.&lt;extension&gt;&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># name downloaded file according to convention</span>
+        <span class="k">if</span> <span class="n">file_name</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">file_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">team_id_str</span><span class="p">,</span> <span class="n">file_item_name</span><span class="p">,</span> <span class="n">file_extension</span><span class="p">)</span>
+        <span class="n">download_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">download_directory</span><span class="p">,</span> <span class="n">file_name</span><span class="p">))</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">download_file_path</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+            
+        <span class="k">return</span> <span class="n">download_file_path</span></div>
+
+<div class="viewcode-block" id="Downloader.extract_if_zip"><a class="viewcode-back" href="../../api/utils.html#gradefast.utils.Downloader.extract_if_zip">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">extract_if_zip</span><span class="p">(</span><span class="n">team_id</span><span class="p">,</span> <span class="n">zip_item_name</span><span class="p">,</span> <span class="n">final_submission_group</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts if the file under consideration is a zip file</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        team_id: int</span>
+<span class="sd">        </span>
+<span class="sd">        zip_item_name: str</span>
+<span class="sd">            Name of the zip item. e.g. &quot;task1_archive&quot;</span>
+
+<span class="sd">        final_submission_group: :class:`~gradefast.submission.SubmissionGroup`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">zip_path</span> <span class="o">=</span> <span class="n">final_submission_group</span><span class="p">[</span><span class="n">team_id</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">zip_item_name</span><span class="p">][</span><span class="s1">&#39;path&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">zip_path</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span> <span class="o">!=</span> <span class="s1">&#39;.zip&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">final_submission_group</span>
+        <span class="c1"># unzip and store it</span>
+        <span class="n">unzip_path</span> <span class="o">=</span> <span class="n">Extracter</span><span class="o">.</span><span class="n">get_default_unzip_path</span><span class="p">(</span><span class="n">zip_path</span><span class="p">)</span>
+        <span class="n">did_extract</span> <span class="o">=</span> <span class="n">Extracter</span><span class="o">.</span><span class="n">extract_file</span><span class="p">(</span><span class="n">zip_path</span><span class="p">,</span> <span class="n">unzip_path</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Extracting file_item </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">zip_path</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">did_extract</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Error unzipping </span><span class="si">{}</span><span class="s2"> of team </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">zip_path</span><span class="p">,</span> <span class="n">team_id</span><span class="p">))</span>
+        <span class="c1"># mark the zips extracted property true</span>
+        <span class="n">final_submission_group</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">team_id</span><span class="p">)]</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">zip_item_name</span><span class="p">][</span><span class="s1">&#39;extracted&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">unzip_item_name</span> <span class="o">=</span> <span class="n">zip_item_name</span> <span class="o">+</span> <span class="s2">&quot;_unzipped&quot;</span>
+        <span class="n">final_submission_group</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">team_id</span><span class="p">)]</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">unzip_item_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">final_submission_group</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">team_id</span><span class="p">)]</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">unzip_item_name</span><span class="p">][</span><span class="s1">&#39;path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">unzip_path</span>
+        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">final_submission_group</span></div>
+
+    <span class="c1"># TODO: Maintain a list of downloaded and not downloaded files </span>
+<div class="viewcode-block" id="Downloader.download"><a class="viewcode-back" href="../../api/utils.html#gradefast.utils.Downloader.download">[docs]</a>    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">submission_group</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Downloads submission_group files to disk</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        submissions: :class:`~gradefast.submission.SubmissionGroup`</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        final_submission_group: :class:`~gradefast.submission.SubmissionGroup`</span>
+<span class="sd">            Updated :class:`~gradefast.submission.SubmissionGroup` with `path` and</span>
+<span class="sd">            `downloaded` attribute set in `dict_of_submissions`.</span>
+<span class="sd">        </span>
+<span class="sd">        download_directory: str</span>
+<span class="sd">            Path to download directory</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># copy submissions</span>
+        <span class="n">final_submission_group</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">submission_group</span><span class="p">)</span>
+
+        <span class="c1"># First make a parent folder</span>
+        <span class="n">parent_folder_name</span> <span class="o">=</span> <span class="n">Downloader</span><span class="o">.</span><span class="n">parent_folder_name</span><span class="p">(</span><span class="n">submission_group</span><span class="o">.</span><span class="n">task_name</span><span class="p">,</span> 
+        <span class="n">submission_group</span><span class="o">.</span><span class="n">theme_name</span><span class="p">)</span>
+        
+        <span class="c1"># path of download directory</span>
+        <span class="n">download_directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storage_location</span><span class="p">,</span> <span class="n">parent_folder_name</span><span class="p">)</span>
+        <span class="c1"># create download directory</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Downloader</span><span class="o">.</span><span class="n">create_storage_directory</span><span class="p">(</span><span class="n">download_directory</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Cannot create storage/download directory&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storage_location</span> <span class="o">=</span> <span class="n">download_directory</span>
+
+        <span class="c1"># Setting up download success and failure loggers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger1</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="s1">&#39;download_success&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storage_location</span><span class="p">,</span>
+        <span class="s1">&#39;download_success.log&#39;</span><span class="p">),</span> <span class="n">level</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger2</span> <span class="o">=</span> <span class="n">setup_logger</span><span class="p">(</span><span class="s1">&#39;download_failed&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storage_location</span><span class="p">,</span>
+        <span class="s1">&#39;download_failed.log&#39;</span><span class="p">),</span> <span class="n">level</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+        <span class="n">cookie</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cookie</span>
+        <span class="k">if</span> <span class="s1">&#39;name&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cookie</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="s1">&#39;value&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cookie</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">cookie</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cookie</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cookie</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]}</span>
+            
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Downloading items for </span><span class="si">{}</span><span class="s1"> teams ...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">submission_group</span><span class="p">)))</span>
+        <span class="c1"># spinner = Spinner()</span>
+        <span class="n">spinner</span> <span class="o">=</span> <span class="n">Halo</span><span class="p">(</span><span class="n">spinner</span><span class="o">=</span><span class="s1">&#39;dots&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">submission</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">submission_group</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">team_id</span> <span class="o">=</span> <span class="n">submission</span><span class="o">.</span><span class="n">team_id</span>
+                <span class="n">team_directory</span> <span class="o">=</span> <span class="n">Downloader</span><span class="o">.</span><span class="n">create_team_folder</span><span class="p">(</span><span class="n">team_id</span><span class="p">,</span> <span class="n">download_directory</span><span class="p">)</span>
+                
+                <span class="k">for</span> <span class="n">file_item_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">:</span>
+                    <span class="n">spinner</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1"> Downloading file_item &quot;</span><span class="si">{}</span><span class="s1">&quot; for team_id: </span><span class="si">{}</span><span class="s1">&#39;</span>\
+                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">submission_group</span><span class="p">),</span> <span class="n">file_item_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">team_id</span><span class="p">)))</span>
+
+                    <span class="k">if</span> <span class="n">submission</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">file_item_name</span><span class="p">)</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">spinner</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s1">&#39;Team </span><span class="si">{}</span><span class="s1"> has not submitted file_item </span><span class="si">{}</span><span class="s1">&#39;</span>
+                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">team_id</span><span class="p">),</span> <span class="n">file_item_name</span><span class="p">))</span>
+                        
+                        <span class="k">continue</span>
+
+                    <span class="n">meta</span> <span class="o">=</span> <span class="n">submission</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">file_item_name</span><span class="p">]</span>
+                <span class="c1"># for file_item_name, meta in submission.items.items():</span>
+                <span class="c1">#     if file_item_name not in self.types:</span>
+                <span class="c1">#         continue</span>
+
+                <span class="c1">#     spinner.start(text=&#39;{}/{} Downloading file_item &quot;{}&quot; for team_id: {}&#39;\</span>
+                <span class="c1">#         .format(idx+1, len(submission_group), file_item_name, str(team_id)))</span>
+
+
+                    <span class="c1"># only download files indicated with types</span>
+                    <span class="c1"># download and save file</span>
+                    <span class="n">downloaded_file_path</span> <span class="o">=</span> <span class="n">Downloader</span><span class="o">.</span><span class="n">download_file_item</span><span class="p">(</span><span class="n">cookie</span><span class="p">,</span> <span class="n">submission</span><span class="p">,</span> <span class="n">file_item_name</span><span class="p">,</span> <span class="n">team_directory</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">downloaded_file_path</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Failed to download file </span><span class="si">{}</span><span class="s1">:</span><span class="si">{}</span><span class="s1"> to path&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_item_name</span><span class="p">,</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">])</span>   \
+                            <span class="o">+</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> for team </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">downloaded_file_path</span><span class="p">,</span> <span class="n">submission</span><span class="o">.</span><span class="n">team_id</span><span class="p">))</span>
+                    
+                    <span class="c1"># add more meta information in newly created final submissions object</span>
+                    <span class="n">final_submission_group</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">team_id</span><span class="p">)]</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">file_item_name</span><span class="p">][</span><span class="s1">&#39;downloaded&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>            
+                    <span class="n">final_submission_group</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">team_id</span><span class="p">)]</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">file_item_name</span><span class="p">][</span><span class="s1">&#39;path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">downloaded_file_path</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger1</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">submission</span><span class="o">.</span><span class="n">team_id</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">file_item_name</span> <span class="o">+</span> <span class="s1">&#39; successfully downloaded.&#39;</span><span class="p">)</span>
+                    <span class="c1"># extract and return new submission group</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                        <span class="n">_</span><span class="p">,</span> <span class="n">final_submission_group</span> <span class="o">=</span> <span class="n">Downloader</span><span class="o">.</span><span class="n">extract_if_zip</span><span class="p">(</span><span class="n">submission</span><span class="o">.</span><span class="n">team_id</span><span class="p">,</span> <span class="n">file_item_name</span><span class="p">,</span>
+                    <span class="n">final_submission_group</span><span class="p">)</span>
+                    
+                    <span class="c1"># spinner success tick</span>
+                    <span class="n">spinner</span><span class="o">.</span><span class="n">succeed</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">spinner</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s1">&#39;Failed to download.&#39;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;Exception when attempting download on </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">])</span> \
+                    <span class="o">+</span> <span class="s1">&#39;for team_id: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">submission</span><span class="o">.</span><span class="n">team_id</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger2</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&#39;s </span><span class="si">{}</span><span class="s2"> failed to download.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">submission</span><span class="o">.</span><span class="n">team_id</span><span class="p">),</span> <span class="n">file_item_name</span><span class="p">))</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">Failed.. Trying next file</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        
+        <span class="n">spinner</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="c1"># write a json to create a submissions object from</span>
+        <span class="c1"># utils.Persist.to_json(submissions, save_location=path)</span>
+        <span class="k">return</span> <span class="n">final_submission_group</span><span class="p">,</span> <span class="n">download_directory</span></div></div>
+
+<div class="viewcode-block" id="Extracter"><a class="viewcode-back" href="../../api/utils.html#gradefast.utils.Extracter">[docs]</a><span class="k">class</span> <span class="nc">Extracter</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A utility that extracts standalone zips or zip items from </span>
+<span class="sd">    :class:`~gradefast.submission.SubmissionGroup` from web to disk</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cookie: str</span>
+<span class="sd">        HTTP session cookie to get access to the portal</span>
+
+<span class="sd">    storage_location: str</span>
+<span class="sd">        Location to store downloaded files. A folder is created for each id</span>
+
+<span class="sd">    extract: bool</span>
+<span class="sd">        Extracts zip files</span>
+
+<span class="sd">    keep_original: bool</span>
+<span class="sd">        Deletes zip files after unzip successful</span>
+
+<span class="sd">    retry: bool</span>
+<span class="sd">        Retry download if it fails</span>
+
+<span class="sd">    retry_times: int</span>
+<span class="sd">        Retry retry_times until the file is downloaded</span>
+
+<span class="sd">    .. todo:</span>
+
+<span class="sd">        Keep or delete files after deletion and retry on fail is not yet implemented</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cookie: str</span>
+<span class="sd">    storage_location: str</span>
+<span class="sd">    extract: bool</span>
+<span class="sd">    keep_original: bool</span>
+<span class="sd">    retry: bool</span>
+<span class="sd">    retry_times: int</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">extract_summary</span><span class="p">(</span><span class="n">extracted_submission_group</span><span class="p">,</span> <span class="n">file_path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="Extracter.get_default_unzip_path"><a class="viewcode-back" href="../../api/utils.html#gradefast.utils.Extracter.get_default_unzip_path">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_default_unzip_path</span><span class="p">(</span><span class="n">zip_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns default name of a zip item from it&#39;s path</span>
+
+<span class="sd">        An extracted zip item is named as &lt;team-id&gt;_&lt;file_item_name&gt;_unzippped</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        zip_path: str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">zip_path</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span> <span class="o">!=</span> <span class="s1">&#39;.zip&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Enter a valid zip path&#39;</span><span class="p">)</span>
+        <span class="n">file_name</span><span class="p">,</span> <span class="n">file_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">zip_path</span><span class="p">))</span>
+        <span class="n">unzip_name</span> <span class="o">=</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s1">&#39;_unzipped&#39;</span>
+        <span class="n">unzip_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">zip_path</span><span class="p">),</span> <span class="n">unzip_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">unzip_path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Extracter.extract_file"><a class="viewcode-back" href="../../api/utils.html#gradefast.utils.Extracter.extract_file">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">extract_file</span><span class="p">(</span><span class="n">zip_path</span><span class="p">,</span> <span class="n">extract_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts a single zip placing the contents at extract_path</span>
+
+<span class="sd">        Inside extract path directory the contents inside the zip are stored.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        zip_path: str</span>
+<span class="sd">            Path to zip file</span>
+
+<span class="sd">        extract_path: str</span>
+<span class="sd">            Full path of directory to unzip the archive at</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            If zip was extracted to the location</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">zip_ref</span> <span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">zip_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+            <span class="c1"># if extract_path == &#39;&#39; or extract_path == None:</span>
+            <span class="c1">#     extract_path = Extract.default_unzip_name(zip_path)</span>
+            <span class="n">zip_ref</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">extract_path</span><span class="p">)</span>
+            <span class="n">zip_ref</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;Exception when attempting to unzip </span><span class="si">{}</span><span class="s1"> to </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">zip_path</span><span class="p">,</span> <span class="n">extract_path</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+    
+<div class="viewcode-block" id="Extracter.extract"><a class="viewcode-back" href="../../api/utils.html#gradefast.utils.Extracter.extract">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="n">submission_group</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts all zip items found in :class:`~gradefast.submission.SubmissionGroup`</span>
+<span class="sd">        and stores them in the specific team folder.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        submission_group: :class:`~gradefast.submission.SubmissionGroup`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_submission_group</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">submission_group</span><span class="p">)</span>
+        <span class="c1"># extracted = {}</span>
+        <span class="k">for</span> <span class="n">submission</span> <span class="ow">in</span> <span class="n">submission_group</span><span class="p">:</span>
+            <span class="n">team_id</span> <span class="o">=</span> <span class="n">submission</span><span class="o">.</span><span class="n">team_id</span>
+            <span class="k">for</span> <span class="n">file_item_name</span><span class="p">,</span> <span class="n">meta_info_dict</span> <span class="ow">in</span> <span class="n">submission</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">file_path</span> <span class="o">=</span> <span class="n">meta_info_dict</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span> <span class="o">!=</span> <span class="s1">&#39;.zip&#39;</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="c1"># path to unzipped folder</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">extract_path</span> <span class="o">=</span> <span class="n">Extracter</span><span class="o">.</span><span class="n">get_default_unzip_path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">Extracter</span><span class="o">.</span><span class="n">extract_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">extract_path</span><span class="p">):</span>
+                        <span class="k">continue</span>
+                    <span class="c1"># write zip to extracted</span>
+                    <span class="n">new_submission_group</span><span class="p">[</span><span class="n">team_id</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">file_item_name</span><span class="p">][</span><span class="s1">&#39;extracted&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="c1"># make entry for extracted folder</span>
+                    <span class="n">new_submission_group</span><span class="p">[</span><span class="n">team_id</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">file_item_name</span> <span class="o">+</span> <span class="s1">&#39;_unzipped&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="n">extract_path</span><span class="p">}</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;Exception when attempting to extract submission </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">submission</span><span class="p">)</span> \
+                        <span class="o">+</span> <span class="s1">&#39;and &quot;file_name&quot; </span><span class="si">{}</span><span class="s1"> meta </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_item_name</span><span class="p">,</span> <span class="n">meta_info_dict</span><span class="p">))</span>
+            <span class="c1"># extracted[submission.team_id] = False</span>
+        <span class="k">return</span> <span class="n">new_submission_group</span></div></div>
+
+<span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">parent_key</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="p">):</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">new_key</span> <span class="o">=</span> <span class="n">parent_key</span> <span class="o">+</span> <span class="n">sep</span> <span class="o">+</span> <span class="n">k</span> <span class="k">if</span> <span class="n">parent_key</span> <span class="k">else</span> <span class="n">k</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">MutableMapping</span><span class="p">):</span>
+            <span class="n">items</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">flatten</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">new_key</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">new_key</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">subtract_dict</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>
+    <span class="n">a_copy</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">b_copy</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">a_copy</span><span class="o">.</span><span class="n">pop</span><span class="p">,</span> <span class="n">b_copy</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">a_copy</span>
+    
+<span class="k">def</span> <span class="nf">is_string_number</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="c1"># check if the name of the folder is a number</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span> 
+
+<span class="k">def</span> <span class="nf">object_equality</span><span class="p">(</span><span class="n">obj1</span><span class="p">,</span> <span class="n">obj2</span><span class="p">,</span> <span class="n">ignore_attrs</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="c1"># this method doesnt not consider private fields and functions</span>
+    <span class="c1"># when evaluating equals    </span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj2</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj1</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">list_of_attrs</span> <span class="o">=</span> <span class="nb">dir</span><span class="p">(</span><span class="n">obj1</span><span class="p">)</span> <span class="o">+</span> <span class="nb">dir</span><span class="p">(</span><span class="n">obj2</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">list_of_attrs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">ignore_attrs</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj1</span><span class="p">,</span> <span class="n">attr</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj1</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj2</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;Some member fields are not present in either objects&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="combine_list_elements"><a class="viewcode-back" href="../../api/utils.html#gradefast.utils.combine_list_elements">[docs]</a><span class="k">def</span> <span class="nf">combine_list_elements</span><span class="p">(</span><span class="o">*</span><span class="n">items</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Combines items into a single list of items</span>
+
+<span class="sd">    Items can contain a single item of any type or a list of items. If combined </span>
+<span class="sd">    list evaluates to a single item, only an item is returned else a list of items</span>
+<span class="sd">    is returned.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">        Combined list of items </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">combined_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="n">combined_list</span> <span class="o">+=</span> <span class="n">item</span>
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">==</span> <span class="nb">float</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="n">combined_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Output of combining </span><span class="si">{}</span><span class="s1"> is </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">combined_list</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">combined_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">combined_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">combined_list</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Omkar Manjrekar
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

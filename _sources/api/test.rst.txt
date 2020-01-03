@@ -1,0 +1,6 @@
+Test Module
+-----------------
+
+.. automodule:: gradefast.test
+    :members:
+    :member-order: bysource

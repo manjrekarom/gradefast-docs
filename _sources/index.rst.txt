@@ -1,0 +1,51 @@
+.. Gradefast documentation master file, created by sphinx-quickstart on Tue
+   Oct  8 20:01:01 2019. You can adapt this file completely to your liking,
+   but it should at least contain the root `toctree` directive.
+
+=====================================
+Welcome to Gradefast's documentation!
+=====================================
+
+*Are you a teacher, professor or a teaching assistant? Are you organising
+a programming competition or conducting a MOOC? If you are someone who is
+looking to batch evaluate programming assignments or projects (however
+complicated) and looking for an open source alternative, then you are at
+the right place.*
+
+**Gradefast** *is here to help you.*
+
+Gradefast sets up the stage for you to download assignments, quickly evaluate
+them and upload the results back to the portal. It has nice features that you
+and I need when evaluating submissions, like *plagiarism checking* and *secure
+environment* being some of the important ones.
+
+If you are a new user, follow the documentation in this order to get acquianted
+with gradefast:-
+
+1. How to :ref:`install <installation>` it
+2. Complete walkthrough :ref:`tutorials <tutorials>`.
+3. :ref:`Recipes <recipes>` for specific use cases. For any doubts in
+   usage of classes, methods, etc. check API reference.
+4. :ref:`Notes <notes>` provide deeper understanding of a the API.
+5. Check the :ref:`API reference <api-ref>` for doubts in using a particular
+   class or function.
+
+Table of contents
+=================
+
+.. toctree::
+    :maxdepth: 2
+
+    what_is_gradefast
+    tutorials/index
+    notes/index
+    recipes/index
+    api/index
+    installation
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

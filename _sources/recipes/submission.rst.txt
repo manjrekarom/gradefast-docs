@@ -1,0 +1,36 @@
+.. _submission-recipe:
+
+Loading student submissions
+---------------------------
+
+Load submissions from URL
+.........................
+Easiest way to load submissions is from a web page that shows information
+about tasks and links to uploaded files. Note that you need to call
+:attr:`~gradefast.submission.LoadSubmissions.get_submissions()` on
+:class:`~gradefast.submission.LoadSubmissions` object to fetch submission
+information. You can also download the submissions locally in one more step.
+
+.. literalinclude:: ../../examples/load_submission_url.py
+    :emphasize-lines: 14-15,18,24,25,27
+
+Load submissions from filesystem
+................................
+Sometimes you might not have a web page to download the data from, for
+example when you are still testing your auto-eval scripts and the
+competition has not yet started. Check out this tutorial to learn how to
+create a proper directory structure so that gradefast can make a submission
+group.
+
+If you have already downloaded submission locally with gradefast from a URL,
+there shouldn't be any need for you to be logged into internet to populate a
+submission group object. When you download files with gradefast, we save a file
+`submission.json` in the same folder so that the submission group object can be
+rebuilt from it.
+
+For both these cases you can populate a
+:class:`~gradefast.submission.SubmissionGroup` using
+:class:`~gradefast.submission.LoadSubmissions` as follows:
+
+.. literalinclude:: ../../examples/load_submission_fs.py
+    :emphasize-lines: 14,17,20

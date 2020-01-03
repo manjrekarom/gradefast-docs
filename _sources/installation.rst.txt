@@ -1,0 +1,20 @@
+.. _installation:
+
+Download and Install
+====================
+
+**GradeFast** is compatible with ``python>=3.5``
+
+
+The recommended way to install ``Gradefast`` is to simply use pipenv
+(or pip, of course)::
+
+    $ pip install gradefast
+
+For getting hold of the latest development changes, you can clone the
+github repo and build from sources::
+
+    $ git clone https://github.com/eyantra-eysip/GradeFast-2019/
+    $ cd GradeFast-2019
+    $ git checkout develop
+    $ pip install .

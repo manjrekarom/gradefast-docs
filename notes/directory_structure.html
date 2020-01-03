@@ -1,0 +1,257 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Directory Structure &mdash; Gradefast 0.1.12 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Recipes" href="../recipes/index.html" />
+    <link rel="prev" title="Notes" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Gradefast
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.12
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../what_is_gradefast.html">What is Gradefast?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Notes</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Directory Structure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#example-1">Example 1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#example-2">Example 2</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes/index.html">Recipes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Api Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Download and Install</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Gradefast</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Notes</a> &raquo;</li>
+        
+      <li>Directory Structure</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/notes/directory_structure.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="directory-structure">
+<span id="id1"></span><h1>Directory Structure<a class="headerlink" href="#directory-structure" title="Permalink to this headline">¶</a></h1>
+<p>When downloading submission items, gradefast follows a convention to name
+and save files. The information embedded in the directory strucutre is used
+again when repopulating a submission group object, given the download directory
+path.</p>
+<p>When you are testing your auto-eval scripts and you don’t have a url (page) to
+download submissions from, you may have to create directory structure by hand,
+so that gradefast can use that information to populate a submission group
+object. For this reason, it is necessary to know the conventions.</p>
+<p>Following are the conventions:</p>
+<ol class="arabic simple">
+<li><p>Root folder can be named anything <code class="docutils literal notranslate"><span class="pre">e.g.</span> <span class="pre">'task0',</span> <span class="pre">'mocking_bot_task1'</span> <span class="pre">or</span>
+<span class="pre">'anything'</span></code></p></li>
+<li><p>The root folder can contain a <cite>.json</cite> file, typically named
+<strong>submission.json</strong>.</p></li>
+<li><p>Folders inside of root folder should be numbers which indicate team_id
+(or student_id).
+<code class="docutils literal notranslate"><span class="pre">e.g.</span> <span class="pre">'4',</span> <span class="pre">'1181',</span> <span class="pre">'777'</span></code> All the team (or student)
+data should go inside of this folder.</p></li>
+<li><p>Files should be named <strong>&lt;team_id&gt;_&lt;file-item-name&gt;.&lt;file-extension&gt;</strong>.
+<code class="docutils literal notranslate"><span class="pre">e.g.</span> <span class="pre">'7_zip.zip',</span> <span class="pre">'926_png.png',</span> <span class="pre">'86_zip2.zip',</span> <span class="pre">'413_txt3.txt'</span></code></p></li>
+<li><p>Unzipped folders are named as <strong>&lt;team_id&gt;_&lt;file-item-name&gt;_unzipped</strong>
+<code class="docutils literal notranslate"><span class="pre">e.g.</span> <span class="pre">'7_zip.zip'</span> <span class="pre">becomes</span> <span class="pre">'7_zip_unzipped'</span> <span class="pre">and</span> <span class="pre">'86_zip2.zip'</span> <span class="pre">becomes</span>
+<span class="pre">'86_zip2_unzipped'</span></code></p></li>
+</ol>
+<p>Below are some examples of file items and the directory they should make
+when present locally on disk.</p>
+<div class="section" id="example-1">
+<h2>Example 1<a class="headerlink" href="#example-1" title="Permalink to this headline">¶</a></h2>
+<p>Note that we only downloaded <strong>png</strong> and <strong>txt</strong> files in this case.</p>
+<img alt="../_images/portal0.png" src="../_images/portal0.png" />
+<img alt="../_images/ds0.png" src="../_images/ds0.png" />
+</div>
+<div class="section" id="example-2">
+<h2>Example 2<a class="headerlink" href="#example-2" title="Permalink to this headline">¶</a></h2>
+<img alt="../_images/portal1.png" src="../_images/portal1.png" />
+<img alt="../_images/ds1.png" src="../_images/ds1.png" />
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../recipes/index.html" class="btn btn-neutral float-right" title="Recipes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Notes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Omkar Manjrekar
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+Result Module
+-------------
+
+.. automodule:: gradefast.result
+    :members:
+    :member-order: bysource

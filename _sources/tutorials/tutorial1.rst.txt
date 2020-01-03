@@ -1,0 +1,203 @@
+Check if file contains given list of strings
+............................................
+
+Task
+^^^^
+The task for teams is to upload a text file to portal. The text file should
+contain all the secret strings, which they don't know before hand.
+
+Expected Output
+^^^^^^^^^^^^^^^
+The text file should contain `Musical`, `Calcifer`, `Random`, `Tenzin` and
+`Shirucafe`.
+
+Installation
+^^^^^^^^^^^^
+Before we do anything, let's first install the package::
+
+$ pip install gradefast
+
+Insights into a Submission
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+A :class:`~gradefast.submission.Submission` object contains information about
+a team's or student's submission and is identified by an `id` (team_id). The
+type of information stored in it is a record of files submitted by a team or
+student and their URLs, paths of files stored locally, whether they have been
+downloaded and evaluated by some gradefast tests, etc.
+
+A **submission** is specific to a task and a team and is needed for
+evaluating it. To store submission information of many teams, we can use a
+:class:`~gradefast.submission.SubmissionGroup`. Thus, a number of submissions
+from teams can be evaluated by clubbing them into a
+:class:`~gradefast.submission.SubmissionGroup`.
+
+There are many ways to populate a
+:class:`~gradefast.submission.SubmissionGroup`. We will use the **from
+filesystem method** since we are testing. You can refer to :ref:`recipes on
+submission <submission-recipe>` for all other methods.
+
+Creating a directory structure
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+We will first create a directory structure that gradefast also follows when
+downloading and saving submissions. Gradefast will use this information
+embedded in directory structure to form a
+:class:`~gradefast.submission.SubmissionGroup`
+
+.. image:: ../../assets/qs_ps1.png
+
+Download :download:`this zip <../../assets/qs_ps1.zip>` and extract it.
+
+Loading submissions in gradefast
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+We can fetch the submission information from the directory where the zip
+was extracted. For this we will use
+:class:`~gradefast.submission.LoadSubmissions` utility::
+
+    from gradefast.submission import LoadSubmissions
+
+    fs_location = 'path/to/the/extracted/zip/file'
+    task_name = 'Task1'
+    theme_name = 'Quickstart'
+    submission_group = LoadSubmissions.from_fs(fs_location, task_name, theme_name).get_submissions()
+    print(submission_group)
+
+
+    ## OUTPUT
+    .. SubmissionGroup(task_name: Task1, theme_name: Quickstart, dict_of_submissions: {135: Submission
+    .. ({'team_id': 135, 'items': {'txt': {'path': './examples/quickstart1/qs_ps1/135/135_text.txt',
+    .. 'downloaded': True}}}), 12: Submission({'team_id': 12, 'items': {'txt': {'path': './examples
+    .. /quickstart1/qs_ps1/12/12_text.txt', 'downloaded': True}}}), 4: Submission({'team_id': 4,
+    .. 'items': {'txt': {'path': './examples/quickstart1/qs_ps1/4/4_text.txt', 'downloaded': True}}}),
+    .. 780: Submission({'team_id': 780, 'items': {'txt': {'path': './examples/quickstart1/qs_ps1/780/
+    .. 780_text.txt', 'downloaded': True}}})})
+
+Note that we have **skipped the download step** since we are just testing and
+submissions live locally.
+
+Writing tests
+^^^^^^^^^^^^^
+A test is core part of an evaluation. It checks for correctness of multiple
+cases and gives marks accordingly.
+
+In Gradefast, a test should be written by extending
+:class:`~gradefast.test.GFTest` and overriding the
+:attr:`~gradefast.test.GFTest.__call__()` method. At the moment, it
+supports two kinds of tests. The first test type is where a file item is
+evaluated and the second where a python module or a package needs to be
+imported.
+
+**Since we have received file submissions, we will use the first type of
+test.**
+
+Now let us write the test class:
+
+.. literalinclude:: ../../examples/quickstart1/qs_ps1_eval.py
+    :emphasize-lines: 3,5,28
+    :lines: 13-40
+
+The :attr:`~gradefast.test.GFTest.__call__()` method should always return
+a **result_dict** which is a key-value pair of parameters and marks, a
+**comment** and a **list of exceptions** encountered.
+
+It is very easy to run test on a single submission::
+
+    # instantiate the test
+    test = QS1Test()
+    # obtain a single submission '4' file path
+    submission_4_text_path = submission_group[4].items['text']['path']
+    # run the test
+    result_dict, comment, exceptions = test(submission_4_text_path,
+    submission_group[4])
+
+    print(result_dict)
+    print(comment)
+    print(exceptions)
+
+    ## OUTPUT
+    .. {'Musical': 1, 'Random': 1, 'Calcifer': 1}
+    .. You guessed 3 words properly
+    .. None
+
+Evaluating tests on all submissions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Gradefast provides a utility called :class:`~gradefast.evaluate.Evaluate` that
+can test all the submissions in a
+:class:`~gradefast.submission.SubmissionGroup` andd returns a group of results
+into a :class:`~gradefast.result.ResultGroup`
+
+Let's do this::
+
+    from gradefast.evaluate import Evaluate
+
+    evaluate = Evaluate(test)
+    # after instantiating evaluate we call it wit submission_group
+    result_group, exceptions = evaluate(submission_group)
+    print(result_group)
+    print(exceptions)
+
+    ## OUTPUT
+    .. ResultGroup(task_name: Task1, theme_name: Quickstart, dict_of_results:
+    .. {780: Result(team_id: 780, file: text, result_dict: {}, exec_time: 0.006471872329711914,
+    .. pkg_path: , comment: You guessed 0 words properly), 4: Result(team_id: 4, file: text,
+    .. result_dict: {'Musical': 1, 'Random': 1, 'Calcifer': 1}, exec_time: 0.005640983581542969,
+    .. pkg_path: , comment: You guessed 3 words properly), 12: Result(team_id: 12, file: text,
+    .. result_dict: {'Random': 1, 'Shirucafe': 1}, exec_time: 0.0055196285247802734, pkg_path: ,
+    .. comment: You guessed 2 words properly), 135: Result(team_id: 135, file: text, result_dict:
+    .. {'Musical': 1, 'Tenzin': 1, 'Random': 1}, exec_time: 0.0057408809661865234, pkg_path: ,
+    .. comment: You guessed 3 words properly)})
+    .. [None, None, None, None] # THESE ARE THE 4 EXCEPTIONS THROWN
+
+Scaling and aggregating results
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+In order to report final marks, we will devise some strategies.
+
+One of the easiest can be count of the words. To find that we can use
+:class:`~gradefast.aggregate.Aggregate` utility of gradefast::
+
+    from gradefast.aggregate import Aggregate
+    total_result_group = Aggregate.add(result_group)
+    print(total_result_group)
+
+    ## OUTPUT
+    .. ResultGroup(task_name: Task1, theme_name: Quickstart, dict_of_results:
+    .. {780: Result(team_id: 780, file: text, result_dict: {'total': 0}, exec_time:
+    .. 0.006494760513305664, pkg_path: , comment: ), 4: Result(team_id: 4, file: text,
+    .. result_dict: {'total': 3}, exec_time: 0.007544755935668945, pkg_path: , comment: ),
+    .. 12: Result(team_id: 12, file: text, result_dict: {'total': 2}, exec_time:
+    .. 0.005505800247192383, pkg_path: , comment: ), 135: Result(team_id: 135, file: text,
+    .. result_dict: {'total': 3}, exec_time: 0.010047435760498047, pkg_path: , comment: )})
+
+What if we want to assign different weightages to each of the words found
+based how rarely they appear in literature like below and then find total
+marks??
+
+Musical = **10**, Calcifer = **50**, Random = **5**, Tenzin = **35**,
+Shirucafe = **30**.
+
+Aggregate has a method called :attr:`gradefast.aggregate.Aggregate.multiply`
+that handles this scenario well::
+
+    weightages = {'Musical': 10, 'Random': 5, 'Tenzin': 35, 'Calcifer': 50,
+    'Shirucafe': 30}
+    weighted_group = Aggregate.multiply(weightages, result_group)
+    total_group = Aggregate.add(weighted_group)
+
+    ResultGroup(task_name: Task1, theme_name: Quickstart, dict_of_results:
+    {780: Result(team_id: 780, file: text, result_dict: {'total': 0}, exec_time:
+    0.00594782829284668, pkg_path: , comment: ), 4: Result(team_id: 4, file: text,
+    result_dict: {'total': 65}, exec_time: 0.006591320037841797, pkg_path: , comment: ),
+    12: Result(team_id: 12, file: text, result_dict: {'total': 35}, exec_time:
+    0.006433010101318359, pkg_path: , comment: ), 135: Result(team_id: 135, file: text,
+    result_dict: {'total': 50}, exec_time: 0.006150484085083008, pkg_path: , comment: )})
+
+Uploading results to portal
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. todo::
+
+    Upload will be ready before Task 0 deadline.
+
+Source code
+^^^^^^^^^^^
+Download full
+:download:`source code<../../examples/quickstart1/qs_ps1_eval.py>`
+for this quickstart

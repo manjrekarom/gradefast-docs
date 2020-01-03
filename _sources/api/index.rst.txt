@@ -1,0 +1,14 @@
+.. _api-ref:
+
+Api Reference
+=============
+
+.. toctree::
+
+	submission
+	test
+	command
+	evaluate
+	aggregate
+	result
+	utils

@@ -1,0 +1,839 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Result Module &mdash; Gradefast 0.1.12 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Utils Module" href="utils.html" />
+    <link rel="prev" title="Aggregate Module" href="aggregate.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Gradefast
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.12
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../what_is_gradefast.html">What is Gradefast?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/index.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes/index.html">Recipes</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Api Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="submission.html">Submission Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="test.html">Test Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command.html">Command Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluate.html">Evaluate Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aggregate.html">Aggregate Module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Result Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">Utils Module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Download and Install</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Gradefast</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Api Reference</a> &raquo;</li>
+        
+      <li>Result Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/result.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-gradefast.result">
+<span id="result-module"></span><h1>Result Module<a class="headerlink" href="#module-gradefast.result" title="Permalink to this headline">¶</a></h1>
+<p>Contains <a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a> and <a class="reference internal" href="#gradefast.result.ResultGroup" title="gradefast.result.ResultGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultGroup</span></code></a> classes
+that represent result of a <a class="reference internal" href="test.html#gradefast.test.GFTest" title="gradefast.test.GFTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">GFTest</span></code></a> or <a class="reference internal" href="evaluate.html#gradefast.evaluate.Evaluate" title="gradefast.evaluate.Evaluate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluate</span></code></a></p>
+<dl class="class">
+<dt id="gradefast.result.Result">
+<em class="property">class </em><code class="sig-prename descclassname">gradefast.result.</code><code class="sig-name descname">Result</code><span class="sig-paren">(</span><em class="sig-param">team_id: int</em>, <em class="sig-param">file: str</em>, <em class="sig-param">result_dict: dict</em>, <em class="sig-param">exec_time=0</em>, <em class="sig-param">pkg_path: str = ''</em>, <em class="sig-param">comment: Union[str</em>, <em class="sig-param">list] = ''</em>, <em class="sig-param">error: Union[str</em>, <em class="sig-param">list] = ''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/result.html#Result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.result.Result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents <cite>result</cite> of a <a class="reference internal" href="test.html#gradefast.test.GFTest" title="gradefast.test.GFTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">GFTest</span></code></a></p>
+<p>A <cite>result</cite> is output of a <a class="reference internal" href="test.html#gradefast.test.GFTest" title="gradefast.test.GFTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">GFTest</span></code></a> identified by <code class="docutils literal notranslate"><span class="pre">team_id</span></code>
+and the <code class="docutils literal notranslate"><span class="pre">file</span></code> the test was run on. The marks are stored as <cite>dictionary</cite> in
+<code class="docutils literal notranslate"><span class="pre">result_dict</span></code> in which <cite>keys</cite> are the <cite>parameters</cite> and <cite>values</cite> are the <cite>marks</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>team_id</strong> (<em>int</em>) – Identifier of the team whose result is under consideration</p></li>
+<li><p><strong>file</strong> (<em>str</em>) – Item which was tested. <code class="docutils literal notranslate"><span class="pre">e.g.</span> <span class="pre">'zip'</span> <span class="pre">or</span> <span class="pre">'png2'</span></code></p></li>
+<li><p><strong>result_dict</strong> (<em>dict</em>) – Contains parameters and marks. <code class="docutils literal notranslate"><span class="pre">e.g.</span> <span class="pre">{sum:</span> <span class="pre">10,</span> <span class="pre">divsion:</span> <span class="pre">[1,</span> <span class="pre">5]}</span></code></p></li>
+<li><p><strong>exec_time</strong> (<em>int</em>) – Time it took for the result_dict to generate</p></li>
+<li><p><strong>pkg_path</strong> (<em>str</em><em>, </em><em>optional</em>) – If TestType.PYTHON was selected, pkg_path should be specified</p></li>
+<li><p><strong>comment</strong> (<em>str</em><em>, </em><em>optional</em>) – Comment is a text feedback. Can be optionally returned from a <a class="reference internal" href="test.html#gradefast.test.GFTest" title="gradefast.test.GFTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">GFTest</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="gradefast.result.Result.team_id">
+<code class="sig-name descname">team_id</code><a class="headerlink" href="#gradefast.result.Result.team_id" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.result.Result.file">
+<code class="sig-name descname">file</code><a class="headerlink" href="#gradefast.result.Result.file" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.result.Result.result_dict">
+<code class="sig-name descname">result_dict</code><a class="headerlink" href="#gradefast.result.Result.result_dict" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.result.Result.exec_time">
+<code class="sig-name descname">exec_time</code><a class="headerlink" href="#gradefast.result.Result.exec_time" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.result.Result.pkg_path">
+<code class="sig-name descname">pkg_path</code><a class="headerlink" href="#gradefast.result.Result.pkg_path" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.result.Result.comment">
+<code class="sig-name descname">comment</code><a class="headerlink" href="#gradefast.result.Result.comment" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">team_id</span> <span class="o">=</span> <span class="mi">987</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">file</span> <span class="o">=</span> <span class="s1">&#39;py&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;loss&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;activation&#39;</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span> <span class="s1">&#39;sgd&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">14</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Result</span><span class="p">(</span><span class="n">team_id</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">)</span>
+<span class="go">Result(team_id: 987, file: py, result_dict: {&#39;loss&#39;: 30, &#39;activation&#39;: 25,</span>
+<span class="go">&#39;sgd&#39;: [14, -5, 10]}, exec_time: 0, pkg_path: , comment: )</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="gradefast.result.Result.from_submission_test">
+<em class="property">static </em><code class="sig-name descname">from_submission_test</code><span class="sig-paren">(</span><em class="sig-param">submission</em>, <em class="sig-param">test</em>, <em class="sig-param">result_dict: dict</em>, <em class="sig-param">exec_time: Union[int</em>, <em class="sig-param">float] = 0</em>, <em class="sig-param">comment: str = ''</em>, <em class="sig-param">error=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/result.html#Result.from_submission_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.result.Result.from_submission_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>submission</strong> (<a class="reference internal" href="submission.html#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a>) – </p></li>
+<li><p><strong>test</strong> (<a class="reference internal" href="test.html#gradefast.test.GFTest" title="gradefast.test.GFTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">GFTest</span></code></a>) – </p></li>
+<li><p><strong>result_dict</strong> (<em>dict</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># submission with team_id 5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># test with file_item_to_test &#39;zip&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Result</span><span class="o">.</span><span class="n">from_submission_test</span><span class="p">(</span><span class="n">submission</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;marks&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
+<span class="go">Result(team_id: 5, file: &#39;zip&#39;, result_dict: {&#39;marks&#39;: 10}, exec_time: 0,</span>
+<span class="go">pkg_path: , comment: )</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.result.Result.from_dict">
+<em class="property">static </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param">result</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/result.html#Result.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.result.Result.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a> from a <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>result</strong> (<em>dict</em>) – Should contain <cite>keys</cite> <cite>team_id</cite>, <cite>file</cite> and <cite>result_dict</cite>. Can optionally contain
+<cite>comment</cite> and <cite>pkg_path</cite>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A <a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a> built from the result dictionary</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dict_repr_result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;team_id&#39;</span><span class="p">:</span> <span class="mi">987</span><span class="p">,</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="s1">&#39;py&#39;</span><span class="p">,</span> <span class="s1">&#39;pkg_path&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;result_dict&#39;</span><span class="p">:</span>
+<span class="gp">... </span><span class="p">{</span><span class="s1">&#39;loss&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;activation&#39;</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span> <span class="s1">&#39;sgd&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">14</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]},</span> <span class="s1">&#39;exec_time&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Result</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">dict_repr_result</span><span class="p">)</span>
+<span class="go">Result(team_id: 987, file: py, result_dict: {&#39;loss&#39;: 30, &#39;activation&#39;: 25,</span>
+<span class="go">&#39;sgd&#39;: [14, -5, 10]}, exec_time: , pkg_path: , comment: )</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.result.Result.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/result.html#Result.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.result.Result.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts from <a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a> to a <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span><span class="mi">987</span><span class="p">,</span> <span class="s1">&#39;py&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;loss&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;activation&#39;</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span> <span class="s1">&#39;sgd&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">14</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]},</span>
+<span class="gp">... </span><span class="n">exec_time</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">pkg_path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;Hello&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="go">{&#39;team_id&#39;: 987, &#39;file&#39;: &#39;py&#39;, &#39;pkg_path&#39;: &#39;&#39;, &#39;result_dict&#39;: {&#39;loss&#39;: 30,</span>
+<span class="go">&#39;activation&#39;: 25, &#39;sgd&#39;: [14, -5, 10]}, &#39;exec_time&#39;: 0.5, &#39;comment&#39;: &#39;Hello&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.result.Result.to_flat_dict">
+<code class="sig-name descname">to_flat_dict</code><span class="sig-paren">(</span><em class="sig-param">result_params_prefix='result_param'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/result.html#Result.to_flat_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.result.Result.to_flat_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a flat (or non-nested) <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code> representation of <a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a></p>
+<p>The method is a utility used to serialize a result into a flat structure like a csv file.
+The parameters and marks inside the result_dict are copied in the root dictionary along
+with team_id, file and other optional parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span><span class="mi">31</span><span class="p">,</span> <span class="s1">&#39;zip&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;add&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;subtract&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">to_flat_dict</span><span class="p">()</span>
+<span class="go">{&#39;team_id&#39;: 31, &#39;file&#39;: &#39;zip&#39;, &#39;pkg_path&#39;: &#39;&#39;, &#39;add&#39;: 5, &#39;subtract&#39;: [1, 3],</span>
+<span class="go">&#39;comment&#39;: &#39;&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.result.Result.flat_result">
+<code class="sig-name descname">flat_result</code><span class="sig-paren">(</span><em class="sig-param">average=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/result.html#Result.flat_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.result.Result.flat_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add or average list of marks, if present, inside <cite>result_dict</cite></p>
+<p>A result_dict may have marks either as float (int) or as a list of floats (ints).
+In the latter case, it means marks for multiple test cases were given. The method
+allows us to add or average such lists of marks</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>average</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to average or add the marks from multiple <cite>test cases</cite> (Default
+is True i.e. Average)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">]})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">flat_result</span><span class="p">()</span>
+<span class="go">Result(team_id: 5, file: png, result_dict: {&#39;a&#39;: 5, &#39;b&#39;: 6.5, &#39;c&#39;: 5.0},</span>
+<span class="go">pkg_path: , comment: )</span>
+</pre></div>
+</div>
+<p>With <code class="docutils literal notranslate"><span class="pre">average=False</span></code>, the method just adds the marks</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">]})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">flat_result</span><span class="p">(</span><span class="n">average</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">Result(team_id: 5, file: png, result_dict: {&#39;a&#39;: 5, &#39;b&#39;: 13, &#39;c&#39;: 5},</span>
+<span class="go">pkg_path: , comment: )</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.result.Result.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">average=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/result.html#Result.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.result.Result.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add marks from <cite>result_dict</cite> and return a <a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a> with result_dict containing
+the <cite>total</cite></p>
+<p>The method adds values from all keys in result_dict and returns a <a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a>
+whose <code class="docutils literal notranslate"><span class="pre">result_dict</span></code> contains only <cite>total</cite> key. You can choose to add or average
+test cases from within this method itself</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>average</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to average or add the marks from multiple <cite>test cases</cite> (Default
+is True i.e. Average)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Result obtained after adding values corresponding to each grading parameter</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">]})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">add</span><span class="p">()</span>
+<span class="go">Result(team_id: 5, file: png, result_dict: {&#39;total&#39;: 16.5}, pkg_path: , comment: )</span>
+</pre></div>
+</div>
+<p>With <code class="docutils literal notranslate"><span class="pre">average=False</span></code>, the method simply adds the marks</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">]})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">average</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">Result(team_id: 5, file: png, result_dict: {&#39;total&#39;: 23}, pkg_path: , comment: )</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.result.Result.copy_from">
+<em class="property">static </em><code class="sig-name descname">copy_from</code><span class="sig-paren">(</span><em class="sig-param">result</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/result.html#Result.copy_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.result.Result.copy_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new <a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a> by adding properties from a base
+<a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">Result.copy_from.kwargs</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>result</strong> (<a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a>) – A base result to copy properties from</p></li>
+<li><p><strong>kwargs</strong> (<em>tuple</em>) – A variable number of key=value pairs. <strong>Key</strong> represents names of
+member fields to be set to given <strong>value</strong>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.result.Result.multiply">
+<code class="sig-name descname">multiply</code><span class="sig-paren">(</span><em class="sig-param">weightages: dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/result.html#Result.multiply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.result.Result.multiply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiply marks in <code class="docutils literal notranslate"><span class="pre">result_dict</span></code> with weights or factors specified in <code class="docutils literal notranslate"><span class="pre">weightages</span></code>
+dict</p>
+<p>Returns a <a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a> obtained by multiplying weights present in <code class="docutils literal notranslate"><span class="pre">weightages</span></code>
+dict with those corresponding to parameters present in <code class="docutils literal notranslate"><span class="pre">result_dict</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>weightages</strong> (<em>dict</em>) – <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code> of weights. Keys present should correspond to those in <code class="docutils literal notranslate"><span class="pre">result_dict</span></code>.
+Values should be <code class="docutils literal notranslate"><span class="pre">float</span></code> or <code class="docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a> obtained after applying weights</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span><span class="mi">987</span><span class="p">,</span> <span class="s1">&#39;py&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;loss&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;activation&#39;</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span> <span class="s1">&#39;backprop&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span>
+<span class="gp">... </span><span class="s1">&#39;sgd&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">14</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]},</span> <span class="n">exec_time</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">pkg_path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;Hello&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">weightages</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;loss&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s1">&#39;activation&#39;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">,</span> <span class="s1">&#39;backprop&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;sgd&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">weightages</span><span class="p">)</span>
+<span class="go">Result(team_id: 987, file: py, result_dict: {&#39;loss&#39;: 15.0, &#39;activation&#39;: 37.5,</span>
+<span class="go">&#39;backprop&#39;: [10, 12], &#39;sgd&#39;: [7.0, -5, 20]}, exec_time: 0.5, pkg_path: , comment: Hello)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.result.Result.join">
+<em class="property">static </em><code class="sig-name descname">join</code><span class="sig-paren">(</span><em class="sig-param">*results</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/result.html#Result.join"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.result.Result.join" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenates <code class="docutils literal notranslate"><span class="pre">result_dict</span></code> from mutiple <a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a> objects</p>
+<p>Joins or concatenates multiple results. The resultant <code class="docutils literal notranslate"><span class="pre">result_dict</span></code> will include
+unique <cite>keys</cite> (parameters) from all the Result objects, thereby creating a union
+of results. For this method to work, <code class="docutils literal notranslate"><span class="pre">team_id</span></code> of results should be same. <code class="docutils literal notranslate"><span class="pre">file</span></code>,
+<code class="docutils literal notranslate"><span class="pre">pkg_path</span></code> and <code class="docutils literal notranslate"><span class="pre">comment</span></code> are appended as lists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>results</strong> (<em>tuple</em>) – A tuple of <a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a>. Any number of result objects can be provided</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Result representing union of results</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>Exception</strong> – If <code class="docutils literal notranslate"><span class="pre">team_id</span></code> of results don’t match</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result1</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span><span class="mi">725</span><span class="p">,</span> <span class="s1">&#39;py&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;loss&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;activation&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;sgd&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;6&#39;</span><span class="p">]},</span>
+<span class="gp">... </span><span class="n">exec_time</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">pkg_path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;Hello&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result2</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span><span class="mi">725</span><span class="p">,</span> <span class="s1">&#39;py2&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;cnn&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;object_detect&#39;</span><span class="p">:</span> <span class="mi">25</span><span class="p">},</span> <span class="n">exec_time</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+<span class="gp">... </span><span class="n">pkg_path</span><span class="o">=</span><span class="s1">&#39;./cnn/&#39;</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;world&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Result</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result1</span><span class="p">,</span> <span class="n">result2</span><span class="p">)</span>
+<span class="go">Result(team_id: 725, file: [&#39;py&#39;, &#39;py2&#39;], result_dict: {&#39;loss&#39;: 10, &#39;activation&#39;: 5,</span>
+<span class="go">&#39;sgd&#39;: [4, 5, &#39;6&#39;], &#39;cnn&#39;: 30, &#39;object_detect&#39;: 25}, exec_time: [10, 15],</span>
+<span class="go">pkg_path: [&#39;&#39;, &#39;./cnn/&#39;], comment: [&#39;Hello&#39;, &#39;world&#39;])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="gradefast.result.ResultGroup">
+<em class="property">class </em><code class="sig-prename descclassname">gradefast.result.</code><code class="sig-name descname">ResultGroup</code><span class="sig-paren">(</span><em class="sig-param">task_name: str</em>, <em class="sig-param">theme_name: str</em>, <em class="sig-param">results</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/result.html#ResultGroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.result.ResultGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Groups many <a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a> together</p>
+<p>A <a class="reference internal" href="#gradefast.result.ResultGroup" title="gradefast.result.ResultGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultGroup</span></code></a> clubs multiple <a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a> together and includes additional
+information like <code class="docutils literal notranslate"><span class="pre">task_name</span></code> and <code class="docutils literal notranslate"><span class="pre">theme_name</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task_name</strong> (<em>str</em>) – </p></li>
+<li><p><strong>theme_name</strong> (<em>str</em>) – </p></li>
+<li><p><strong>results</strong> (<em>list</em><em>, </em><em>dict</em>) – List or dictionary of results. If dictionary, key should be a team_id and
+value should be a <a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="gradefast.result.ResultGroup.task_name">
+<code class="sig-name descname">task_name</code><a class="headerlink" href="#gradefast.result.ResultGroup.task_name" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.result.ResultGroup.theme_name">
+<code class="sig-name descname">theme_name</code><a class="headerlink" href="#gradefast.result.ResultGroup.theme_name" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.result.ResultGroup.dict_of_results">
+<code class="sig-name descname">dict_of_results</code><a class="headerlink" href="#gradefast.result.ResultGroup.dict_of_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary of results where <cite>key</cite> is a team_id and <cite>value</cite> is a <a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Result group is an iterator. Try not to mutate it and expect it to work fabulously thereafter.</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result1</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span><span class="mi">725</span><span class="p">,</span> <span class="s1">&#39;py&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;loss&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;activation&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;sgd&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;6&#39;</span><span class="p">]},</span>
+<span class="gp">... </span><span class="n">exec_time</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">pkg_path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;Hello&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result2</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span><span class="mi">109</span><span class="p">,</span> <span class="s1">&#39;py&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;loss&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;activation&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s1">&#39;sgd&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">14</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;6&#39;</span><span class="p">]},</span>
+<span class="gp">... </span><span class="n">exec_time</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">pkg_path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;world&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ResultGroup</span><span class="p">(</span><span class="s1">&#39;Task1&#39;</span><span class="p">,</span> <span class="s1">&#39;Fish Theme&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">result1</span><span class="p">,</span> <span class="n">result2</span><span class="p">])</span>
+<span class="go">ResultGroup(task_name: Task1, theme_name: Fish Theme, dict_of_results: {725:</span>
+<span class="go">Result(team_id: 725, file: py, result_dict: {&#39;loss&#39;: 10, &#39;activation&#39;: 5,</span>
+<span class="go">&#39;sgd&#39;: [4, 5, &#39;6&#39;]}, exec_time: 10, pkg_path: , comment: Hello), 109:</span>
+<span class="go">Result(team_id: 109, file: py, result_dict: {&#39;loss&#39;: 7, &#39;activation&#39;: 15,</span>
+<span class="go">&#39;sgd&#39;: [14, -5, &#39;6&#39;]}, exec_time: 15, pkg_path: , comment: world)})</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="gradefast.result.ResultGroup.from_dict">
+<em class="property">static </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param">group_dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/result.html#ResultGroup.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.result.ResultGroup.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <a class="reference internal" href="#gradefast.result.ResultGroup" title="gradefast.result.ResultGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultGroup</span></code></a> from a <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>group_dict</strong> (<em>dict</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gradefast.result.ResultGroup" title="gradefast.result.ResultGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultGroup</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result_group_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;task_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Task1&#39;</span><span class="p">,</span> <span class="s1">&#39;theme_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Fish Theme&#39;</span><span class="p">,</span>
+<span class="gp">... </span><span class="s1">&#39;dict_of_results&#39;</span><span class="p">:</span> <span class="p">{</span><span class="mi">725</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;team_id&#39;</span><span class="p">:</span> <span class="mi">725</span><span class="p">,</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="s1">&#39;py&#39;</span><span class="p">,</span> <span class="s1">&#39;pkg_path&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+<span class="gp">... </span><span class="s1">&#39;result_dict&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;loss&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;activation&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;sgd&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;6&#39;</span><span class="p">]},</span> <span class="s1">&#39;exec_time&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+<span class="gp">... </span><span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="s1">&#39;Hello&#39;</span><span class="p">},</span> <span class="mi">109</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;team_id&#39;</span><span class="p">:</span> <span class="mi">109</span><span class="p">,</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="s1">&#39;py&#39;</span><span class="p">,</span> <span class="s1">&#39;pkg_path&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+<span class="gp">... </span><span class="s1">&#39;result_dict&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;loss&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;activation&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s1">&#39;sgd&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">14</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;6&#39;</span><span class="p">]},</span> <span class="s1">&#39;exec_time&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+<span class="gp">... </span><span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="s1">&#39;world&#39;</span><span class="p">}}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ResultGroup</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">result_group_dict</span><span class="p">)</span>
+<span class="go">ResultGroup(task_name: Task1, theme_name: Fish Theme, dict_of_results:</span>
+<span class="go">{725: Result(team_id: 725, file: py, result_dict: {&#39;loss&#39;: 10, &#39;activation&#39;: 5,</span>
+<span class="go">&#39;sgd&#39;: [4, 5, &#39;6&#39;]}, exec_time: , pkg_path: Hello, comment: ), 109:</span>
+<span class="go">Result(team_id: 109, file: py, result_dict: {&#39;loss&#39;: 7, &#39;activation&#39;: 15,</span>
+<span class="go">&#39;sgd&#39;: [14, -5, &#39;6&#39;]}, exec_time: , pkg_path: world, comment: )})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.result.ResultGroup.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/result.html#ResultGroup.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.result.ResultGroup.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts from <a class="reference internal" href="#gradefast.result.ResultGroup" title="gradefast.result.ResultGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultGroup</span></code></a> to a <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.result.ResultGroup.from_json">
+<em class="property">static </em><code class="sig-name descname">from_json</code><span class="sig-paren">(</span><em class="sig-param">file_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/result.html#ResultGroup.from_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.result.ResultGroup.from_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a <a class="reference internal" href="#gradefast.result.ResultGroup" title="gradefast.result.ResultGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultGroup</span></code></a> from a json file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<em>str</em>) – Path to json file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gradefast.result.ResultGroup" title="gradefast.result.ResultGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultGroup</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.result.ResultGroup.to_json">
+<code class="sig-name descname">to_json</code><span class="sig-paren">(</span><em class="sig-param">save_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/result.html#ResultGroup.to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.result.ResultGroup.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a <a class="reference internal" href="#gradefast.result.ResultGroup" title="gradefast.result.ResultGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultGroup</span></code></a> object to json file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>save_path</strong> (<em>str</em>) – Path to json file or directory</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.result.ResultGroup.result_group_file_name">
+<em class="property">static </em><code class="sig-name descname">result_group_file_name</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/result.html#ResultGroup.result_group_file_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.result.ResultGroup.result_group_file_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns name of result_group file according to decided naming convention</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.result.ResultGroup.from_csv">
+<em class="property">static </em><code class="sig-name descname">from_csv</code><span class="sig-paren">(</span><em class="sig-param">save_location</em>, <em class="sig-param">theme_name=''</em>, <em class="sig-param">task_name=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/result.html#ResultGroup.from_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.result.ResultGroup.from_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a <a class="reference internal" href="#gradefast.result.ResultGroup" title="gradefast.result.ResultGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultGroup</span></code></a> from csv file</p>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>The feature will be built soon.</p>
+</div>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.0.15.</span></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>save_location</strong> (<em>str</em>) – Path to csv file or directory</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.result.ResultGroup.to_csv">
+<code class="sig-name descname">to_csv</code><span class="sig-paren">(</span><em class="sig-param">save_location</em>, <em class="sig-param">result_params_prefix='result_params'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/result.html#ResultGroup.to_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.result.ResultGroup.to_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a <a class="reference internal" href="#gradefast.result.ResultGroup" title="gradefast.result.ResultGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultGroup</span></code></a> object to csv file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>save_location</strong> (<em>str</em>) – Path to json file or directory</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.result.ResultGroup.comment_builder">
+<code class="sig-name descname">comment_builder</code><span class="sig-paren">(</span><em class="sig-param">method</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/result.html#ResultGroup.comment_builder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.result.ResultGroup.comment_builder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify a method to make comments for each team based on their result</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<em>function</em>) – Takes a <a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a>, args and kwargs as arguments and returns a <cite>comment</cite> as <code class="docutils literal notranslate"><span class="pre">str</span></code></p></li>
+<li><p><strong>args</strong> – Arguments specified by user given to the method</p></li>
+<li><p><strong>kwargs</strong> – Named arguments specified by user given to the method</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># create a result_group that looks like below</span>
+<span class="go">ResultGroup(task_name: Task0, theme_name: Homecoming, dict_of_results: {75:</span>
+<span class="go">Result(team_id: 75, file: [&#39;py&#39;], result_dict: {&#39;loss&#39;: 15, &#39;activation&#39;: 5,</span>
+<span class="go">&#39;sgd&#39;: [4, 5, 7]}, pkg_path: abc, comment: ), 987: Result(team_id: 987, file: py,</span>
+<span class="go">result_dict: {&#39;loss&#39;: 30, &#39;activation&#39;: 25, &#39;sgd&#39;: [14, -5, 10]}, pkg_path: ,</span>
+<span class="go">comment: ), 453: Result(team_id: 453, file: py, result_dict: {&#39;loss&#39;: 10,</span>
+<span class="go">&#39;activation&#39;: 5, &#39;sgd&#39;: [4, 5, &#39;6&#39;]}, pkg_path: , comment: )})</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">build_comment</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">gracemarks</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">):</span> <span class="c1"># the comment builder function</span>
+<span class="gp">... </span>    <span class="n">total</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">average</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">total</span> <span class="o">+</span> <span class="n">gracemarks</span> <span class="o">&gt;</span> <span class="n">cutoff</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="s2">&quot;Congrats you passed&quot;</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="s2">&quot;Please try again next year&quot;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result_group</span><span class="o">.</span><span class="n">comment_builder</span><span class="p">(</span><span class="n">build_comment</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">35</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_result_group</span> <span class="o">=</span> <span class="n">result_group</span><span class="o">.</span><span class="n">make_comments</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">new_result_group</span><span class="p">)</span>
+
+<span class="go">ResultGroup(task_name: Task0, theme_name: Homecoming, dict_of_results: {75:</span>
+<span class="go">Result(team_id: 75, file: [&#39;py&#39;], result_dict: {&#39;loss&#39;: 15, &#39;activation&#39;: 5,</span>
+<span class="go">&#39;sgd&#39;: [4, 5, 7]}, pkg_path: abc, comment: Congrats you passed), 987: Result(</span>
+<span class="go">team_id: 987, file: py, result_dict: {&#39;loss&#39;: 30, &#39;activation&#39;: 25,</span>
+<span class="go">&#39;sgd&#39;: [14, -5, 10]}, pkg_path: , comment: Congrats you passed), 453:</span>
+<span class="go">Result(team_id: 453, file: py, result_dict: {&#39;loss&#39;: 10, &#39;activation&#39;: 5,</span>
+<span class="go">&#39;sgd&#39;: [4, 5, &#39;6&#39;]}, pkg_path: , comment: Please try again next year)})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.result.ResultGroup.make_comments">
+<code class="sig-name descname">make_comments</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/result.html#ResultGroup.make_comments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.result.ResultGroup.make_comments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses <cite>method</cite> specified in <a class="reference internal" href="#gradefast.result.ResultGroup.comment_builder" title="gradefast.result.ResultGroup.comment_builder"><code class="xref py py-attr docutils literal notranslate"><span class="pre">comment_builder</span></code></a> to generate comments for each result
+in <code class="docutils literal notranslate"><span class="pre">dict_of_results</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gradefast.result.ResultGroup" title="gradefast.result.ResultGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultGroup</span></code></a> with each <a class="reference internal" href="#gradefast.result.Result" title="gradefast.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a> having comments built using method
+specified
+in <a class="reference internal" href="#gradefast.result.ResultGroup.comment_builder" title="gradefast.result.ResultGroup.comment_builder"><code class="xref py py-class docutils literal notranslate"><span class="pre">comment_builder</span></code></a></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#gradefast.result.ResultGroup" title="gradefast.result.ResultGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultGroup</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="utils.html" class="btn btn-neutral float-right" title="Utils Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="aggregate.html" class="btn btn-neutral float-left" title="Aggregate Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Omkar Manjrekar
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

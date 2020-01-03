@@ -1,0 +1,475 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Write a module that implements quicksort &mdash; Gradefast 0.1.12 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Notes" href="../notes/index.html" />
+    <link rel="prev" title="Check if file contains given list of strings" href="tutorial1.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Gradefast
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.12
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../what_is_gradefast.html">What is Gradefast?</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorials</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#problem-statments">Problem statments</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tutorial1.html">Check if file contains given list of strings</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Write a module that implements quicksort</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#task">Task</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#expected-output">Expected Output</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#insights-into-a-submission">Insights into a Submission</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#creating-a-directory-structure">Creating a directory structure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#loading-submissions-in-gradefast">Loading submissions in gradefast</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#writing-tests">Writing tests</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#evaluating-tests-on-all-submissions">Evaluating tests on all submissions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#scaling-and-aggregating-results">Scaling and aggregating results</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#building-comments-based-on-marks">Building comments based on marks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uploading-results-to-portal">Uploading results to portal</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#source-code">Source code</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/index.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes/index.html">Recipes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Api Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Download and Install</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Gradefast</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Tutorials</a> &raquo;</li>
+        
+      <li>Write a module that implements quicksort</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/tutorials/tutorial2.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="write-a-module-that-implements-quicksort">
+<h1>Write a module that implements quicksort<a class="headerlink" href="#write-a-module-that-implements-quicksort" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="task">
+<h2>Task<a class="headerlink" href="#task" title="Permalink to this headline">¶</a></h2>
+<p>The task for teams is to upload a zip file containing a module named
+sortalg which contains a method called quicksort. Quicksort takes as
+input a list of numbers and return a list in sorted order.</p>
+</div>
+<div class="section" id="expected-output">
+<h2>Expected Output<a class="headerlink" href="#expected-output" title="Permalink to this headline">¶</a></h2>
+<p>The numbers should be sorted in ascending order. We will provide multiple
+sets of input lists as <strong>test cases</strong> and each of them should be sorted.
+Teams fetch a <strong>1</strong> or a <strong>0</strong> for each of the sorted or non sorted output
+respectively.</p>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Before we do anything, let’s first install the package:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install gradefast
+</pre></div>
+</div>
+</div>
+<div class="section" id="insights-into-a-submission">
+<h2>Insights into a Submission<a class="headerlink" href="#insights-into-a-submission" title="Permalink to this headline">¶</a></h2>
+<p>A <a class="reference internal" href="../api/submission.html#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a> object contains information about
+a team’s or student’s submission and is identified by an <cite>id</cite> (team_id). The
+type of information stored in it is a record of files submitted by a team or
+student and their URLs, paths of files stored locally, whether they have been
+downloaded and evaluated by some gradefast tests, etc.</p>
+<p>A <strong>submission</strong> is specific to a task and a team and is needed for
+evaluating it. To store submission information of many teams, we can use a
+<a class="reference internal" href="../api/submission.html#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a>. Thus, a number of submissions
+from teams can be evaluated by clubbing them into a
+<a class="reference internal" href="../api/submission.html#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a>.</p>
+<p>There are many ways to populate a
+<a class="reference internal" href="../api/submission.html#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a>. We will use the <strong>from
+filesystem method</strong> since we are testing. You can refer to <a class="reference internal" href="../recipes/submission.html#submission-recipe"><span class="std std-ref">recipes on
+submission</span></a> for all other methods.</p>
+</div>
+<div class="section" id="creating-a-directory-structure">
+<h2>Creating a directory structure<a class="headerlink" href="#creating-a-directory-structure" title="Permalink to this headline">¶</a></h2>
+<p>We will first create a directory structure that gradefast also follows when
+downloading and saving submissions. Gradefast will use this information
+embedded in directory structure to form a
+<a class="reference internal" href="../api/submission.html#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a></p>
+<img alt="../_images/qs_ps2.png" src="../_images/qs_ps2.png" />
+<p>Download <a class="reference download internal" download="" href="../_downloads/9087bcdfe99c21f5c31c34e896e24c79/qs_ps2.zip"><code class="xref download docutils literal notranslate"><span class="pre">this</span> <span class="pre">zip</span></code></a> and extract it.</p>
+</div>
+<div class="section" id="loading-submissions-in-gradefast">
+<h2>Loading submissions in gradefast<a class="headerlink" href="#loading-submissions-in-gradefast" title="Permalink to this headline">¶</a></h2>
+<p>We can fetch submission information from the directory where the zip was
+extracted. For this we will use <a class="reference internal" href="../api/submission.html#gradefast.submission.LoadSubmissions" title="gradefast.submission.LoadSubmissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadSubmissions</span></code></a>
+utility:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gradefast.submission</span> <span class="k">import</span> <span class="n">LoadSubmissions</span>
+
+<span class="n">fs_location</span> <span class="o">=</span> <span class="s1">&#39;path/to/the/extracted/zip/file&#39;</span>
+<span class="n">task_name</span> <span class="o">=</span> <span class="s1">&#39;Task2&#39;</span>
+<span class="n">theme_name</span> <span class="o">=</span> <span class="s1">&#39;Quickstart&#39;</span>
+<span class="n">submission_group</span> <span class="o">=</span> <span class="n">LoadSubmissions</span><span class="o">.</span><span class="n">from_fs</span><span class="p">(</span><span class="n">fs_location</span><span class="p">,</span> <span class="n">task_name</span><span class="p">,</span> <span class="n">theme_name</span><span class="p">)</span><span class="o">.</span><span class="n">get_submissions</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">submission_group</span><span class="p">)</span>
+
+
+<span class="c1">## OUTPUT</span>
+<span class="o">..</span> <span class="n">SubmissionGroup</span><span class="p">(</span><span class="n">task_name</span><span class="p">:</span> <span class="n">Task2</span><span class="p">,</span> <span class="n">theme_name</span><span class="p">:</span> <span class="n">Quickstart</span><span class="p">,</span> <span class="n">dict_of_submissions</span><span class="p">:</span>
+<span class="o">..</span> <span class="p">{</span><span class="mi">1181</span><span class="p">:</span> <span class="n">Submission</span><span class="p">({</span><span class="s1">&#39;team_id&#39;</span><span class="p">:</span> <span class="mi">1181</span><span class="p">,</span> <span class="s1">&#39;items&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;unzipped&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;path&#39;</span><span class="p">:</span>
+<span class="o">..</span> <span class="s1">&#39;./examples/quickstart2/qs_ps2/1181/1181_unzipped&#39;</span><span class="p">,</span> <span class="s1">&#39;downloaded&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span> <span class="s1">&#39;zip&#39;</span><span class="p">:</span>
+<span class="o">..</span> <span class="p">{</span><span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="s1">&#39;./examples/quickstart2/qs_ps2/1181/1181_zip.zip&#39;</span><span class="p">,</span> <span class="s1">&#39;downloaded&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}}}),</span>
+<span class="o">..</span> <span class="mi">4</span><span class="p">:</span> <span class="n">Submission</span><span class="p">({</span><span class="s1">&#39;team_id&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;items&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;unzipped&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;path&#39;</span><span class="p">:</span>
+<span class="o">..</span> <span class="s1">&#39;./examples/quickstart2/qs_ps2/4/4_unzipped&#39;</span><span class="p">,</span> <span class="s1">&#39;downloaded&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span> <span class="s1">&#39;zip&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;path&#39;</span><span class="p">:</span>
+<span class="o">..</span> <span class="s1">&#39;./examples/quickstart2/qs_ps2/4/4_zip.zip&#39;</span><span class="p">,</span> <span class="s1">&#39;downloaded&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}}})})</span>
+</pre></div>
+</div>
+<p>Note that we have <strong>skipped the download step</strong> since we are just testing and
+submissions live locally.</p>
+</div>
+<div class="section" id="writing-tests">
+<h2>Writing tests<a class="headerlink" href="#writing-tests" title="Permalink to this headline">¶</a></h2>
+<p>A test is core part of an evaluation. It checks for correctness of multiple
+cases and gives marks accordingly.</p>
+<p>In Gradefast, a test should be written by extending
+<a class="reference internal" href="../api/test.html#gradefast.test.GFTest" title="gradefast.test.GFTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">GFTest</span></code></a> and overriding the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">__call__()</span></code> method. At the moment, it
+supports two kinds of tests. The first test type is where a file item is
+evaluated and the second where a python module or a package needs to be
+imported.</p>
+<p><strong>Since the task is to write a module, we will use PKG test type. Our test
+function will then import the module and perform evaluation.</strong></p>
+<p>Now let us write the test class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gradefast.submission</span> <span class="k">import</span> <span class="n">Submission</span><span class="p">,</span> <span class="n">LoadSubmissions</span>
+<span class="kn">from</span> <span class="nn">gradefast.test</span> <span class="k">import</span> <span class="n">TestType</span><span class="p">,</span> <span class="n">GFTest</span>
+<span class="kn">from</span> <span class="nn">gradefast.evaluate</span> <span class="k">import</span> <span class="n">Evaluate</span>
+<span class="kn">from</span> <span class="nn">gradefast.aggregate</span> <span class="k">import</span> <span class="n">Aggregate</span>
+
+<span class="n">fs_location</span> <span class="o">=</span> <span class="s1">&#39;./examples/quickstart2/qs_ps2&#39;</span>
+<span class="n">task_name</span> <span class="o">=</span> <span class="s1">&#39;Task2&#39;</span>
+<span class="n">theme_name</span> <span class="o">=</span> <span class="s1">&#39;Quickstart&#39;</span>
+<span class="n">submission_group</span> <span class="o">=</span> <span class="n">LoadSubmissions</span><span class="o">.</span><span class="n">from_fs</span><span class="p">(</span><span class="n">fs_location</span><span class="p">,</span> <span class="n">task_name</span><span class="p">,</span> <span class="n">theme_name</span><span class="p">)</span><span class="o">.</span><span class="n">get_submissions</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">submission_group</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">QS2Test</span><span class="p">(</span><span class="n">GFTest</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># file_to_test is unzipped which is the name of file_item in</span>
+        <span class="c1"># e.g. submission.items[&#39;unzipped&#39;][&#39;path&#39;] resolves path to</span>
+        <span class="c1"># the unzipped folder on filesystem </span>
+        <span class="c1"># package_path is the parent directory where the module or</span>
+        <span class="c1"># package can be found</span>
+        <span class="c1"># in this case final path of package is &#39;unzipped&#39; + &#39;./&#39; </span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">TestType</span><span class="o">.</span><span class="n">PYTHON</span><span class="p">,</span> <span class="s1">&#39;unzipped&#39;</span><span class="p">,</span> <span class="n">package_path</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">submission</span><span class="p">):</span>
+        <span class="c1"># GFTest requires this method to be implemented</span>
+        <span class="c1"># we will write evaluation logic here</span>
+        
+        <span class="c1"># expected output</span>
+        <span class="n">init_list</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">33</span><span class="p">],</span> <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">52</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">77</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
+        <span class="n">sorted_list</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">45</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">52</span><span class="p">,</span> <span class="mi">77</span><span class="p">]]</span>
+
+        <span class="c1"># notice the file_path and submission parameters</span>
+        <span class="c1"># these parameters are inserted in this test automatically</span>
+        <span class="c1"># by another gradefast module called Evaluate</span>
+        <span class="n">result_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;marks&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">sortalg</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result_dict</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">message</span>
+        
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">sortalg</span><span class="o">.</span><span class="n">quicksort</span><span class="p">(</span><span class="n">init_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="n">sorted_list</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;marks&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;marks&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result_dict</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p>The <code class="xref py py-attr docutils literal notranslate"><span class="pre">__call__()</span></code> method should always return
+a <strong>result_dict</strong> which is a key-value pair of parameters and marks, a
+<strong>comment</strong> and a <strong>list of exceptions</strong> encountered.</p>
+<p>If you try running, the test directly it will give a module not found
+error:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># instantiate the test</span>
+<span class="n">test</span> <span class="o">=</span> <span class="n">QS2Test</span><span class="p">()</span>
+<span class="c1"># obtain a single submission &#39;4&#39; file path</span>
+<span class="n">submission_4_unzip_path</span> <span class="o">=</span> <span class="n">submission_group</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="s1">&#39;unzipped&#39;</span><span class="p">][</span><span class="s1">&#39;path&#39;</span><span class="p">]</span>
+<span class="c1"># run the test</span>
+<span class="n">result_dict</span><span class="p">,</span> <span class="n">comment</span><span class="p">,</span> <span class="n">exceptions</span> <span class="o">=</span> <span class="n">test</span><span class="p">(</span><span class="n">submission_group</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span> <span class="c1"># throws module</span>
+<span class="c1"># not found error</span>
+</pre></div>
+</div>
+<p>Since a package/module needs to be imported, we will let gradefast do
+the heavy lifting of mounting a package.</p>
+</div>
+<div class="section" id="evaluating-tests-on-all-submissions">
+<h2>Evaluating tests on all submissions<a class="headerlink" href="#evaluating-tests-on-all-submissions" title="Permalink to this headline">¶</a></h2>
+<p>Gradefast provides a utility called <a class="reference internal" href="../api/evaluate.html#gradefast.evaluate.Evaluate" title="gradefast.evaluate.Evaluate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluate</span></code></a> that
+can test all the submissions in a
+<a class="reference internal" href="../api/submission.html#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a> andd returns a group of results
+into a <a class="reference internal" href="../api/result.html#gradefast.result.ResultGroup" title="gradefast.result.ResultGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultGroup</span></code></a></p>
+<p><strong>Evaluate will scan specified package path when importing modules or
+packages.</strong></p>
+<p>Let’s do this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gradefast.evaluate</span> <span class="k">import</span> <span class="n">Evaluate</span>
+
+<span class="n">evaluate</span> <span class="o">=</span> <span class="n">Evaluate</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+<span class="c1"># after instantiating evaluate we call it wit submission_group</span>
+<span class="n">result_group</span><span class="p">,</span> <span class="n">exceptions</span> <span class="o">=</span> <span class="n">evaluate</span><span class="p">(</span><span class="n">submission_group</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result_group</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">exceptions</span><span class="p">)</span>
+
+<span class="c1">## OUTPUT</span>
+<span class="o">..</span> <span class="n">ResultGroup</span><span class="p">(</span><span class="n">task_name</span><span class="p">:</span> <span class="n">Task2</span><span class="p">,</span> <span class="n">theme_name</span><span class="p">:</span> <span class="n">Quickstart</span><span class="p">,</span> <span class="n">dict_of_results</span><span class="p">:</span> <span class="p">{</span><span class="mi">4</span><span class="p">:</span>
+<span class="o">..</span> <span class="n">Result</span><span class="p">(</span><span class="n">team_id</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">unzipped</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;marks&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]},</span> <span class="n">exec_time</span><span class="p">:</span>
+<span class="o">..</span> <span class="mf">0.014669179916381836</span><span class="p">,</span> <span class="n">pkg_path</span><span class="p">:</span> <span class="o">./</span><span class="p">,</span> <span class="n">comment</span><span class="p">:</span> <span class="p">),</span> <span class="mi">1181</span><span class="p">:</span> <span class="n">Result</span><span class="p">(</span><span class="n">team_id</span><span class="p">:</span> <span class="mi">1181</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span>
+<span class="o">..</span> <span class="n">unzipped</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;marks&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]},</span> <span class="n">exec_time</span><span class="p">:</span> <span class="mf">0.03820395469665527</span><span class="p">,</span> <span class="n">pkg_path</span><span class="p">:</span> <span class="o">./</span><span class="p">,</span>
+<span class="o">..</span> <span class="n">comment</span><span class="p">:</span> <span class="p">)})</span>
+<span class="o">..</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="scaling-and-aggregating-results">
+<h2>Scaling and aggregating results<a class="headerlink" href="#scaling-and-aggregating-results" title="Permalink to this headline">¶</a></h2>
+<p>Lets devise the strategy to calculate final marks. We will give weightages
+to each of the different inputs that were sorted depending on the complexity
+of the input.</p>
+<p>And then we will add the marks for each of the test cases.</p>
+<p>Aggregate has methods <a class="reference internal" href="../api/aggregate.html#gradefast.aggregate.Aggregate.multiply" title="gradefast.aggregate.Aggregate.multiply"><code class="xref py py-attr docutils literal notranslate"><span class="pre">multiply()</span></code></a>
+and <a class="reference internal" href="../api/aggregate.html#gradefast.aggregate.Aggregate.add" title="gradefast.aggregate.Aggregate.add"><code class="xref py py-attr docutils literal notranslate"><span class="pre">add()</span></code></a> that handle this scenario
+well:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># weightages</span>
+<span class="n">weightages</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">weightages</span><span class="p">[</span><span class="s1">&#39;marks&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">]</span>
+<span class="c1"># scaling</span>
+<span class="n">scaled_result_group</span> <span class="o">=</span> <span class="n">Aggregate</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">weightages</span><span class="p">,</span> <span class="n">result_group</span><span class="p">)</span>
+<span class="c1"># calculating total</span>
+<span class="n">total_group</span> <span class="o">=</span> <span class="n">Aggregate</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">result_group</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">total_group</span><span class="p">)</span>
+
+<span class="c1">## OUTPUT</span>
+<span class="o">..</span> <span class="n">ResultGroup</span><span class="p">(</span><span class="n">task_name</span><span class="p">:</span> <span class="n">Task2</span><span class="p">,</span> <span class="n">theme_name</span><span class="p">:</span> <span class="n">Quickstart</span><span class="p">,</span> <span class="n">dict_of_results</span><span class="p">:</span> <span class="p">{</span><span class="mi">4</span><span class="p">:</span>
+<span class="o">..</span> <span class="n">Result</span><span class="p">(</span><span class="n">team_id</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">unzipped</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;total&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">},</span> <span class="n">exec_time</span><span class="p">:</span>
+<span class="o">..</span> <span class="mf">0.008117437362670898</span><span class="p">,</span> <span class="n">pkg_path</span><span class="p">:</span> <span class="o">./</span><span class="p">,</span> <span class="n">comment</span><span class="p">:</span> <span class="p">),</span> <span class="mi">1181</span><span class="p">:</span> <span class="n">Result</span><span class="p">(</span><span class="n">team_id</span><span class="p">:</span> <span class="mi">1181</span><span class="p">,</span>
+<span class="o">..</span> <span class="n">file</span><span class="p">:</span> <span class="n">unzipped</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;total&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span> <span class="n">exec_time</span><span class="p">:</span> <span class="mf">0.010161161422729492</span><span class="p">,</span>
+<span class="o">..</span> <span class="n">pkg_path</span><span class="p">:</span> <span class="o">./</span><span class="p">,</span> <span class="n">comment</span><span class="p">:</span> <span class="p">)})</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="building-comments-based-on-marks">
+<h2>Building comments based on marks<a class="headerlink" href="#building-comments-based-on-marks" title="Permalink to this headline">¶</a></h2>
+<p>We can generate comments based on the result_dict like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># adding comments based on marks</span>
+<span class="k">def</span> <span class="nf">build_comment</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">30</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;well done&#39;</span>
+    <span class="k">return</span> <span class="s1">&#39;no worries. try and complete the task&#39;</span>
+
+<span class="n">total_group</span><span class="o">.</span><span class="n">comment_builder</span><span class="p">(</span><span class="n">build_comment</span><span class="p">)</span>
+<span class="n">total_and_comments</span> <span class="o">=</span> <span class="n">total_group</span><span class="o">.</span><span class="n">make_comments</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">total_and_comments</span><span class="p">)</span>
+
+<span class="c1">## OUTPUT</span>
+<span class="o">..</span> <span class="n">ResultGroup</span><span class="p">(</span><span class="n">task_name</span><span class="p">:</span> <span class="n">Task2</span><span class="p">,</span> <span class="n">theme_name</span><span class="p">:</span> <span class="n">Quickstart</span><span class="p">,</span> <span class="n">dict_of_results</span><span class="p">:</span> <span class="p">{</span><span class="mi">4</span><span class="p">:</span>
+<span class="o">..</span> <span class="n">Result</span><span class="p">(</span><span class="n">team_id</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">unzipped</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;total&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">},</span> <span class="n">exec_time</span><span class="p">:</span>
+<span class="o">..</span> <span class="mf">0.008288383483886719</span><span class="p">,</span> <span class="n">pkg_path</span><span class="p">:</span> <span class="o">./</span><span class="p">,</span> <span class="n">comment</span><span class="p">:</span> <span class="n">well</span> <span class="n">done</span><span class="p">),</span> <span class="mi">1181</span><span class="p">:</span> <span class="n">Result</span><span class="p">(</span><span class="n">team_id</span><span class="p">:</span>
+<span class="o">..</span> <span class="mi">1181</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">unzipped</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;total&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span> <span class="n">exec_time</span><span class="p">:</span> <span class="mf">0.007193088531494141</span><span class="p">,</span>
+<span class="o">..</span> <span class="n">pkg_path</span><span class="p">:</span> <span class="o">./</span><span class="p">,</span> <span class="n">comment</span><span class="p">:</span> <span class="n">no</span> <span class="n">worries</span><span class="o">.</span> <span class="k">try</span> <span class="ow">and</span> <span class="n">complete</span> <span class="n">the</span> <span class="n">task</span><span class="p">)})</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="uploading-results-to-portal">
+<h2>Uploading results to portal<a class="headerlink" href="#uploading-results-to-portal" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>Uploading to portal feature will be ready before task0 deadline.</p>
+</div>
+</div>
+<div class="section" id="source-code">
+<h2>Source code<a class="headerlink" href="#source-code" title="Permalink to this headline">¶</a></h2>
+<p>Download full
+<a class="reference download internal" download="" href="../_downloads/aeccff27ae2b0f1a76e093954e9e5d6f/qs_ps2_eval.py"><code class="xref download docutils literal notranslate"><span class="pre">source</span> <span class="pre">code</span></code></a>
+for this quickstart</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../notes/index.html" class="btn btn-neutral float-right" title="Notes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tutorial1.html" class="btn btn-neutral float-left" title="Check if file contains given list of strings" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Omkar Manjrekar
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

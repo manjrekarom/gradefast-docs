@@ -1,0 +1,24 @@
+.. _transform-recipe:
+
+Transforming result group obtained from evaluation
+--------------------------------------------------
+
+You might find a need to transform result group of a test for example
+to rename some result_dict parameters or exclude some parameters, etc.
+Gradefast has utilities to help you with this.
+
+Renaming parameters
+....................
+
+You can rename a result_dict parameters of a resuult or a result group
+
+.. literalinclude:: ../../examples/recipes/transform_result.py
+    :lines: 1-30
+
+Including and excluding parameters
+...................................
+
+You can include and exclude specific parameters as shown below.
+
+.. literalinclude:: ../../examples/recipes/transform_result.py
+    :lines: 1-3, 13-22, 31-

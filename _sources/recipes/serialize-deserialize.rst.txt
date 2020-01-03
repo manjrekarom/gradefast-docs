@@ -1,0 +1,19 @@
+.. _serialize-deserialize-recipe:
+
+Saving gradefast objects as JSON and CSV for later use
+------------------------------------------------------
+
+Gradefast provides utility methods to store objects from
+:mod:`~gradefast.submission` and :mod:`~gradefast.result` into json and csv.
+
+.. note::
+
+    For formats that we don't support yet, you can
+    :ref:`convert gradefast objects <type-conversion-recipe>` to python
+    primitives and pass them as argument to other python packages that do the
+    conversion.
+
+Result group to JSON and CSV
+.............................
+
+.. literalinclude:: ../../examples/recipes/serialize_deserialize.py

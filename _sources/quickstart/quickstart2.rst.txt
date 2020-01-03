@@ -1,0 +1,206 @@
+Write a module that implements quicksort
+........................................
+
+Task
+^^^^^^^^
+The task for teams is to upload a zip file containing a module named
+sortalg which contains a method called quicksort. Quicksort takes as
+input a list of numbers and return a list in sorted order.
+
+Expected Output
+^^^^^^^^^^^^^^^
+The numbers should be sorted in ascending order. We will provide multiple
+sets of input lists as **test cases** and each of them should be sorted.
+Teams fetch a **1** or a **0** for each of the sorted or non sorted output
+respectively.
+
+Installation
+^^^^^^^^^^^^
+Before we do anything, let's first install the package::
+
+$ pip install gradefast
+
+Insights into a Submission
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+A :class:`~gradefast.submission.Submission` object contains information about
+a team's or student's submission and is identified by an `id` (team_id). The
+type of information stored in it is a record of files submitted by a team or
+student and their URLs, paths of files stored locally, whether they have been
+downloaded and evaluated by some gradefast tests, etc.
+
+A **submission** is specific to a task and a team and is needed for
+evaluating it. To store submission information of many teams, we can use a
+:class:`~gradefast.submission.SubmissionGroup`. Thus, a number of submissions
+from teams can be evaluated by clubbing them into a
+:class:`~gradefast.submission.SubmissionGroup`.
+
+There are many ways to populate a
+:class:`~gradefast.submission.SubmissionGroup`. We will use the **from
+filesystem method** since we are testing. You can refer to :ref:`recipes on
+submission <submission-recipe>` for all other methods.
+
+Creating a directory structure
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+We will first create a directory structure that gradefast also follows when
+downloading and saving submissions. Gradefast will use this information
+embedded in directory structure to form a
+:class:`~gradefast.submission.SubmissionGroup`
+
+.. image:: ../../assets/qs_ps2.png
+
+Download :download:`this zip <../../assets/qs_ps2.zip>` and extract it.
+
+Loading submissions in gradefast
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+We can fetch submission information from the directory where the zip was
+extracted. For this we will use :class:`~gradefast.submission.LoadSubmissions`
+utility::
+
+    from gradefast.submission import LoadSubmissions
+
+    fs_location = 'path/to/the/extracted/zip/file'
+    task_name = 'Task2'
+    theme_name = 'Quickstart'
+    submission_group = LoadSubmissions.from_fs(fs_location, task_name, theme_name).get_submissions()
+    print(submission_group)
+
+
+    ## OUTPUT
+    .. SubmissionGroup(task_name: Task2, theme_name: Quickstart, dict_of_submissions:
+    .. {1181: Submission({'team_id': 1181, 'items': {'unzipped': {'path':
+    .. './examples/quickstart2/qs_ps2/1181/1181_unzipped', 'downloaded': True}, 'zip':
+    .. {'path': './examples/quickstart2/qs_ps2/1181/1181_zip.zip', 'downloaded': True}}}),
+    .. 4: Submission({'team_id': 4, 'items': {'unzipped': {'path':
+    .. './examples/quickstart2/qs_ps2/4/4_unzipped', 'downloaded': True}, 'zip': {'path':
+    .. './examples/quickstart2/qs_ps2/4/4_zip.zip', 'downloaded': True}}})})
+
+Note that we have **skipped the download step** since we are just testing and
+submissions live locally.
+
+Writing tests
+^^^^^^^^^^^^^
+A test is core part of an evaluation. It checks for correctness of multiple
+cases and gives marks accordingly.
+
+In Gradefast, a test should be written by extending
+:class:`~gradefast.test.GFTest` and overriding the
+:attr:`~gradefast.test.GFTest.__call__()` method. At the moment, it
+supports two kinds of tests. The first test type is where a file item is
+evaluated and the second where a python module or a package needs to be
+imported.
+
+**Since the task is to write a module, we will use PKG test type. Our test
+function will then import the module and perform evaluation.**
+
+Now let us write the test class:
+
+.. literalinclude:: ../../examples/quickstart2/qs_ps2_eval.py
+    :emphasize-lines: 9,11,35
+    :lines: 13-47
+
+The :attr:`~gradefast.test.GFTest.__call__()` method should always return
+a **result_dict** which is a key-value pair of parameters and marks, a
+**comment** and a **list of exceptions** encountered.
+
+If you try running, the test directly it will give a module not found
+error::
+
+    # instantiate the test
+    test = QS2Test()
+    # obtain a single submission '4' file path
+    submission_4_unzip_path = submission_group[4].items['unzipped']['path']
+    # run the test
+    result_dict, comment, exceptions = test(submission_group[4]) # throws module
+    # not found error
+
+Since a package/module needs to be imported, we will let gradefast do
+the heavy lifting of mounting a package.
+
+Evaluating tests on all submissions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Gradefast provides a utility called :class:`~gradefast.evaluate.Evaluate` that
+can test all the submissions in a
+:class:`~gradefast.submission.SubmissionGroup` andd returns a group of results
+into a :class:`~gradefast.result.ResultGroup`
+
+**Evaluate will scan specified package path when importing modules or
+packages.**
+
+Let's do this::
+
+    from gradefast.evaluate import Evaluate
+
+    evaluate = Evaluate(test)
+    # after instantiating evaluate we call it wit submission_group
+    result_group, exceptions = evaluate(submission_group)
+    print(result_group)
+    print(exceptions)
+
+    ## OUTPUT
+    .. ResultGroup(task_name: Task2, theme_name: Quickstart, dict_of_results: {4:
+    .. Result(team_id: 4, file: unzipped, result_dict: {'marks': [1, 1, 1]}, exec_time:
+    .. 0.014669179916381836, pkg_path: ./, comment: ), 1181: Result(team_id: 1181, file:
+    .. unzipped, result_dict: {'marks': [0, 0, 0]}, exec_time: 0.03820395469665527, pkg_path: ./,
+    .. comment: )})
+    .. [None, None]
+
+Scaling and aggregating results
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Lets devise the strategy to calculate final marks. We will give weightages
+to each of the different inputs that were sorted depending on the complexity
+of the input.
+
+And then we will add the marks for each of the test cases.
+
+Aggregate has methods :attr:`~gradefast.aggregate.Aggregate.multiply()`
+and :attr:`~gradefast.aggregate.Aggregate.add()` that handle this scenario
+well::
+
+    # weightages
+    weightages = {}
+    weightages['marks'] = [5, 10, 15]
+    # scaling
+    scaled_result_group = Aggregate.multiply(weightages, result_group)
+    # calculating total
+    total_group = Aggregate.add(result_group)
+    print(total_group)
+
+    ## OUTPUT
+    .. ResultGroup(task_name: Task2, theme_name: Quickstart, dict_of_results: {4:
+    .. Result(team_id: 4, file: unzipped, result_dict: {'total': 30}, exec_time:
+    .. 0.008117437362670898, pkg_path: ./, comment: ), 1181: Result(team_id: 1181,
+    .. file: unzipped, result_dict: {'total': 0}, exec_time: 0.010161161422729492,
+    .. pkg_path: ./, comment: )})
+
+Building comments based on marks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+We can generate comments based on the result_dict like this::
+
+    # adding comments based on marks
+    def build_comment(result):
+        if result.result_dict['total'] == 30:
+            return 'well done'
+        return 'no worries. try and complete the task'
+
+    total_group.comment_builder(build_comment)
+    total_and_comments = total_group.make_comments()
+    print(total_and_comments)
+
+    ## OUTPUT
+    .. ResultGroup(task_name: Task2, theme_name: Quickstart, dict_of_results: {4:
+    .. Result(team_id: 4, file: unzipped, result_dict: {'total': 30}, exec_time:
+    .. 0.008288383483886719, pkg_path: ./, comment: well done), 1181: Result(team_id:
+    .. 1181, file: unzipped, result_dict: {'total': 0}, exec_time: 0.007193088531494141,
+    .. pkg_path: ./, comment: no worries. try and complete the task)})
+
+Uploading results to portal
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. todo::
+
+    Uploading to portal feature will be ready before task0 deadline.
+
+Source code
+^^^^^^^^^^^
+Download full
+:download:`source code<../../examples/quickstart2/qs_ps2_eval.py>`
+for this quickstart

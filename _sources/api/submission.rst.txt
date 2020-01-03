@@ -1,0 +1,6 @@
+Submission Module
+-----------------
+
+.. automodule:: gradefast.submission
+    :members:
+    :member-order: bysource

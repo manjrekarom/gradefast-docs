@@ -1,0 +1,306 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Loading student submissions &mdash; Gradefast 0.1.12 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Writing tests that evaluate a downloaded submission" href="test.html" />
+    <link rel="prev" title="Recipes" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Gradefast
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.12
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../what_is_gradefast.html">What is Gradefast?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/index.html">Notes</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Recipes</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Loading student submissions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#load-submissions-from-url">Load submissions from URL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#load-submissions-from-filesystem">Load submissions from filesystem</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="test.html">Writing tests that evaluate a downloaded submission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aggregate.html">Aggregating gradefast results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transform.html">Transforming result group obtained from evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="type-conversion.html">Converting between gradefast objects and python types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serialize-deserialize.html">Saving gradefast objects as JSON and CSV for later use</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Api Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Download and Install</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Gradefast</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Recipes</a> &raquo;</li>
+        
+      <li>Loading student submissions</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/recipes/submission.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="loading-student-submissions">
+<span id="submission-recipe"></span><h1>Loading student submissions<a class="headerlink" href="#loading-student-submissions" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="load-submissions-from-url">
+<h2>Load submissions from URL<a class="headerlink" href="#load-submissions-from-url" title="Permalink to this headline">¶</a></h2>
+<p>Easiest way to load submissions is from a web page that shows information
+about tasks and links to uploaded files. Note that you need to call
+<a class="reference internal" href="../api/submission.html#gradefast.submission.LoadSubmissions.get_submissions" title="gradefast.submission.LoadSubmissions.get_submissions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_submissions()</span></code></a> on
+<a class="reference internal" href="../api/submission.html#gradefast.submission.LoadSubmissions" title="gradefast.submission.LoadSubmissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadSubmissions</span></code></a> object to fetch submission
+information. You can also download the submissions locally in one more step.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gradefast.utils</span> <span class="k">import</span> <span class="n">Downloader</span>
+<span class="kn">from</span> <span class="nn">gradefast.submission</span> <span class="k">import</span> <span class="n">LoadSubmissions</span>
+
+<span class="c1"># url of the task page</span>
+<span class="n">task_url</span> <span class="o">=</span> <span class="s1">&#39;http://portal.e-yantra.org/admin/grade/task1a&#39;</span>
+<span class="n">task_name</span> <span class="o">=</span> <span class="s1">&#39;Task1A&#39;</span>
+<span class="n">theme_name</span> <span class="o">=</span> <span class="s1">&#39;RR&#39;</span>
+
+<span class="c1"># list of items to download</span>
+<span class="n">types</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;zip&#39;</span><span class="p">]</span>
+<span class="c1"># the cookie is obtained from web portal</span>
+<span class="n">cookie</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;eyrc_session&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;eyJpdiI6IlBVSnZlNG42ZUNWR3Y5K3V1a0oyTWc9PSIsInZhbHVlIjoiNUtOQjlDVW8xSzdhR213TUdGY3czMTlTS2Vwa2FXUjVacUg2U3M0QTVUdGF5b21mcmxGVk5wOVwvYXB3dGYrNEQiLCJtYWMiOiIxYjc3MmM4YWFmZjk2MTFjODg5NjE4OTIyNDVhY2QwZWFlYWQwN2VkYmFlNDNlMjE1ODAxOTZlYWFmNmUxMDM4In0%3D&quot;</span><span class="p">}</span>
+
+<span class="hll"><span class="n">load_submission</span> <span class="o">=</span> <span class="n">LoadSubmissions</span><span class="o">.</span><span class="n">from_url</span><span class="p">(</span><span class="n">task_url</span><span class="p">,</span> <span class="n">cookie</span><span class="p">,</span> <span class="n">task_name</span><span class="p">,</span> <span class="n">theme_name</span><span class="p">,</span> 
+</span><span class="hll"><span class="n">types</span><span class="o">=</span><span class="n">types</span><span class="p">,</span> <span class="n">before_date</span><span class="o">=</span><span class="s1">&#39;2019-11-20 10:00:00&#39;</span><span class="p">,</span> <span class="n">after_date</span><span class="o">=</span><span class="s1">&#39;2019-11-06 00:00:00&#39;</span><span class="p">)</span>
+</span><span class="c1"># this step actually downloads information</span>
+<span class="n">submission_group</span> <span class="o">=</span> <span class="n">load_submission</span><span class="o">.</span><span class="n">get_submissions</span><span class="p">()</span>
+<span class="hll"><span class="c1"># print(submission_group[1739])</span>
+</span><span class="c1"># print(submission_group[1471])</span>
+<span class="c1"># print(submission_group[232])</span>
+<span class="c1"># print(submission_group[4149])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">submission_group</span><span class="p">[</span><span class="mi">50</span><span class="p">])</span>
+<span class="hll"><span class="nb">print</span><span class="p">(</span><span class="n">submission_group</span><span class="p">[</span><span class="mi">164</span><span class="p">])</span>
+</span><span class="hll"><span class="c1"># # to download the files</span>
+</span><span class="c1"># storage_location = &#39;./tests/generated/&#39;</span>
+<span class="hll"><span class="c1"># # configuration for download</span>
+</span><span class="c1"># downloader = Downloader(cookie, types=types, storage_location=storage_location,</span>
+<span class="c1"># extract=True)</span>
+<span class="c1"># # start the download</span>
+<span class="c1"># submission_group, path = downloader.download(submission_group[:200]) # path to downloaded folder</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="load-submissions-from-filesystem">
+<h2>Load submissions from filesystem<a class="headerlink" href="#load-submissions-from-filesystem" title="Permalink to this headline">¶</a></h2>
+<p>Sometimes you might not have a web page to download the data from, for
+example when you are still testing your auto-eval scripts and the
+competition has not yet started. Check out this tutorial to learn how to
+create a proper directory structure so that gradefast can make a submission
+group.</p>
+<p>If you have already downloaded submission locally with gradefast from a URL,
+there shouldn’t be any need for you to be logged into internet to populate a
+submission group object. When you download files with gradefast, we save a file
+<cite>submission.json</cite> in the same folder so that the submission group object can be
+rebuilt from it.</p>
+<p>For both these cases you can populate a
+<a class="reference internal" href="../api/submission.html#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a> using
+<a class="reference internal" href="../api/submission.html#gradefast.submission.LoadSubmissions" title="gradefast.submission.LoadSubmissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadSubmissions</span></code></a> as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gradefast.submission</span> <span class="k">import</span> <span class="n">LoadSubmissions</span><span class="p">,</span> <span class="n">SubmissionGroup</span>
+<span class="kn">from</span> <span class="nn">gradefast.utils</span> <span class="k">import</span> <span class="n">Download</span>
+
+<span class="c1"># url of the task page</span>
+<span class="n">fs_location</span> <span class="o">=</span> <span class="s1">&#39;./mocking_bot/task1/&#39;</span>
+<span class="n">task_name</span> <span class="o">=</span> <span class="s1">&#39;Task1&#39;</span>
+<span class="n">theme_name</span> <span class="o">=</span> <span class="s1">&#39;MockingBot&#39;</span>
+
+<span class="c1"># list of items to download</span>
+<span class="n">types</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;png2&#39;</span><span class="p">,</span> <span class="s1">&#39;txt3&#39;</span><span class="p">,</span> <span class="s1">&#39;zip&#39;</span><span class="p">]</span>
+
+<span class="c1"># just give directory path where the files were downloaded, the folder inside </span>
+<span class="c1"># which you have all numbered folders</span>
+<span class="hll"><span class="n">load_submission</span> <span class="o">=</span> <span class="n">LoadSubmissions</span><span class="o">.</span><span class="n">from_fs</span><span class="p">(</span><span class="n">fs_location</span><span class="p">,</span> <span class="n">task_name</span><span class="p">,</span> <span class="n">theme_name</span><span class="p">)</span>
+</span><span class="c1"># OR</span>
+<span class="c1"># alternatively you can load a submission group from a json file like this</span>
+<span class="hll"><span class="n">submission_group</span> <span class="o">=</span> <span class="n">SubmissionGroup</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="s1">&#39;path/to/jsonfile.json&#39;</span><span class="p">)</span>
+</span>
+<span class="c1"># this step actually downloads infromation</span>
+<span class="hll"><span class="n">submission_group</span> <span class="o">=</span> <span class="n">load_submission</span><span class="o">.</span><span class="n">get_submissions</span><span class="p">()</span>
+</span>
+<span class="c1"># no need to download since the submissions are already live locally </span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="test.html" class="btn btn-neutral float-right" title="Writing tests that evaluate a downloaded submission" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Recipes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Omkar Manjrekar
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

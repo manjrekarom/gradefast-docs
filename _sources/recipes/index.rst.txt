@@ -1,0 +1,14 @@
+.. _recipes:
+
+=======
+Recipes
+=======
+
+.. toctree::
+
+    submission
+    test
+    aggregate
+    transform
+    type-conversion
+    serialize-deserialize

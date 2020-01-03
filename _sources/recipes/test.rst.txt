@@ -1,0 +1,101 @@
+.. _test-recipe:
+
+Writing tests that evaluate a downloaded submission
+---------------------------------------------------
+
+A test is core part of an evaluation. It checks for correctness of multiple
+cases and gives marks accordingly.
+
+In Gradefast, a test should be written by extending
+:class:`~gradefast.test.GFTest` and overriding the
+:attr:`~gradefast.test.GFTest.__call__()` method. At the moment, it
+supports two kinds of tests. The first test type is where a file item is
+evaluated and the second where a python module or a package needs to be
+imported.
+
+Output of a test
+.................
+A test can output multiple parameters and marks for those parameters. Marks
+could be a single floating point number or even a list of floating point
+numbers if there are multiple test cases for that parameter. The parameters
+and marks form the **result dictionary**, with keys being the parameters and
+marks being the value.
+
+Along with marks, **comments** act as very important feedback for students to
+improve their scores in upcoming tasks.
+
+Finally, there might be **errors** while running the test that also need to be
+reported as feedback.
+
+In gradefast, a **dictionary of marks**, **comment as a string** and
+**exceptions as a list of strings** make up the output of a test.
+
+
+Test Type: File
+................
+When your test takes as input a single uploaded file item, you can use the
+test type FILE. The file can be `text`, `png`, `jpeg` or even `zip`.
+
+.. note::
+
+    Gradefast can find files only if they are stored following the conventions.
+    See :ref:`directory-structure`.
+
+The test can be written by creating a class extending
+:class:`~gradefast.test.GFTest`. You set this test type by calling constructor
+of parent class with test_type set to TestType.FILE and file_item_to_test set as the
+intended upload item to test.
+
+
+When this mode is set, the :attr:`~gradefast.test.Test.__call__()`
+method receives filepath and :class:`~gradefast.submission.Submission`
+information as parameters. You override the
+:attr:`~gradefast.test.Test.__call__()` method to write your test logic.
+Remember to output 3 values discussed earlier.
+
+In the test example provided, you can see that the
+:attr:`~gradefast.test.GFTest.__call__()` method receives two arguments,
+`file_path` and `submission`. The function returns 3 values, a result_dict,
+comment and list of exceptions.
+
+Notice on line 7, where we set the test_type as **TestType.FILE** and
+file_to_test as **txt**.
+
+.. literalinclude:: ../../examples/task0_test.py
+    :emphasize-lines: 7,10,94
+
+You can then use this test to run on entire submission group as follows:
+
+.. literalinclude:: ../../examples/task0_eval.py
+
+Test Type: Package
+..................
+When you want to use libraries that student's have written, for example,
+functions for building a 2-layer neural network, you need to import modules
+or packages written by them.
+
+In this case, the gradefast test acts as client code which runs methods and
+functions from student's code and compares it with reference implementation or
+output. This mode is applicable to unzipped folders and respective zips, so the
+file_to_test parameter will always start with either zip or unzipped.
+
+The test can be written by creating a class extending
+:class:`~gradefast.test.GFTest`. You set this test type by calling constructor
+of parent class with test_type set to TestType.PKG and specifying the file_to
+test with zip or respective unzipped folder. Additionally, you have to specify
+the package_path which is one directory above the package directory.
+
+When this mode is set, the :attr:`~gradefast.test.Test.__call__()` method
+receives :class:`~gradefast.submission.Submission` information only as a
+parameter. You override the :attr:`~gradefast.test.Test.__call__()` method to
+write your test logic. Remember to output 3 values as discussed earlier.
+
+Notice the highlighted lines
+
+.. literalinclude:: ../../examples/task1_test.py
+    :lines: 1-124
+    :emphasize-lines: 16,107,110
+
+The evaluation file would always look similar.
+
+.. literalinclude:: ../../examples/task1_eval.py

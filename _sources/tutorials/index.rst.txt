@@ -1,0 +1,21 @@
+.. _tutorials:
+
+==========
+Tutorials
+==========
+
+This guide will help you get started with Gradefast as quickly as possible.
+Things that are briefly explained here, can be found in depth in tutorials
+and recipes.
+
+Problem statments
+-----------------
+
+.. toctree::
+    :maxdepth: 1
+
+    tutorial1
+    tutorial2
+
+Our tasks for evaluation are to check if a file contains a given list
+of strings and importing a package/module that implements quicksort.

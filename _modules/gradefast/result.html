@@ -1,0 +1,1166 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>gradefast.result &mdash; Gradefast 0.1.12 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Gradefast
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.12
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../what_is_gradefast.html">What is Gradefast?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notes/index.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../recipes/index.html">Recipes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">Api Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Download and Install</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Gradefast</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>gradefast.result</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for gradefast.result</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Contains :class:`~gradefast.result.Result` and :class:`~gradefast.result.ResultGroup` classes</span>
+<span class="sd">that represent result of a :class:`~gradefast.test.GFTest` or :class:`~gradefast.evaluate.Evaluate`</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">gradefast</span> <span class="k">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">gradefast.exceptions</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">gradefast</span> <span class="k">import</span> <span class="n">logconfig</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logconfig</span><span class="o">.</span><span class="n">configure_and_get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># TODO: Include exception inside result object itself</span>
+<span class="c1"># TODO: CopyFrom result method to copy a result from</span>
+<span class="c1"># existing one and add new fields to it</span>
+<div class="viewcode-block" id="Result"><a class="viewcode-back" href="../../api/result.html#gradefast.result.Result">[docs]</a><span class="k">class</span> <span class="nc">Result</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents `result` of a :class:`~gradefast.test.GFTest`</span>
+
+<span class="sd">    A `result` is output of a :class:`~gradefast.test.GFTest` identified by ``team_id`` </span>
+<span class="sd">    and the ``file`` the test was run on. The marks are stored as `dictionary` in </span>
+<span class="sd">    ``result_dict`` in which `keys` are the `parameters` and `values` are the `marks`.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    team_id: int</span>
+<span class="sd">        Identifier of the team whose result is under consideration</span>
+
+<span class="sd">    file: str</span>
+<span class="sd">        Item which was tested. ``e.g. &#39;zip&#39; or &#39;png2&#39;``</span>
+
+<span class="sd">    result_dict: dict</span>
+<span class="sd">        Contains parameters and marks. ``e.g. {sum: 10, divsion: [1, 5]}``</span>
+
+<span class="sd">    exec_time: int</span>
+<span class="sd">        Time it took for the result_dict to generate</span>
+
+<span class="sd">    pkg_path: str, optional</span>
+<span class="sd">        If TestType.PYTHON was selected, pkg_path should be specified</span>
+<span class="sd">        </span>
+<span class="sd">    comment: str, optional</span>
+<span class="sd">        Comment is a text feedback. Can be optionally returned from a :class:`~gradefast.test.GFTest` </span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    team_id: int</span>
+<span class="sd">    file: str</span>
+<span class="sd">    result_dict: dict</span>
+<span class="sd">    exec_time: float</span>
+<span class="sd">    pkg_path: str</span>
+<span class="sd">    comment: str</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. doctest::</span>
+
+<span class="sd">        &gt;&gt;&gt; team_id = 987</span>
+<span class="sd">        &gt;&gt;&gt; file = &#39;py&#39;</span>
+<span class="sd">        &gt;&gt;&gt; result_dict = {&#39;loss&#39;: 30, &#39;activation&#39;: 25, &#39;sgd&#39;: [14, -5, 10]}</span>
+<span class="sd">        &gt;&gt;&gt; Result(team_id, file, result_dict)</span>
+<span class="sd">        Result(team_id: 987, file: py, result_dict: {&#39;loss&#39;: 30, &#39;activation&#39;: 25,</span>
+<span class="sd">        &#39;sgd&#39;: [14, -5, 10]}, exec_time: 0, pkg_path: , comment: )</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">team_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">exec_time</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> 
+    <span class="n">pkg_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">comment</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
+
+        <span class="c1"># identified by team id</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">team_id</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="ow">and</span> <span class="n">utils</span><span class="o">.</span><span class="n">is_string_number</span><span class="p">(</span><span class="n">team_id</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">team_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">team_id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;team_id should be a integer&quot;</span><span class="p">)</span>
+
+        <span class="c1"># which file did the test run on?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file</span> <span class="o">=</span> <span class="n">file</span>
+        <span class="c1"># which package to mount?</span>
+        <span class="c1"># dictionary of parameters and marks</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Result should be a dict&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result_dict</span> <span class="o">=</span> <span class="n">result_dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pkg_path</span> <span class="o">=</span> <span class="n">pkg_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exec_time</span> <span class="o">=</span> <span class="n">exec_time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="n">comment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="n">error</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="c1"># this method doesnt not consider private fields and functions</span>
+        <span class="c1"># when evaluating equals</span>
+        <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">object_equality</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Result(team_id: </span><span class="si">{}</span><span class="s2">, file: </span><span class="si">{}</span><span class="s2">, result_dict: </span><span class="si">{}</span><span class="s2">, &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">team_id</span><span class="p">,</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_dict</span><span class="p">)</span> \
+        <span class="o">+</span> <span class="s2">&quot;exec_time: </span><span class="si">{}</span><span class="s2">, pkg_path: </span><span class="si">{}</span><span class="s2">, comment: </span><span class="si">{}</span><span class="s2">, error: </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exec_time</span><span class="p">,</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">pkg_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Result.from_submission_test"><a class="viewcode-back" href="../../api/result.html#gradefast.result.Result.from_submission_test">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_submission_test</span><span class="p">(</span><span class="n">submission</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> 
+    <span class="n">exec_time</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">comment</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a :class:`Result`</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        submission: :class:`~gradefast.submission.Submission`</span>
+<span class="sd">        test: :class:`~gradefast.test.GFTest`</span>
+<span class="sd">        result_dict: dict</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        :class:`Result`</span>
+<span class="sd"> </span>
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. doctest:: </span>
+
+<span class="sd">            &gt;&gt;&gt; # submission with team_id 5</span>
+<span class="sd">            &gt;&gt;&gt; # test with file_item_to_test &#39;zip&#39; </span>
+<span class="sd">            &gt;&gt;&gt; Result.from_submission_test(submission, test, {&#39;marks&#39;: 10})</span>
+<span class="sd">            Result(team_id: 5, file: &#39;zip&#39;, result_dict: {&#39;marks&#39;: 10}, exec_time: 0,</span>
+<span class="sd">            pkg_path: , comment: )</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="n">submission</span><span class="o">.</span><span class="n">team_id</span><span class="p">,</span> <span class="n">test</span><span class="o">.</span><span class="n">file_item_to_test</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">,</span> 
+        <span class="n">exec_time</span><span class="o">=</span><span class="n">exec_time</span><span class="p">,</span> <span class="n">pkg_path</span><span class="o">=</span><span class="n">test</span><span class="o">.</span><span class="n">pkg_path</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">error</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Result.from_dict"><a class="viewcode-back" href="../../api/result.html#gradefast.result.Result.from_dict">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a :class:`Result` from a :class:`dict`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        result: dict</span>
+<span class="sd">            Should contain `keys` `team_id`, `file` and `result_dict`. Can optionally contain</span>
+<span class="sd">            `comment` and `pkg_path`. </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`Result`</span>
+<span class="sd">            A :class:`Result` built from the result dictionary</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. doctest::</span>
+
+<span class="sd">            &gt;&gt;&gt; dict_repr_result = {&#39;team_id&#39;: 987, &#39;file&#39;: &#39;py&#39;, &#39;pkg_path&#39;: &#39;&#39;, &#39;result_dict&#39;:</span>
+<span class="sd">            ... {&#39;loss&#39;: 30, &#39;activation&#39;: 25, &#39;sgd&#39;: [14, -5, 10]}, &#39;exec_time&#39;: 0, &#39;comment&#39;: &#39;&#39;}</span>
+<span class="sd">            &gt;&gt;&gt; Result.from_dict(dict_repr_result)</span>
+<span class="sd">            Result(team_id: 987, file: py, result_dict: {&#39;loss&#39;: 30, &#39;activation&#39;: 25, </span>
+<span class="sd">            &#39;sgd&#39;: [14, -5, 10]}, exec_time: , pkg_path: , comment: )</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># if &#39;team_id&#39; in result:</span>
+        <span class="c1">#     team_id = result[&#39;team_id&#39;]</span>
+        <span class="c1"># if &#39;file&#39; in result:</span>
+        <span class="c1">#     file = result[&#39;file&#39;]</span>
+        <span class="c1"># if &#39;result_dict&#39; in result:</span>
+        <span class="c1">#     result_dict = result[&#39;result_dict&#39;]</span>
+        <span class="c1"># if &#39;exec_time&#39; in result:</span>
+        <span class="c1">#     exec_time = result[&#39;exec_time&#39;]</span>
+        <span class="c1"># if &#39;pkg_path&#39; in result:</span>
+        <span class="c1">#     pkg_path = result[&#39;pkg_path&#39;]</span>
+        <span class="c1"># if &#39;comment&#39; in result:</span>
+        <span class="c1">#     comment = result[&#39;comment&#39;]</span>
+        <span class="c1"># if &#39;error&#39; in result:</span>
+        <span class="c1">#     error = result[&#39;error&#39;]</span>
+
+        <span class="n">result_obj</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;team_id&#39;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;result_dict&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="n">copy_from</span><span class="p">(</span><span class="n">result_obj</span><span class="p">,</span> <span class="o">**</span><span class="n">result</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Result.to_dict"><a class="viewcode-back" href="../../api/result.html#gradefast.result.Result.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts from :class:`Result` to a :class:`dict`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. doctest::</span>
+
+<span class="sd">            &gt;&gt;&gt; result = Result(987, &#39;py&#39;, {&#39;loss&#39;: 30, &#39;activation&#39;: 25, &#39;sgd&#39;: [14, -5, 10]}, </span>
+<span class="sd">            ... exec_time=0.5, pkg_path=&#39;&#39;, comment=&#39;Hello&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; result.to_dict()</span>
+<span class="sd">            {&#39;team_id&#39;: 987, &#39;file&#39;: &#39;py&#39;, &#39;pkg_path&#39;: &#39;&#39;, &#39;result_dict&#39;: {&#39;loss&#39;: 30,</span>
+<span class="sd">            &#39;activation&#39;: 25, &#39;sgd&#39;: [14, -5, 10]}, &#39;exec_time&#39;: 0.5, &#39;comment&#39;: &#39;Hello&#39;}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span></div>
+
+<div class="viewcode-block" id="Result.to_flat_dict"><a class="viewcode-back" href="../../api/result.html#gradefast.result.Result.to_flat_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_flat_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result_params_prefix</span><span class="o">=</span><span class="s1">&#39;result_param&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a flat (or non-nested) :class:`dict` representation of :class:`Result`</span>
+
+<span class="sd">        The method is a utility used to serialize a result into a flat structure like a csv file. </span>
+<span class="sd">        The parameters and marks inside the result_dict are copied in the root dictionary along </span>
+<span class="sd">        with team_id, file and other optional parameters.  </span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. doctest::</span>
+
+<span class="sd">            &gt;&gt;&gt; r = Result(31, &#39;zip&#39;, {&#39;add&#39;: 5, &#39;subtract&#39;: [1, 3]})</span>
+<span class="sd">            &gt;&gt;&gt; r.to_flat_dict()</span>
+<span class="sd">            {&#39;team_id&#39;: 31, &#39;file&#39;: &#39;zip&#39;, &#39;pkg_path&#39;: &#39;&#39;, &#39;add&#39;: 5, &#39;subtract&#39;: [1, 3], </span>
+<span class="sd">            &#39;comment&#39;: &#39;&#39;}</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># return {&#39;team_id&#39;: self.team_id, &#39;file&#39;: self.file, </span>
+        <span class="c1"># &#39;exec_time&#39;: self.exec_time, &#39;pkg_path&#39;: self.pkg_path,</span>
+        <span class="c1"># **self.result_dict, &#39;comment&#39;: self.comment}</span>
+
+        <span class="n">flattened_dict</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">flatten</span><span class="p">({</span><span class="n">result_params_prefix</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_dict</span><span class="p">})</span>
+        
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;team_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">team_id</span><span class="p">,</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> 
+        <span class="s1">&#39;exec_time&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">exec_time</span><span class="p">,</span> <span class="s1">&#39;pkg_path&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pkg_path</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">flattened_dict</span><span class="p">,</span> <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="Result.flat_result"><a class="viewcode-back" href="../../api/result.html#gradefast.result.Result.flat_result">[docs]</a>    <span class="k">def</span> <span class="nf">flat_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add or average list of marks, if present, inside `result_dict` </span>
+
+<span class="sd">        A result_dict may have marks either as float (int) or as a list of floats (ints).</span>
+<span class="sd">        In the latter case, it means marks for multiple test cases were given. The method </span>
+<span class="sd">        allows us to add or average such lists of marks</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        average: bool, optional</span>
+<span class="sd">            Whether to average or add the marks from multiple `test cases` (Default </span>
+<span class="sd">            is True i.e. Average)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        :class:`Result`</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. doctest::</span>
+
+<span class="sd">            &gt;&gt;&gt; r = Result(5, &#39;png&#39;, {&#39;a&#39;: 5, &#39;b&#39;: [3, 10], &#39;c&#39;: [5]})</span>
+<span class="sd">            &gt;&gt;&gt; r.flat_result()</span>
+<span class="sd">            Result(team_id: 5, file: png, result_dict: {&#39;a&#39;: 5, &#39;b&#39;: 6.5, &#39;c&#39;: 5.0},</span>
+<span class="sd">            pkg_path: , comment: )</span>
+
+<span class="sd">        With ``average=False``, the method just adds the marks</span>
+<span class="sd">            </span>
+<span class="sd">            &gt;&gt;&gt; r = Result(5, &#39;png&#39;, {&#39;a&#39;: 5, &#39;b&#39;: [3, 10], &#39;c&#39;: [5]})</span>
+<span class="sd">            &gt;&gt;&gt; r.flat_result(average=False)</span>
+<span class="sd">            Result(team_id: 5, file: png, result_dict: {&#39;a&#39;: 5, &#39;b&#39;: 13, &#39;c&#39;: 5},</span>
+<span class="sd">            pkg_path: , comment: )</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result_copy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result_dict</span><span class="p">)</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">result_copy</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+                    <span class="n">result_copy</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_aggregate_test_cases</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">average</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result_copy</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="n">copy_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result_dict</span><span class="o">=</span><span class="n">result_copy</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Result.add"><a class="viewcode-back" href="../../api/result.html#gradefast.result.Result.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add marks from `result_dict` and return a :class:`Result` with result_dict containing </span>
+<span class="sd">        the `total`</span>
+
+<span class="sd">        The method adds values from all keys in result_dict and returns a :class:`Result` </span>
+<span class="sd">        whose ``result_dict`` contains only `total` key. You can choose to add or average </span>
+<span class="sd">        test cases from within this method itself</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        average: bool, optional</span>
+<span class="sd">            Whether to average or add the marks from multiple `test cases` (Default </span>
+<span class="sd">            is True i.e. Average)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        :class:`Result`</span>
+<span class="sd">            Result obtained after adding values corresponding to each grading parameter</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. doctest::</span>
+
+<span class="sd">            &gt;&gt;&gt; r = Result(5, &#39;png&#39;, {&#39;a&#39;: 5, &#39;b&#39;: [3, 10], &#39;c&#39;: [5]})</span>
+<span class="sd">            &gt;&gt;&gt; r.add()</span>
+<span class="sd">            Result(team_id: 5, file: png, result_dict: {&#39;total&#39;: 16.5}, pkg_path: , comment: )</span>
+
+<span class="sd">        With ``average=False``, the method simply adds the marks</span>
+<span class="sd">            </span>
+<span class="sd">            &gt;&gt;&gt; r = Result(5, &#39;png&#39;, {&#39;a&#39;: 5, &#39;b&#39;: [3, 10], &#39;c&#39;: [5]})</span>
+<span class="sd">            &gt;&gt;&gt; r.add(average=False)</span>
+<span class="sd">            Result(team_id: 5, file: png, result_dict: {&#39;total&#39;: 23}, pkg_path: , comment: )</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result_copy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result_dict</span><span class="p">)</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">result_copy</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+                    <span class="n">total</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_aggregate_test_cases</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">average</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span> 
+                    <span class="n">total</span> <span class="o">+=</span> <span class="n">value</span>
+
+        <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="n">copy_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;total&#39;</span><span class="p">:</span> <span class="n">total</span><span class="p">})</span></div>
+
+<div class="viewcode-block" id="Result.copy_from"><a class="viewcode-back" href="../../api/result.html#gradefast.result.Result.copy_from">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">copy_from</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a new :class:`Result` by adding properties from a base</span>
+<span class="sd">        :class:`Result` and :attr:`Result.copy_from.kwargs`</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        result: :class:`Result`</span>
+<span class="sd">            A base result to copy properties from</span>
+<span class="sd">        kwargs: tuple</span>
+<span class="sd">            A variable number of key=value pairs. **Key** represents names of</span>
+<span class="sd">            member fields to be set to given **value**.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`Result`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_result</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> 
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">new_result</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_result</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">multiply_list</span><span class="p">(</span><span class="n">marks</span><span class="p">,</span> <span class="n">weightage</span><span class="p">):</span>
+        <span class="n">final_marks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">marks</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Test cases marks should be numbers&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">weightage</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Weightages should be number or list of numbers&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">weightage</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">weightage</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">marks</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Either specify a single multiplier or all multiplers&quot;</span>  \
+                    <span class="s2">&quot;for weightages&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">weightage</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">weightage</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">marks</span><span class="p">)):</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">value</span> <span class="o">*</span> <span class="n">weightage</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">value</span> <span class="o">*</span> <span class="n">weightage</span>
+            <span class="n">final_marks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">final_marks</span>
+
+<div class="viewcode-block" id="Result.multiply"><a class="viewcode-back" href="../../api/result.html#gradefast.result.Result.multiply">[docs]</a>    <span class="k">def</span> <span class="nf">multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weightages</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Multiply marks in ``result_dict`` with weights or factors specified in ``weightages``</span>
+<span class="sd">        dict</span>
+
+<span class="sd">        Returns a :class:`Result` obtained by multiplying weights present in ``weightages``</span>
+<span class="sd">        dict with those corresponding to parameters present in ``result_dict``</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        weightages: dict</span>
+<span class="sd">            :class:`dict` of weights. Keys present should correspond to those in ``result_dict``. </span>
+<span class="sd">            Values should be ``float`` or ``int``</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`Result`</span>
+<span class="sd">            :class:`Result` obtained after applying weights</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. doctest::</span>
+
+<span class="sd">            &gt;&gt;&gt; result = Result(987, &#39;py&#39;, {&#39;loss&#39;: 30, &#39;activation&#39;: 25, &#39;backprop&#39;: [5, 6],</span>
+<span class="sd">            ... &#39;sgd&#39;: [14, -5, 10]}, exec_time=0.5, pkg_path=&#39;&#39;, comment=&#39;Hello&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; weightages = {&#39;loss&#39;: 0.5, &#39;activation&#39;: 1.5, &#39;backprop&#39;: 2, &#39;sgd&#39;: [0.5, 1, 2]}</span>
+<span class="sd">            &gt;&gt;&gt; result.multiply(weightages)</span>
+<span class="sd">            Result(team_id: 987, file: py, result_dict: {&#39;loss&#39;: 15.0, &#39;activation&#39;: 37.5,</span>
+<span class="sd">            &#39;backprop&#39;: [10, 12], &#39;sgd&#39;: [7.0, -5, 20]}, exec_time: 0.5, pkg_path: , comment: Hello)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result_copy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result_dict</span><span class="p">)</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">marks</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">weightages</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">marks</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">marks</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+                    <span class="n">result_copy</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">Result</span><span class="o">.</span><span class="n">multiply_list</span><span class="p">(</span><span class="n">marks</span><span class="p">,</span> <span class="n">weightages</span><span class="p">[</span><span class="n">param</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">marks</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">weightages</span><span class="p">[</span><span class="n">param</span><span class="p">])</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+                    <span class="n">result_copy</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">marks</span> <span class="o">*</span> <span class="n">weightages</span><span class="p">[</span><span class="n">param</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Marks and weightages for a parameter should be a number or&quot;</span>    \
+                        <span class="s2">&quot;number list. Marks cannot be a single number and weightages a list for&quot;</span>    \
+                        <span class="s2">&quot;same parameter.&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Marks for a parameter should be either a number or number list</span><span class="se">\</span>
+<span class="s1">                    and not NaN&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="n">copy_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result_dict</span><span class="o">=</span><span class="n">result_copy</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_aggregate_test_cases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result_of_test_cases</span><span class="p">,</span> <span class="n">average</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">            A test cased result will be a list and not a float/int value</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">result_of_test_cases</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span> <span class="ow">and</span> <span class="n">utils</span><span class="o">.</span><span class="n">is_string_number</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+                <span class="n">total</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">is_string_number</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">total</span> <span class="o">+=</span> <span class="n">value</span>
+        <span class="k">if</span> <span class="n">average</span><span class="p">:</span>
+            <span class="n">total</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">total</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">result_of_test_cases</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">total</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">rename</span><span class="p">(</span><span class="n">mapping</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+        <span class="n">new_result</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="n">renamed_result_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">new_result</span><span class="o">.</span><span class="n">result_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">mapping</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">renamed_result_dict</span><span class="p">[</span><span class="n">mapping</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span> <span class="o">=</span> <span class="n">new_result</span><span class="o">.</span><span class="n">result_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">renamed_result_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_result</span><span class="o">.</span><span class="n">result_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="n">copy_from</span><span class="p">(</span><span class="n">new_result</span><span class="p">,</span> <span class="n">result_dict</span><span class="o">=</span><span class="n">renamed_result_dict</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Result.join"><a class="viewcode-back" href="../../api/result.html#gradefast.result.Result.join">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="o">*</span><span class="n">results</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Concatenates ``result_dict`` from mutiple :class:`Result` objects</span>
+
+<span class="sd">        Joins or concatenates multiple results. The resultant ``result_dict`` will include </span>
+<span class="sd">        unique `keys` (parameters) from all the Result objects, thereby creating a union </span>
+<span class="sd">        of results. For this method to work, ``team_id`` of results should be same. ``file``, </span>
+<span class="sd">        ``pkg_path`` and ``comment`` are appended as lists.</span>
+
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        results: tuple</span>
+<span class="sd">            A tuple of :class:`Result`. Any number of result objects can be provided</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`Result`</span>
+<span class="sd">            Result representing union of results</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        -------</span>
+<span class="sd">        Exception</span>
+<span class="sd">            If ``team_id`` of results don&#39;t match</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. doctest::</span>
+
+<span class="sd">            &gt;&gt;&gt; result1 = Result(725, &#39;py&#39;, {&#39;loss&#39;: 10, &#39;activation&#39;: 5, &#39;sgd&#39;: [4, 5, &#39;6&#39;]},</span>
+<span class="sd">            ... exec_time=10, pkg_path=&#39;&#39;, comment=&#39;Hello&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; result2 = Result(725, &#39;py2&#39;, {&#39;cnn&#39;: 30, &#39;object_detect&#39;: 25}, exec_time=15, </span>
+<span class="sd">            ... pkg_path=&#39;./cnn/&#39;, comment=&#39;world&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; Result.join(result1, result2)</span>
+<span class="sd">            Result(team_id: 725, file: [&#39;py&#39;, &#39;py2&#39;], result_dict: {&#39;loss&#39;: 10, &#39;activation&#39;: 5,</span>
+<span class="sd">            &#39;sgd&#39;: [4, 5, &#39;6&#39;], &#39;cnn&#39;: 30, &#39;object_detect&#39;: 25}, exec_time: [10, 15],</span>
+<span class="sd">            pkg_path: [&#39;&#39;, &#39;./cnn/&#39;], comment: [&#39;Hello&#39;, &#39;world&#39;])</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">team_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">result</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">team_id</span><span class="p">,</span> <span class="n">results</span><span class="p">))</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">team_ids</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Results should have same team_ids&#39;</span><span class="p">)</span>
+
+        <span class="n">file_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">pkg_path_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">result_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">comment</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">exec_time</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">file</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+                <span class="n">file_list</span> <span class="o">+=</span> <span class="n">result</span><span class="o">.</span><span class="n">file</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">file_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">pkg_path</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+                <span class="n">pkg_path_list</span> <span class="o">+=</span> <span class="n">result</span><span class="o">.</span><span class="n">pkg_path</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pkg_path_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">pkg_path</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+                <span class="n">comment</span> <span class="o">+=</span> <span class="n">result</span><span class="o">.</span><span class="n">comment</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">comment</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">exec_time</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+                <span class="n">exec_time</span> <span class="o">+=</span> <span class="n">result</span><span class="o">.</span><span class="n">exec_time</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">exec_time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">exec_time</span><span class="p">)</span>
+
+            <span class="n">result_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">result_dict</span><span class="p">)</span>
+
+        <span class="n">joined_result</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">team_ids</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">file_list</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">,</span> 
+        <span class="n">exec_time</span><span class="o">=</span><span class="n">exec_time</span><span class="p">,</span> <span class="n">pkg_path</span><span class="o">=</span><span class="n">pkg_path_list</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">joined_result</span></div></div>
+
+
+<div class="viewcode-block" id="ResultGroup"><a class="viewcode-back" href="../../api/result.html#gradefast.result.ResultGroup">[docs]</a><span class="k">class</span> <span class="nc">ResultGroup</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Groups many :class:`Result` together</span>
+
+<span class="sd">    A :class:`ResultGroup` clubs multiple :class:`Result` together and includes additional </span>
+<span class="sd">    information like ``task_name`` and ``theme_name``. </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    task_name: str</span>
+<span class="sd">    theme_name: str</span>
+<span class="sd">    results: list, dict</span>
+<span class="sd">        List or dictionary of results. If dictionary, key should be a team_id and </span>
+<span class="sd">        value should be a :class:`Result`</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    task_name: str</span>
+<span class="sd">    theme_name: str</span>
+<span class="sd">    dict_of_results: dict</span>
+<span class="sd">        A dictionary of results where `key` is a team_id and `value` is a :class:`Result`</span>
+
+<span class="sd">    Warnings</span>
+<span class="sd">    ---------    </span>
+<span class="sd">    Result group is an iterator. Try not to mutate it and expect it to work fabulously thereafter.</span>
+<span class="sd">    </span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. doctest::</span>
+
+<span class="sd">        &gt;&gt;&gt; result1 = Result(725, &#39;py&#39;, {&#39;loss&#39;: 10, &#39;activation&#39;: 5, &#39;sgd&#39;: [4, 5, &#39;6&#39;]}, </span>
+<span class="sd">        ... exec_time=10, pkg_path=&#39;&#39;, comment=&#39;Hello&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; result2 = Result(109, &#39;py&#39;, {&#39;loss&#39;: 7, &#39;activation&#39;: 15, &#39;sgd&#39;: [14, -5, &#39;6&#39;]}, </span>
+<span class="sd">        ... exec_time=15, pkg_path=&#39;&#39;, comment=&#39;world&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; ResultGroup(&#39;Task1&#39;, &#39;Fish Theme&#39;, [result1, result2])</span>
+<span class="sd">        ResultGroup(task_name: Task1, theme_name: Fish Theme, dict_of_results: {725:</span>
+<span class="sd">        Result(team_id: 725, file: py, result_dict: {&#39;loss&#39;: 10, &#39;activation&#39;: 5,</span>
+<span class="sd">        &#39;sgd&#39;: [4, 5, &#39;6&#39;]}, exec_time: 10, pkg_path: , comment: Hello), 109:</span>
+<span class="sd">        Result(team_id: 109, file: py, result_dict: {&#39;loss&#39;: 7, &#39;activation&#39;: 15,</span>
+<span class="sd">        &#39;sgd&#39;: [14, -5, &#39;6&#39;]}, exec_time: 15, pkg_path: , comment: world)})</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">theme_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task_name</span> <span class="o">=</span> <span class="n">task_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">theme_name</span> <span class="o">=</span> <span class="n">theme_name</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_results</span> <span class="o">=</span> <span class="p">{</span><span class="n">result</span><span class="o">.</span><span class="n">team_id</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">team_id</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span> \
+                <span class="k">else</span> <span class="n">result</span><span class="o">.</span><span class="n">team_id</span><span class="p">:</span> <span class="n">result</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_results</span> <span class="o">=</span> <span class="n">results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_iter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_of_results</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+    
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_of_results</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_curr_idx</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_iter</span><span class="p">)</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_idx</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_results</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_idx</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_iter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_of_results</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">StopIteration</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="c1"># this method doesnt not consider private fields and functions</span>
+        <span class="c1"># when evaluating equals</span>
+        <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">object_equality</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;ResultGroup(task_name: </span><span class="si">{}</span><span class="s2">, theme_name: </span><span class="si">{}</span><span class="s2">, dict_of_results: </span><span class="si">{}</span><span class="s2">)&quot;</span>\
+            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">task_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theme_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_results</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+        
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">team_id</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">team_id</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
+                <span class="n">dict_of_results</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">*</span><span class="n">team_id</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">team_id</span><span class="o">.</span><span class="n">stop</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">dict_of_results</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span>
+                <span class="k">return</span> <span class="n">ResultGroup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">task_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theme_name</span><span class="p">,</span> <span class="n">dict_of_results</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">team_id</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">team_id</span><span class="p">)</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_results</span><span class="p">[</span><span class="n">team_id</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">team_id</span><span class="p">))</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_results</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">team_id</span><span class="p">)]</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">team_id</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">team_id</span><span class="p">)</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_results</span><span class="p">[</span><span class="n">team_id</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">team_id</span><span class="p">))</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_results</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">team_id</span><span class="p">)]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;Exception when attempting getitem where team_id: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">team_id</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">None</span>
+    
+    <span class="c1"># TODO: safely remove this</span>
+    <span class="c1"># def find_by_id(self, id):</span>
+    <span class="c1">#     # find result quickly by exploiting the fact that results are stored in sorted order</span>
+    <span class="c1">#     for team_id, result in self.dict_of_results.items():</span>
+    <span class="c1">#         if result.team_id == id:</span>
+    <span class="c1">#             return result</span>
+
+<div class="viewcode-block" id="ResultGroup.from_dict"><a class="viewcode-back" href="../../api/result.html#gradefast.result.ResultGroup.from_dict">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="n">group_dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a :class:`ResultGroup` from a :class:`dict`</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        group_dict: dict</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`ResultGroup`</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. doctest::</span>
+
+<span class="sd">            &gt;&gt;&gt; result_group_dict = {&#39;task_name&#39;: &#39;Task1&#39;, &#39;theme_name&#39;: &#39;Fish Theme&#39;,</span>
+<span class="sd">            ... &#39;dict_of_results&#39;: {725: {&#39;team_id&#39;: 725, &#39;file&#39;: &#39;py&#39;, &#39;pkg_path&#39;: &#39;&#39;,</span>
+<span class="sd">            ... &#39;result_dict&#39;: {&#39;loss&#39;: 10, &#39;activation&#39;: 5, &#39;sgd&#39;: [4, 5, &#39;6&#39;]}, &#39;exec_time&#39;: 10,</span>
+<span class="sd">            ... &#39;comment&#39;: &#39;Hello&#39;}, 109: {&#39;team_id&#39;: 109, &#39;file&#39;: &#39;py&#39;, &#39;pkg_path&#39;: &#39;&#39;,</span>
+<span class="sd">            ... &#39;result_dict&#39;: {&#39;loss&#39;: 7, &#39;activation&#39;: 15, &#39;sgd&#39;: [14, -5, &#39;6&#39;]}, &#39;exec_time&#39;: 15,</span>
+<span class="sd">            ... &#39;comment&#39;: &#39;world&#39;}}}</span>
+<span class="sd">            &gt;&gt;&gt; ResultGroup.from_dict(result_group_dict)</span>
+<span class="sd">            ResultGroup(task_name: Task1, theme_name: Fish Theme, dict_of_results:</span>
+<span class="sd">            {725: Result(team_id: 725, file: py, result_dict: {&#39;loss&#39;: 10, &#39;activation&#39;: 5,</span>
+<span class="sd">            &#39;sgd&#39;: [4, 5, &#39;6&#39;]}, exec_time: , pkg_path: Hello, comment: ), 109: </span>
+<span class="sd">            Result(team_id: 109, file: py, result_dict: {&#39;loss&#39;: 7, &#39;activation&#39;: 15,</span>
+<span class="sd">            &#39;sgd&#39;: [14, -5, &#39;6&#39;]}, exec_time: , pkg_path: world, comment: )})</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dict_of_results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">team_id</span><span class="p">,</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">group_dict</span><span class="p">[</span><span class="s1">&#39;dict_of_results&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">dict_of_results</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">team_id</span><span class="p">)]</span> <span class="o">=</span> <span class="n">Result</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">ResultGroup</span><span class="p">(</span><span class="n">group_dict</span><span class="p">[</span><span class="s1">&#39;task_name&#39;</span><span class="p">],</span> <span class="n">group_dict</span><span class="p">[</span><span class="s1">&#39;theme_name&#39;</span><span class="p">],</span> <span class="n">dict_of_results</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="ResultGroup.to_dict"><a class="viewcode-back" href="../../api/result.html#gradefast.result.ResultGroup.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts from :class:`ResultGroup` to a :class:`dict`</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result_group</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">result_group</span><span class="p">[</span><span class="s1">&#39;task_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_name</span>
+        <span class="n">result_group</span><span class="p">[</span><span class="s1">&#39;theme_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">theme_name</span>
+        
+        <span class="n">dict_of_results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">team_id</span><span class="p">,</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">dict_of_results</span><span class="p">[</span><span class="n">team_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">result_group</span><span class="p">[</span><span class="s1">&#39;dict_of_results&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dict_of_results</span>
+        <span class="k">return</span> <span class="n">result_group</span></div>
+
+    <span class="k">def</span> <span class="nf">to_flattened_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result_params_prefix</span><span class="o">=</span><span class="s1">&#39;result_param&#39;</span><span class="p">):</span>
+        <span class="n">flattened_results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">flattened_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">to_flat_dict</span><span class="p">(</span><span class="n">result_params_prefix</span><span class="o">=</span><span class="n">result_params_prefix</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">flattened_results</span>
+
+<div class="viewcode-block" id="ResultGroup.from_json"><a class="viewcode-back" href="../../api/result.html#gradefast.result.ResultGroup.from_json">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a :class:`ResultGroup` from a json file</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_path: str</span>
+<span class="sd">            Path to json file</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`ResultGroup`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># convert submissions array to json array</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;result_group_&#39;</span><span class="p">):</span>
+                    <span class="n">json_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s1">&#39;.json&#39;</span><span class="p">)</span>
+                    <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">json_file_path</span> <span class="o">=</span> <span class="n">file_path</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_file_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+            <span class="n">result_group_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">ResultGroup</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">result_group_dict</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ResultGroup.to_json"><a class="viewcode-back" href="../../api/result.html#gradefast.result.ResultGroup.to_json">[docs]</a>    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save a :class:`ResultGroup` object to json file</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        save_path: str</span>
+<span class="sd">            Path to json file or directory</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># convert submissions array to json array</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="s1">&#39;result_group_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theme_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">save_path</span><span class="p">):</span>
+            <span class="n">json_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s1">&#39;.json&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">json_file_path</span> <span class="o">=</span> <span class="n">save_path</span>
+
+        <span class="n">result_group_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_file_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">result_group_dict</span><span class="p">,</span> <span class="n">json_file</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="ResultGroup.result_group_file_name"><a class="viewcode-back" href="../../api/result.html#gradefast.result.ResultGroup.result_group_file_name">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">result_group_file_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns name of result_group file according to decided naming convention </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;result_group_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theme_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ResultGroup.from_csv"><a class="viewcode-back" href="../../api/result.html#gradefast.result.ResultGroup.from_csv">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_csv</span><span class="p">(</span><span class="n">save_location</span><span class="p">,</span> <span class="n">theme_name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">task_name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a :class:`ResultGroup` from csv file</span>
+
+<span class="sd">        .. todo::</span>
+
+<span class="sd">            The feature will be built soon.</span>
+
+<span class="sd">        .. deprecated:: 0.0.15</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        save_location: str</span>
+<span class="sd">            Path to csv file or directory</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># read csv into pandas dataframe</span>
+        <span class="c1"># iterate and convert each row into a Result object</span>
+        <span class="c1"># finally create a ResultGroup</span>
+        
+        <span class="n">csv_path</span><span class="p">,</span> <span class="n">meta_path</span> <span class="o">=</span> <span class="n">ResultGroup</span><span class="o">.</span><span class="n">_find_result_group_files</span><span class="p">(</span><span class="n">save_location</span><span class="p">,</span> 
+        <span class="n">theme_name</span><span class="p">,</span> <span class="n">task_name</span><span class="p">)</span>
+
+        <span class="n">dict_of_results</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv_path</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">itertuples</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="n">info_dict</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;team_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">team_id</span>
+            <span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">file</span>
+            <span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;pkg_path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">pkg_path</span>
+            <span class="n">result_dict</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">subtract_dict</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">_asdict</span><span class="p">()),</span> <span class="n">info_dict</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;pkg_path&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span> <span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;pkg_path&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span><span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;team_id&#39;</span><span class="p">],</span> <span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">],</span> <span class="n">result_dict</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span><span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;team_id&#39;</span><span class="p">],</span> <span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">],</span> <span class="n">result_dict</span><span class="p">,</span>
+                <span class="n">pkg_path</span><span class="o">=</span><span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;pkg_path&#39;</span><span class="p">])</span>
+            <span class="n">dict_of_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="c1"># print(dict_of_results)</span>
+        <span class="c1"># read json file</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">meta_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+            <span class="n">result_meta</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+        
+        <span class="c1"># print(result_meta)</span>
+        <span class="k">return</span> <span class="n">ResultGroup</span><span class="p">(</span><span class="n">result_meta</span><span class="p">[</span><span class="s1">&#39;task_name&#39;</span><span class="p">],</span> <span class="n">result_meta</span><span class="p">[</span><span class="s1">&#39;theme_name&#39;</span><span class="p">],</span> <span class="n">dict_of_results</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ResultGroup.to_csv"><a class="viewcode-back" href="../../api/result.html#gradefast.result.ResultGroup.to_csv">[docs]</a>    <span class="k">def</span> <span class="nf">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_location</span><span class="p">,</span> <span class="n">result_params_prefix</span><span class="o">=</span><span class="s1">&#39;result_params&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save a :class:`ResultGroup` object to csv file</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        save_location: str</span>
+<span class="sd">            Path to json file or directory</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># comments regarding what are restrictions on theme name and task name</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="s1">&#39;result_group_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theme_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">save_location</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">save_location</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_location</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># create csv</span>
+            <span class="n">list_of_dictionary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_flattened_list</span><span class="p">(</span><span class="n">result_params_prefix</span><span class="o">=</span><span class="n">result_params_prefix</span><span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">list_of_dictionary</span><span class="p">)</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="c1"># create json</span>
+            <span class="n">meta_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;task_name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_name</span><span class="p">,</span> <span class="s1">&#39;theme_name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">theme_name</span><span class="p">}</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span> <span class="o">+</span> <span class="s1">&#39;.json&#39;</span><span class="p">,</span> <span class="s1">&#39;w+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">meta_dict</span><span class="p">,</span> <span class="n">json_file</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;Exception when attempting to convert </span><span class="si">{}</span><span class="s1"> to csv </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_location</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_find_result_group_files</span><span class="p">(</span><span class="n">save_location</span><span class="p">,</span> <span class="n">theme_name</span><span class="p">,</span> <span class="n">task_name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">theme_name</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span> <span class="n">theme_name</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">task_name</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span> <span class="n">task_name</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;result_group_.*_.*\.(csv|json)$&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;result_group_.*_</span><span class="si">{}</span><span class="s2">\.(csv|json)$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">task_name</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">task_name</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="n">task_name</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;result_group_</span><span class="si">{}</span><span class="s2">_.*\.(csv|json)$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">theme_name</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;result_group_</span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">\.(csv|json)$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">theme_name</span><span class="p">,</span> <span class="n">task_name</span><span class="p">))</span>
+
+        <span class="n">csv_file_name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">meta_file_name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="n">list_of_items</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">save_location</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">list_of_items</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">m</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">file_extension</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;csv&#39;</span><span class="p">:</span>
+                    <span class="n">complement_file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">item</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.json&#39;</span>
+                    <span class="k">if</span> <span class="n">complement_file_name</span> <span class="ow">in</span> <span class="n">list_of_items</span><span class="p">:</span>
+                        <span class="n">meta_file_name</span> <span class="o">=</span> <span class="n">complement_file_name</span>
+                        <span class="n">csv_file_name</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;json&#39;</span><span class="p">:</span>
+                    <span class="n">complement_file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">item</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span>
+                    <span class="k">if</span> <span class="n">complement_file_name</span> <span class="ow">in</span> <span class="n">list_of_items</span><span class="p">:</span>
+                        <span class="n">meta_file_name</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                        <span class="n">csv_file_name</span> <span class="o">=</span> <span class="n">complement_file_name</span>
+        
+        <span class="n">csv_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_location</span><span class="p">,</span> <span class="n">csv_file_name</span><span class="p">)</span>
+        <span class="n">meta_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_location</span><span class="p">,</span> <span class="n">meta_file_name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">csv_path</span><span class="p">,</span> <span class="n">meta_path</span>
+
+<div class="viewcode-block" id="ResultGroup.comment_builder"><a class="viewcode-back" href="../../api/result.html#gradefast.result.ResultGroup.comment_builder">[docs]</a>    <span class="k">def</span> <span class="nf">comment_builder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Specify a method to make comments for each team based on their result</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        method: function</span>
+<span class="sd">            Takes a :class:`Result`, args and kwargs as arguments and returns a `comment` as ``str``</span>
+<span class="sd">        args: </span>
+<span class="sd">            Arguments specified by user given to the method</span>
+<span class="sd">        kwargs: </span>
+<span class="sd">            Named arguments specified by user given to the method</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. doctest::</span>
+
+<span class="sd">            &gt;&gt;&gt; # create a result_group that looks like below</span>
+<span class="sd">            ResultGroup(task_name: Task0, theme_name: Homecoming, dict_of_results: {75: </span>
+<span class="sd">            Result(team_id: 75, file: [&#39;py&#39;], result_dict: {&#39;loss&#39;: 15, &#39;activation&#39;: 5,</span>
+<span class="sd">            &#39;sgd&#39;: [4, 5, 7]}, pkg_path: abc, comment: ), 987: Result(team_id: 987, file: py,</span>
+<span class="sd">            result_dict: {&#39;loss&#39;: 30, &#39;activation&#39;: 25, &#39;sgd&#39;: [14, -5, 10]}, pkg_path: , </span>
+<span class="sd">            comment: ), 453: Result(team_id: 453, file: py, result_dict: {&#39;loss&#39;: 10,</span>
+<span class="sd">            &#39;activation&#39;: 5, &#39;sgd&#39;: [4, 5, &#39;6&#39;]}, pkg_path: , comment: )})</span>
+<span class="sd">            </span>
+<span class="sd">            &gt;&gt;&gt; def build_comment(result, gracemarks, cutoff): # the comment builder function</span>
+<span class="sd">            ...     total = result.add(average=False).result_dict[&#39;total&#39;]</span>
+<span class="sd">            ...     if total + gracemarks &gt; cutoff:</span>
+<span class="sd">            ...         return &quot;Congrats you passed&quot;</span>
+<span class="sd">            ...     return &quot;Please try again next year&quot;</span>
+
+<span class="sd">            &gt;&gt;&gt; result_group.comment_builder(build_comment, 5, 35)</span>
+<span class="sd">            &gt;&gt;&gt; new_result_group = result_group.make_comments()</span>
+<span class="sd">            &gt;&gt;&gt; print(new_result_group)</span>
+<span class="sd">            </span>
+<span class="sd">            ResultGroup(task_name: Task0, theme_name: Homecoming, dict_of_results: {75:</span>
+<span class="sd">            Result(team_id: 75, file: [&#39;py&#39;], result_dict: {&#39;loss&#39;: 15, &#39;activation&#39;: 5,</span>
+<span class="sd">            &#39;sgd&#39;: [4, 5, 7]}, pkg_path: abc, comment: Congrats you passed), 987: Result(</span>
+<span class="sd">            team_id: 987, file: py, result_dict: {&#39;loss&#39;: 30, &#39;activation&#39;: 25, </span>
+<span class="sd">            &#39;sgd&#39;: [14, -5, 10]}, pkg_path: , comment: Congrats you passed), 453: </span>
+<span class="sd">            Result(team_id: 453, file: py, result_dict: {&#39;loss&#39;: 10, &#39;activation&#39;: 5, </span>
+<span class="sd">            &#39;sgd&#39;: [4, 5, &#39;6&#39;]}, pkg_path: , comment: Please try again next year)})</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_build_comment</span> <span class="o">=</span> <span class="n">method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span></div>
+
+<div class="viewcode-block" id="ResultGroup.make_comments"><a class="viewcode-back" href="../../api/result.html#gradefast.result.ResultGroup.make_comments">[docs]</a>    <span class="k">def</span> <span class="nf">make_comments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Uses `method` specified in :attr:`comment_builder` to generate comments for each result </span>
+<span class="sd">        in ``dict_of_results``</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`ResultGroup`</span>
+<span class="sd">            :class:`ResultGroup` with each :class:`Result` having comments built using method </span>
+<span class="sd">            specified </span>
+<span class="sd">            in :class:`comment_builder`</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dict_of_results</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_of_results</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">team_id</span><span class="p">,</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_of_results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">dict_of_results</span><span class="p">[</span><span class="n">team_id</span><span class="p">]</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_comment</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">)</span>           
+        <span class="k">return</span> <span class="n">ResultGroup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">task_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theme_name</span><span class="p">,</span> <span class="n">dict_of_results</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Omkar Manjrekar
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+.. _notes:
+
+Notes
+=========
+
+.. toctree::
+
+    directory_structure

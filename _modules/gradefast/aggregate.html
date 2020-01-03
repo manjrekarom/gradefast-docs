@@ -1,0 +1,424 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>gradefast.aggregate &mdash; Gradefast 0.1.12 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Gradefast
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.12
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../what_is_gradefast.html">What is Gradefast?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notes/index.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../recipes/index.html">Recipes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">Api Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Download and Install</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Gradefast</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>gradefast.aggregate</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for gradefast.aggregate</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">gradefast</span> <span class="k">import</span> <span class="n">logconfig</span>
+<span class="kn">from</span> <span class="nn">gradefast.result</span> <span class="k">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">ResultGroup</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logconfig</span><span class="o">.</span><span class="n">configure_and_get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># TODO(manjrekarom): An option to transform result_dict entirely</span>
+<span class="c1"># This includes combining values from many parameters, excluding</span>
+<span class="c1"># some parameters, changing names of parameters, etc. </span>
+<div class="viewcode-block" id="Aggregate"><a class="viewcode-back" href="../../api/aggregate.html#gradefast.aggregate.Aggregate">[docs]</a><span class="k">class</span> <span class="nc">Aggregate</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Contains method to group multiple :class:`~gradefast.result.ResultGroup` in different </span>
+<span class="sd">    ways</span>
+
+<span class="sd">    Methods from this class may be used to combine results of same test, for instance, if </span>
+<span class="sd">    the submissions were sliced and results computed paralelly to save time. One can also</span>
+<span class="sd">    concatenate results from different tests for aggregating it to form a final result. </span>
+<span class="sd">    Finally one can aggregate parameters of a test to form a final grade.</span>
+
+<span class="sd">    For all such cases, use :class:`Aggregate`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: Throw error if compatible file_item_to_test or pkg_path are</span>
+    <span class="c1"># encountered</span>
+<div class="viewcode-block" id="Aggregate.combine"><a class="viewcode-back" href="../../api/aggregate.html#gradefast.aggregate.Aggregate.combine">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="o">*</span><span class="n">result_groups</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Combine multiple :class:`ResultGroup` obtained from **same**</span>
+<span class="sd">        :class:`~gradefast.test.GFTest` or :class:`~gradefad.GFCliTest`</span>
+
+<span class="sd">        .. warning::</span>
+
+<span class="sd">            When specifying result groups, please make sure they are supposed</span>
+<span class="sd">            to be coming from same type of test. The function will combine even</span>
+<span class="sd">            if they don&#39;t and **won&#39;t throw any error**.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        results_groups: tuple</span>
+<span class="sd">            As many result groups as you like to combine belonging to same test type</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`ResultGroup`</span>
+<span class="sd">            Combined results groups</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. doctest::</span>
+<span class="sd">        </span>
+<span class="sd">            &gt;&gt;&gt; # result groups obtained from the SAME TESTs but DIFFERENT SUBMISSIONs</span>
+<span class="sd">            &gt;&gt;&gt; result_group1 = ResultGroup(...) </span>
+<span class="sd">            &gt;&gt;&gt; result_group2 = ResultGroup(...)</span>
+<span class="sd">            &gt;&gt;&gt; result_group3 = ResultGroup(...)</span>
+<span class="sd">            &gt;&gt;&gt; Aggregate.combine(result_group1, result_group2, result_group3)</span>
+<span class="sd">            ResultGroup(...) </span>
+<span class="sd">            # result group with dict_of_results containing results from all 3 groups</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">final_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">result_groups</span><span class="p">:</span>
+            <span class="n">final_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">dict_of_results</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result_groups</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> 
+            <span class="n">combined_group</span> <span class="o">=</span> <span class="n">ResultGroup</span><span class="p">(</span><span class="n">result_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">task_name</span><span class="p">,</span> <span class="n">result_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">theme_name</span><span class="p">,</span>
+            <span class="n">final_dict</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Final result group: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">combined_group</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">combined_group</span>
+
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Aggregate.add"><a class="viewcode-back" href="../../api/aggregate.html#gradefast.aggregate.Aggregate.add">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="o">*</span><span class="n">result_groups</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add parameters in ``result_dict`` of all results present in :class:`ResultGroup`</span>
+<span class="sd">        to form a final total</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        results_groups: tuple</span>
+<span class="sd">            As many result groups as you like to combine belonging to same test type</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`ResultGroup`</span>
+<span class="sd">            Combined results groups obtained after adding</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">            &gt;&gt;&gt; # result groups obtained from SAME TESTs but DIFFERENT SUBMISSIONs</span>
+<span class="sd">            &gt;&gt;&gt; result_group1 = ResultGroup(...) </span>
+<span class="sd">            &gt;&gt;&gt; result_group2 = ResultGroup(...)</span>
+<span class="sd">            &gt;&gt;&gt; Aggregate.add(result_group1, result_group2)</span>
+<span class="sd">            ResultGroup(...) </span>
+<span class="sd">            # result groups are first combined and then each result parameter is summed</span>
+<span class="sd">            # to a total value. Output is a combined result_group having only &#39;total&#39; field</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Aggregate</span><span class="o">.</span><span class="n">operate</span><span class="p">(</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">result_groups</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="n">average</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Aggregate.multiply"><a class="viewcode-back" href="../../api/aggregate.html#gradefast.aggregate.Aggregate.multiply">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">multiply</span><span class="p">(</span><span class="n">weightages</span><span class="p">,</span> <span class="o">*</span><span class="n">result_groups</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transform marks by multiplying parameters with weightages in ``result_dict``</span>
+<span class="sd">        for all results present in :class:`ResultGroup`</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        results_groups: tuple</span>
+<span class="sd">            As many result groups as you like to multiply with weightages</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`ResultGroup`</span>
+<span class="sd">            Combined results groups obtained after multiplying</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">            &gt;&gt;&gt; # result groups obtained from SAME TESTs but DIFFERENT SUBMISSIONs</span>
+<span class="sd">            &gt;&gt;&gt; result_group1 = ResultGroup(...) </span>
+<span class="sd">            &gt;&gt;&gt; result_group2 = ResultGroup(...)</span>
+<span class="sd">            &gt;&gt;&gt; weightages = {&quot;param1&quot;: 2.5, &quot;param2&quot;: 1/3.0, &quot;param4&quot;: -5}</span>
+<span class="sd">            &gt;&gt;&gt; Aggregate.multiply(weightages, result_group1, result_group2)</span>
+<span class="sd">            ResultGroup(...) </span>
+<span class="sd">            # result groups are first combined and then each result parameter is scaled</span>
+<span class="sd">            # by value in weightage dictionary. Output is a combined result_group with </span>
+<span class="sd">            # all results scaled.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Aggregate</span><span class="o">.</span><span class="n">operate</span><span class="p">(</span><span class="s1">&#39;multiply&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">result_groups</span><span class="p">,</span> <span class="n">weightages</span><span class="o">=</span><span class="n">weightages</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Aggregate.flatten_test_cases"><a class="viewcode-back" href="../../api/aggregate.html#gradefast.aggregate.Aggregate.flatten_test_cases">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">flatten_test_cases</span><span class="p">(</span><span class="o">*</span><span class="n">result_groups</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Flatten test cases of ``result_dict`` for all results present in :class:`ResultGroup`</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        average: bool, optional</span>
+<span class="sd">            Whether to simply add or average the list of marks in test cases. Default</span>
+<span class="sd">            is False</span>
+<span class="sd">        results_groups: tuple</span>
+<span class="sd">            As many result groups as you like to combine belonging to same test type</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`ResultGroup`</span>
+<span class="sd">            Combined results groups obtained after flattening test cases</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">            &gt;&gt;&gt; # result groups obtained from **same** tests but **different** submissions</span>
+<span class="sd">            &gt;&gt;&gt; result_group1 = ResultGroup(...) </span>
+<span class="sd">            &gt;&gt;&gt; result_group2 = ResultGroup(...)</span>
+<span class="sd">            &gt;&gt;&gt; Aggregate.flatten_test_cases(result_group1, result_group2)</span>
+<span class="sd">            ResultGroup(...) </span>
+<span class="sd">            # result groups are first combined and then each result parameter having value</span>
+<span class="sd">            # of type list is flattened by adding (and/or averaging).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Aggregate</span><span class="o">.</span><span class="n">operate</span><span class="p">(</span><span class="s1">&#39;flatten_test_cases&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">result_groups</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="n">average</span><span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">operate</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="o">*</span><span class="n">result_groups</span><span class="p">,</span> <span class="n">weightages</span><span class="o">=</span><span class="p">{},</span> <span class="n">average</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result_groups</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">combined_group</span> <span class="o">=</span> <span class="n">Aggregate</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="o">*</span><span class="n">result_groups</span><span class="p">)</span>
+            <span class="n">final_result</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">combined_group</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;flatten_test_cases&#39;</span><span class="p">:</span>
+                    <span class="n">final_result</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">team_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">flat_result</span><span class="p">()</span>
+                <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;multiply&#39;</span><span class="p">:</span>
+                    <span class="n">final_result</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">team_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">weightages</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;add&#39;</span><span class="p">:</span>
+                    <span class="n">final_result</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">team_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">average</span><span class="o">=</span><span class="n">average</span><span class="p">)</span>
+            <span class="n">combined_group</span><span class="o">.</span><span class="n">dict_of_results</span> <span class="o">=</span> <span class="n">final_result</span>
+            <span class="k">return</span> <span class="n">combined_group</span>
+
+<div class="viewcode-block" id="Aggregate.join"><a class="viewcode-back" href="../../api/aggregate.html#gradefast.aggregate.Aggregate.join">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="o">*</span><span class="n">result_groups</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Concatenate multiple :class:`ResultGroup` performed on **same** </span>
+<span class="sd">        :class:`~gradefast.test.GFTest` or :class:`~gradefad.GFCliTest`</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        results_groups: tuple</span>
+<span class="sd">            As many result groups as you like to combine belonging to same test type</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        :class:`ResultGroup`</span>
+<span class="sd">            Joined result groups from different tests but of same teams  </span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">            &gt;&gt;&gt; # result groups obtained from DIFFERENT tests but SAME submissions</span>
+<span class="sd">            &gt;&gt;&gt; result_group1 = ResultGroup(...) </span>
+<span class="sd">            &gt;&gt;&gt; result_group2 = ResultGroup(...)</span>
+<span class="sd">            &gt;&gt;&gt; Aggregate.join(result_group1, result_group2)</span>
+<span class="sd">            ResultGroup(...)</span>
+<span class="sd">            # result in different result groups with same team_id are joined/concatenated to </span>
+<span class="sd">            # make a single result. The joined result contains parameters from both results. </span>
+<span class="sd">            # The output result_group&#39;s dict_of_results will contain such results for all team_ids. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">task_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">group</span><span class="p">:</span> <span class="n">group</span><span class="o">.</span><span class="n">task_name</span><span class="p">,</span> <span class="n">result_groups</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">task_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Result groups you are joining should be for the same task&#39;</span><span class="p">)</span>
+
+        <span class="n">theme_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">group</span><span class="p">:</span> <span class="n">group</span><span class="o">.</span><span class="n">theme_name</span><span class="p">,</span> <span class="n">result_groups</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">theme_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Result groups you are joining should be for the same theme&#39;</span><span class="p">)</span>
+
+        <span class="c1"># select results with particular team_ids and run join method on them</span>
+        <span class="n">team_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">result_groups</span><span class="p">:</span>
+            <span class="n">team_ids</span> <span class="o">=</span> <span class="n">team_ids</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">team_id</span><span class="p">:</span> <span class="n">team_id</span><span class="p">,</span> <span class="n">group</span><span class="o">.</span><span class="n">dict_of_results</span><span class="p">)))</span>
+            
+        <span class="n">final_results_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">team_id</span> <span class="ow">in</span> <span class="n">team_ids</span><span class="p">:</span>
+            <span class="n">joined_result</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">result_groups</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">joined_result</span> <span class="o">==</span> <span class="p">{}:</span>
+                    <span class="n">joined_result</span> <span class="o">=</span> <span class="n">Result</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">group</span><span class="p">[</span><span class="n">team_id</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">joined_result</span> <span class="o">=</span> <span class="n">Result</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">group</span><span class="p">[</span><span class="n">team_id</span><span class="p">],</span> <span class="n">joined_result</span><span class="p">)</span>
+            <span class="n">final_results_dict</span><span class="p">[</span><span class="n">team_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">joined_result</span>
+        
+        <span class="k">return</span> <span class="n">ResultGroup</span><span class="p">(</span><span class="n">result_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">task_name</span><span class="p">,</span> <span class="n">result_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">theme_name</span><span class="p">,</span> <span class="n">final_results_dict</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Omkar Manjrekar
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

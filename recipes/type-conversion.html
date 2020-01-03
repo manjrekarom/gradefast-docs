@@ -1,0 +1,274 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Converting between gradefast objects and python types &mdash; Gradefast 0.1.12 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Saving gradefast objects as JSON and CSV for later use" href="serialize-deserialize.html" />
+    <link rel="prev" title="Transforming result group obtained from evaluation" href="transform.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Gradefast
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.12
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../what_is_gradefast.html">What is Gradefast?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/index.html">Notes</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Recipes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="submission.html">Loading student submissions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="test.html">Writing tests that evaluate a downloaded submission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aggregate.html">Aggregating gradefast results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transform.html">Transforming result group obtained from evaluation</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Converting between gradefast objects and python types</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#converting-a-result-and-a-result-group">Converting a result and a result group</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="serialize-deserialize.html">Saving gradefast objects as JSON and CSV for later use</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Api Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Download and Install</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Gradefast</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Recipes</a> &raquo;</li>
+        
+      <li>Converting between gradefast objects and python types</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/recipes/type-conversion.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="converting-between-gradefast-objects-and-python-types">
+<span id="type-conversion-recipe"></span><h1>Converting between gradefast objects and python types<a class="headerlink" href="#converting-between-gradefast-objects-and-python-types" title="Permalink to this headline">¶</a></h1>
+<p>You can convert gradefast objects into primitive python types like dictionaries
+and list of dictionaries. Most of these methods start with a <cite>to_&lt;type&gt;</cite> and
+<cite>from_&lt;type&gt;</cite>.</p>
+<div class="section" id="converting-a-result-and-a-result-group">
+<h2>Converting a result and a result group<a class="headerlink" href="#converting-a-result-and-a-result-group" title="Permalink to this headline">¶</a></h2>
+<p>Gradefast provides to_dict methods to convert objects to dictionary. It is
+done to ensure interoperability with other python frameworks like pandas. You
+can then use the dictionary with other python packages and module like json
+module or pandas module.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gradefast.result</span> <span class="k">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">ResultGroup</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span><span class="mi">91</span><span class="p">,</span> <span class="s1">&#39;some_text_file&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;param1&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;param2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">7</span><span class="p">]},</span> 
+<span class="n">exec_time</span><span class="o">=</span><span class="mf">1.3325</span><span class="p">,</span> <span class="n">pkg_path</span><span class="o">=</span><span class="s1">&#39;some/pkg/&#39;</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;good recipe&#39;</span><span class="p">)</span>
+
+<span class="c1"># convert result to dict</span>
+<span class="n">result_repr_dict</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="c1"># convert dict to Result</span>
+<span class="n">reformed_result</span> <span class="o">=</span> <span class="n">Result</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">result_repr_dict</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span> <span class="o">==</span> <span class="n">reformed_result</span><span class="p">)</span> <span class="c1"># evaluates to true</span>
+
+<span class="c1"># importing result from a stored json just for the sake of example</span>
+<span class="c1"># but this will obviously work for any result group that you have</span>
+<span class="n">result_group</span> <span class="o">=</span> <span class="n">ResultGroup</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="s1">&#39;result_group_HomeComing_Task0.json&#39;</span><span class="p">)</span>
+
+<span class="c1"># convert result group to dict</span>
+<span class="n">result_group_repr_dict</span> <span class="o">=</span> <span class="n">result_group</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="c1"># convert dict to result group</span>
+<span class="n">reformed_result_group</span> <span class="o">=</span> <span class="n">ResultGroup</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">result_group_repr_dict</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result_group</span> <span class="o">==</span> <span class="n">reformed_result_group</span><span class="p">)</span> <span class="c1"># also evaluates to true</span>
+
+</pre></div>
+</div>
+<p>A dictionary can be nested. One may want a non-nested dictionary represntation
+like when you need to serialize the results into a csv. If your particular use
+case has such a requirement you can use these methods.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># you can also convert result groups to non-nested dictionaries needed</span>
+<span class="c1"># for some formats like csv</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">to_flat_dict</span><span class="p">(</span><span class="n">result_params_prefix</span><span class="o">=</span><span class="s1">&#39;result_dict&#39;</span><span class="p">))</span>
+<span class="c1"># evaluates to </span>
+<span class="c1"># {&#39;team_id&#39;: 91, &#39;file&#39;: &#39;some_text_file&#39;, &#39;exec_time&#39;: 1.3325, &#39;pkg_path&#39;: &#39;some/pkg/&#39;, &#39;result_dict_param1&#39;: 5, &#39;result_dict_param2&#39;: [10, 7], &#39;comment&#39;: &#39;good recipe&#39;}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result_group</span><span class="o">.</span><span class="n">to_flattened_list</span><span class="p">())</span>
+<span class="c1"># evaluates to</span>
+<span class="c1"># [{&#39;team_id&#39;: 55, &#39;file&#39;: &#39;py&#39;, &#39;exec_time&#39;: 0, &#39;pkg_path&#39;: &#39;&#39;, &#39;result_param_a&#39;: 1.0,</span>
+<span class="c1">#  &#39;result_param_b&#39;: 2.0, &#39;comment&#39;: &#39;&#39;}, {&#39;team_id&#39;: 36, &#39;file&#39;: &#39;py&#39;, &#39;exec_time&#39;: 0,</span>
+<span class="c1">#  &#39;pkg_path&#39;: &#39;&#39;, &#39;result_param_c&#39;: 3.45, &#39;result_param_b&#39;: 1, &#39;comment&#39;: &#39;&#39;}, {&#39;team_id&#39;: 79, </span>
+<span class="c1">#  &#39;file&#39;: &#39;png&#39;, &#39;exec_time&#39;: 0, &#39;pkg_path&#39;: &#39;&#39;, &#39;result_param_a&#39;: 5, &#39;result_param_c&#39;: 3, </span>
+<span class="c1">#  &#39;comment&#39;: &#39;&#39;}]</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="serialize-deserialize.html" class="btn btn-neutral float-right" title="Saving gradefast objects as JSON and CSV for later use" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="transform.html" class="btn btn-neutral float-left" title="Transforming result group obtained from evaluation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Omkar Manjrekar
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

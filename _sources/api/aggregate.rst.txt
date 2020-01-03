@@ -1,0 +1,6 @@
+Aggregate Module
+----------------
+
+.. automodule:: gradefast.aggregate
+    :members:
+    :member-order: bysource

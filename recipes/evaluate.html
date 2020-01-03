@@ -1,0 +1,502 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Evaluating tests on all downloaded submissions &mdash; Gradefast 0.1.12 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Gradefast
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.12
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../what_is_gradefast.html">What is Gradefast?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/index.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Recipes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Api Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Download and Install</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Gradefast</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Evaluating tests on all downloaded submissions</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/recipes/evaluate.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="evaluating-tests-on-all-downloaded-submissions">
+<span id="evaluate-recipe"></span><h1>Evaluating tests on all downloaded submissions<a class="headerlink" href="#evaluating-tests-on-all-downloaded-submissions" title="Permalink to this headline">¶</a></h1>
+<p>A test is core part of an evaluation. It checks for correctness of multiple
+cases and gives marks accordingly.</p>
+<p>In Gradefast, a test should be written by extending
+<a class="reference internal" href="../api/test.html#gradefast.test.GFTest" title="gradefast.test.GFTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">GFTest</span></code></a> and overriding the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">__call__()</span></code> method. At the moment, it
+supports two kinds of tests. The first test type is where a file item is
+evaluated and the second where a python module or a package needs to be
+imported.</p>
+<div class="section" id="output-of-a-test">
+<h2>Output of a test<a class="headerlink" href="#output-of-a-test" title="Permalink to this headline">¶</a></h2>
+<p>A test can output multiple parameters and marks for those parameters. Marks
+could be a single floating point number or even a list of floating point
+numbers if there are multiple test cases for that parameter. The parameters
+and marks form the <strong>result dictionary</strong>, with keys being the parameters and
+marks being the value.</p>
+<p>Along with marks, <strong>comments</strong> act as very important feedback for students to
+improve their scores in upcoming tasks.</p>
+<p>Finally, there might be <strong>errors</strong> while running the test that also need to be
+reported as feedback.</p>
+<p>In gradefast, a <strong>dictionary of marks</strong>, <strong>comment as a string</strong> and
+<strong>exceptions as a list of strings</strong> make up the output of a test.</p>
+</div>
+<div class="section" id="test-type-file">
+<h2>Test Type: File<a class="headerlink" href="#test-type-file" title="Permalink to this headline">¶</a></h2>
+<p>When your test takes as input a single uploaded file item, you can use the
+test type FILE. The file can be <cite>text</cite>, <cite>png</cite>, <cite>jpeg</cite> or even <cite>zip</cite>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Gradefast can find files only if they are stored following the conventions.
+See <a class="reference internal" href="../notes/directory_structure.html#directory-structure"><span class="std std-ref">Directory Structure</span></a>.</p>
+</div>
+<p>The test can be written by creating a class extending
+<a class="reference internal" href="../api/test.html#gradefast.test.GFTest" title="gradefast.test.GFTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">GFTest</span></code></a>. You set this test type by calling constructor
+of parent class with test_type set to TestType.FILE and file_item_to_test set
+as the intended upload item to test.</p>
+<p>When this mode is set, the <code class="xref py py-attr docutils literal notranslate"><span class="pre">__call__()</span></code>
+method receives filepath and <a class="reference internal" href="../api/submission.html#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a>
+information as parameters. You override the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">__call__()</span></code> method to write your test logic.
+Remember to output 3 values discussed earlier.</p>
+<p>In the test example provided, you can see that the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">__call__()</span></code> method receives two arguments,
+<cite>file_path</cite> and <cite>submission</cite>. The function returns 3 values, a result_dict,
+comment and list of exceptions.</p>
+<p>Notice on line 7, where we set the test_type as <strong>TestType.FILE</strong> and
+file_to_test as <strong>txt</strong>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">import</span> <span class="nn">gradefast</span>
+<span class="kn">from</span> <span class="nn">gradefast.test</span> <span class="k">import</span> <span class="n">GFTest</span><span class="p">,</span> <span class="n">TestType</span>
+
+<span class="k">class</span> <span class="nc">Task0Test</span><span class="p">(</span><span class="n">GFTest</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="hll">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">TestType</span><span class="o">.</span><span class="n">FILE</span><span class="p">,</span> <span class="s1">&#39;abc&#39;</span><span class="p">,</span> <span class="n">pkg_path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">plagiarism_check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span>
+        
+<span class="hll">    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">submission</span><span class="p">):</span>
+</span>        <span class="n">ideal</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;3.6&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;3.4&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;1.14&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="s1">&#39;0.18&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span> <span class="s1">&#39;0.23&#39;</span><span class="p">,</span>
+        <span class="mi">6</span><span class="p">:</span> <span class="s1">&#39;1.0&#39;</span><span class="p">,</span> <span class="mi">7</span><span class="p">:</span> <span class="s1">&#39;2.2&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">:</span> <span class="s1">&#39;0.4&#39;</span><span class="p">,</span> <span class="mi">9</span><span class="p">:</span> <span class="s1">&#39;0.2&#39;</span><span class="p">}</span>
+        <span class="c1"># print(&quot;\n\t&quot; + str(ideal))</span>
+
+        <span class="n">actual</span> <span class="o">=</span> <span class="n">ideal</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">ideal</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">ideal</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">ideal</span><span class="p">)</span>
+
+        <span class="c1"># ideal = [pyth_ver, cv2_ver, numpy_ver, sklearn_ver, pandas_ver, scipy_ver,</span>
+        <span class="c1">#  matplotlib_ver, pytorch_ver, torchvision_ver]</span>
+
+        <span class="n">change</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">file_path</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;grade&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span> <span class="s2">&quot;Task not submitted!&quot;</span><span class="p">,</span> <span class="kc">None</span>
+
+            <span class="n">test_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+            
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">Team ID = &quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">file_path</span><span class="p">)</span>
+
+            <span class="n">grade</span> <span class="o">=</span> <span class="mi">2</span>
+            <span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+            <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ideal</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                    
+                <span class="n">data</span> <span class="o">=</span> <span class="n">test_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+                <span class="n">decoded</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+
+                <span class="n">decoded</span> <span class="o">=</span> <span class="n">decoded</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">decoded</span><span class="p">[:(</span><span class="mi">6</span><span class="p">)],</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="n">decoded</span> <span class="o">=</span> <span class="n">decoded</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">decoded</span><span class="p">[</span><span class="o">-</span><span class="p">(</span><span class="mi">6</span><span class="p">):],</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+                <span class="c1"># actual.append(decoded)</span>
+                <span class="n">actual</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">decoded</span>
+
+                <span class="k">if</span> <span class="n">decoded</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;.&#39;</span><span class="p">:</span>
+
+                    <span class="n">result</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">decoded</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span>
+                    <span class="c1"># result.append(decoded[:4])</span>
+
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="n">result</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">decoded</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+                    <span class="c1"># result.append(decoded[:3])</span>
+
+                <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">ideal</span><span class="p">[</span><span class="n">idx</span><span class="p">]:</span>
+                    
+                    <span class="n">cnt</span> <span class="o">=</span> <span class="n">cnt</span> <span class="o">+</span> <span class="mi">1</span>
+
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="n">change</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">Kindly check this index libary version: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">cnt</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+                <span class="n">grade</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot;Good work. Keep it up !&quot;</span>
+                
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">Output is correct.&quot;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">grade</span> <span class="o">=</span> <span class="mi">2</span>
+                <span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot;Please check these versions: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">change</span><span class="p">)</span>
+
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">Output is not correct !&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Check this versions: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">change</span><span class="p">))</span>
+
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">ideal = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ideal</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">result = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+
+            <span class="c1"># row = [grade, comment]</span>
+            <span class="n">result_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;grade&quot;</span><span class="p">:</span> <span class="n">grade</span><span class="p">}</span>
+            <span class="c1"># sheet_writer.writerow(row)</span>
+
+            <span class="c1"># actual = []</span>
+            <span class="c1"># result = []</span>
+            <span class="n">change</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">actual</span> <span class="o">=</span> <span class="n">ideal</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">ideal</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">ideal</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">ideal</span><span class="p">)</span>
+            <span class="n">test_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            
+<span class="hll">            <span class="k">return</span> <span class="n">result_dict</span><span class="p">,</span> <span class="n">comment</span><span class="p">,</span> <span class="kc">None</span>
+</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># eval_sheet.close()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="ne">Exception</span><span class="o">.</span><span class="n">with_traceback</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>You can then use this test to run on entire submission group as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gradefast.submission</span> <span class="k">import</span> <span class="n">SubmissionGroup</span><span class="p">,</span> <span class="n">Submission</span>
+<span class="kn">from</span> <span class="nn">gradefast.evaluate</span> <span class="k">import</span> <span class="n">Evaluate</span>
+
+<span class="kn">from</span> <span class="nn">examples.task0_test</span> <span class="k">import</span> <span class="n">Task0Test</span>
+
+<span class="c1"># load submission group</span>
+<span class="n">submission_group</span> <span class="o">=</span> <span class="n">SubmissionGroup</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="s1">&#39;./tests/resources/submission_task0.json&#39;</span><span class="p">)</span>
+<span class="c1"># create object of the test</span>
+<span class="n">test</span> <span class="o">=</span> <span class="n">Task0Test</span><span class="p">()</span>
+
+<span class="c1"># file_path = &#39;some/file/path&#39;</span>
+<span class="c1"># submission = Submission(4, {&#39;png&#39;:&#39;path/to/png&#39;, &#39;txt&#39;: &#39;path/to/text&#39;})</span>
+<span class="c1"># you can also run test on a single file like this</span>
+<span class="c1"># result_dict, comment, exceptions = test(file_path, submission)</span>
+
+<span class="c1"># create an object of evaluate class</span>
+<span class="n">evaluate</span> <span class="o">=</span> <span class="n">Evaluate</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+<span class="c1"># run evaluate</span>
+<span class="n">result_group</span><span class="p">,</span> <span class="n">exception</span> <span class="o">=</span> <span class="n">evaluate</span><span class="p">(</span><span class="n">submission_group</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="test-type-package">
+<h2>Test Type: Package<a class="headerlink" href="#test-type-package" title="Permalink to this headline">¶</a></h2>
+<p>When you want to use libraries that student’s have written, for example,
+functions for building a 2-layer neural network, you need to import modules
+or packages written by them.</p>
+<p>In this case, the gradefast test acts as client code which runs methods and
+functions from student’s code and compares it with reference implementation or
+output. This mode is applicable to unzipped folders and respective zips, so the
+file_to_test parameter will always start with either zip or unzipped.</p>
+<p>The test can be written by creating a class extending
+<a class="reference internal" href="../api/test.html#gradefast.test.GFTest" title="gradefast.test.GFTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">GFTest</span></code></a>. You set this test type by calling constructor
+of parent class with test_type set to TestType.PKG and specifying the file_to
+test with zip or respective unzipped folder. Additionally, you have to specify
+the package_path which is one directory above the package directory.</p>
+<p>When this mode is set, the <code class="xref py py-attr docutils literal notranslate"><span class="pre">__call__()</span></code> method
+receives <a class="reference internal" href="../api/submission.html#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a> information only as a
+parameter. You override the <code class="xref py py-attr docutils literal notranslate"><span class="pre">__call__()</span></code> method to
+write your test logic. Remember to output 3 values as discussed earlier.</p>
+<p>Notice the highlighted lines</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tests.tests.test_activation</span> <span class="k">import</span> <span class="n">TestActivationModule</span>
+<span class="kn">from</span> <span class="nn">tests.tests.test_loss</span> <span class="k">import</span> <span class="n">TestLossModule</span>
+<span class="kn">from</span> <span class="nn">tests.tests.test_optimizer</span> <span class="k">import</span> <span class="n">TestOptimizerModule</span>
+<span class="kn">from</span> <span class="nn">tests.tests.test_model</span> <span class="k">import</span> <span class="n">TestModelModule</span>
+
+<span class="kn">from</span> <span class="nn">gradefast.test</span> <span class="k">import</span> <span class="n">GFTest</span><span class="p">,</span> <span class="n">TestType</span>
+
+<span class="c1"># make project folder scannable</span>
+<span class="c1"># sys.path.insert(0, project_path)</span>
+<span class="k">class</span> <span class="nc">Task1Test</span><span class="p">(</span><span class="n">GFTest</span><span class="p">):</span>
+    <span class="n">fieldnames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;sigmoid&#39;</span><span class="p">,</span> <span class="s1">&#39;softmax&#39;</span><span class="p">,</span> <span class="s1">&#39;delta_sigmoid&#39;</span><span class="p">,</span> <span class="s1">&#39;cross_entropy&#39;</span><span class="p">,</span> <span class="s1">&#39;delta_cross_entropy&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;mbgd&#39;</span><span class="p">,</span> <span class="s1">&#39;model_init&#39;</span><span class="p">,</span><span class="s1">&#39;model_weighted_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;model_forward&#39;</span><span class="p">,</span> <span class="s1">&#39;model_backward&#39;</span><span class="p">,</span> <span class="s1">&#39;model_calc_grad&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;model_train&#39;</span><span class="p">,</span> <span class="s1">&#39;model_predict&#39;</span><span class="p">,</span> <span class="s1">&#39;model_eval&#39;</span><span class="p">,</span> <span class="s1">&#39;exec_time&#39;</span><span class="p">]</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_item_to_test</span><span class="p">,</span> <span class="n">pkg_path</span><span class="p">):</span>
+<span class="hll">        <span class="nb">super</span><span class="p">(</span><span class="n">Task1Test</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">TestType</span><span class="o">.</span><span class="n">PYTHON</span><span class="p">,</span> <span class="n">file_item_to_test</span><span class="o">=</span><span class="n">file_item_to_test</span><span class="p">,</span> <span class="n">pkg_path</span><span class="o">=</span><span class="n">package_path</span><span class="p">)</span>
+</span>
+    <span class="k">def</span> <span class="nf">_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">submission</span><span class="p">):</span>
+        <span class="c1"># initialize scores for each case</span>
+        <span class="n">result_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fieldnames</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># collect errors to log</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">nnet</span> <span class="k">import</span> <span class="n">activation</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># traceback.print_exc(e)</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">nnet</span> <span class="k">import</span> <span class="n">loss</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># traceback.print_exc(e)</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">nnet</span> <span class="k">import</span> <span class="n">model</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># traceback.print_exc(e)</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">nnet</span> <span class="k">import</span> <span class="n">optimizer</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># traceback.print_exc(e)</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="c1"># dependency injection on tests</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">test_activation</span> <span class="o">=</span> <span class="n">TestActivationModule</span><span class="p">(</span><span class="n">activation</span><span class="p">)</span>
+            <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;sigmoid&#39;</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="n">test_activation</span><span class="o">.</span><span class="n">test_sigmoid</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Sigmoid:&#39;</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;sigmoid&#39;</span><span class="p">],</span> <span class="n">_</span><span class="p">)</span>
+            <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;softmax&#39;</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="n">test_activation</span><span class="o">.</span><span class="n">test_softmax</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Softmax:&#39;</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;softmax&#39;</span><span class="p">],</span> <span class="n">_</span><span class="p">)</span>
+            <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;delta_sigmoid&#39;</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="n">test_activation</span><span class="o">.</span><span class="n">test_delta_sigmoid</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Delta Sigmoid:&#39;</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;delta_sigmoid&#39;</span><span class="p">],</span> <span class="n">_</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># print(e)</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">test_loss</span> <span class="o">=</span> <span class="n">TestLossModule</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+            <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;cross_entropy&#39;</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="n">test_loss</span><span class="o">.</span><span class="n">test_cross_entropy</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Cross Entropy:&#39;</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;cross_entropy&#39;</span><span class="p">],</span> <span class="n">_</span><span class="p">)</span>
+            <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;delta_cross_entropy&#39;</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="n">test_loss</span><span class="o">.</span><span class="n">test_delta_cross_entropy_loss</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Delta Cross Entropy:&#39;</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;delta_cross_entropy&#39;</span><span class="p">],</span> <span class="n">_</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># print(e)</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">test_optimizer</span> <span class="o">=</span> <span class="n">TestOptimizerModule</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
+            <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;mbgd&#39;</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="n">test_optimizer</span><span class="o">.</span><span class="n">test_mbgd</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MBGD:&#39;</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;mbgd&#39;</span><span class="p">],</span> <span class="n">_</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">test_model</span> <span class="o">=</span> <span class="n">TestModelModule</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">activation</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span>
+            <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;model_init&#39;</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="n">test_model</span><span class="o">.</span><span class="n">test_init</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Model init:&#39;</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;model_init&#39;</span><span class="p">],</span> <span class="n">_</span><span class="p">)</span>
+            <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;model_weighted_sum&#39;</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span>  <span class="n">test_model</span><span class="o">.</span><span class="n">test_weighted_sum</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Model weighted sum:&#39;</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;model_weighted_sum&#39;</span><span class="p">],</span> <span class="n">_</span><span class="p">)</span>
+            <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;model_forward&#39;</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span>  <span class="n">test_model</span><span class="o">.</span><span class="n">test_forward</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Model forward:&#39;</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;model_forward&#39;</span><span class="p">],</span> <span class="n">_</span><span class="p">)</span>
+            <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;model_backward&#39;</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="n">test_model</span><span class="o">.</span><span class="n">test_backward</span><span class="p">()</span> 
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Model backward:&#39;</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;model_backward&#39;</span><span class="p">],</span> <span class="n">_</span><span class="p">)</span>
+            <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;model_calc_grad&#39;</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="n">test_model</span><span class="o">.</span><span class="n">test_calculate_grad</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Model calc grad:&#39;</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;model_calc_grad&#39;</span><span class="p">],</span> <span class="n">_</span><span class="p">)</span>
+            <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;model_train&#39;</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="n">test_model</span><span class="o">.</span><span class="n">test_train</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Model train:&#39;</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;model_train&#39;</span><span class="p">],</span> <span class="n">_</span><span class="p">)</span>
+            <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;model_predict&#39;</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="n">test_model</span><span class="o">.</span><span class="n">test_predict</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Model predict:&#39;</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;model_predict&#39;</span><span class="p">],</span> <span class="n">_</span><span class="p">)</span>
+            <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;model_eval&#39;</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="n">test_model</span><span class="o">.</span><span class="n">test_eval</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Model eval:&#39;</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;model_eval&#39;</span><span class="p">],</span> <span class="n">_</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># print(e)</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;exec_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Correct Arr:&quot;</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Errors:&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_tb</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">__traceback__</span><span class="p">)</span>
+        
+        <span class="c1"># THIS IS MY RESULT DICT</span>
+<span class="hll">        <span class="k">return</span> <span class="n">result_dict</span><span class="p">,</span> <span class="s1">&#39;No comments&#39;</span><span class="p">,</span> <span class="n">errors</span>
+</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">submission</span><span class="p">):</span>
+<span class="hll">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate</span><span class="p">(</span><span class="n">submission</span><span class="p">)</span>
+</span>        
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Omkar Manjrekar
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,347 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Command Module &mdash; Gradefast 0.1.12 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Evaluate Module" href="evaluate.html" />
+    <link rel="prev" title="Test Module" href="test.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Gradefast
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.12
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../what_is_gradefast.html">What is Gradefast?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/index.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes/index.html">Recipes</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Api Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="submission.html">Submission Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="test.html">Test Module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Command Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluate.html">Evaluate Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aggregate.html">Aggregate Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="result.html">Result Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">Utils Module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Download and Install</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Gradefast</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Api Reference</a> &raquo;</li>
+        
+      <li>Command Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/command.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-gradefast.command">
+<span id="command-module"></span><h1>Command Module<a class="headerlink" href="#module-gradefast.command" title="Permalink to this headline">¶</a></h1>
+<p>Command module allows executing ad hoc commands</p>
+<dl class="class">
+<dt id="gradefast.command.Command">
+<em class="property">class </em><code class="sig-prename descclassname">gradefast.command.</code><code class="sig-name descname">Command</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">command_builder</em>, <em class="sig-param">*args</em>, <em class="sig-param">working_directory='.'</em>, <em class="sig-param">long_running=False</em>, <em class="sig-param">timeout=None</em>, <em class="sig-param">log_directory='.'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/command.html#Command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.command.Command" title="Permalink to this definition">¶</a></dt>
+<dd><p>A runnable command</p>
+<p>A command in <a class="reference internal" href="test.html#gradefast.test.GFCommandTest" title="gradefast.test.GFCommandTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">gradefast.test.GFCommandTest</span></code></a> gets executed to
+return a result, comment and exceptions.</p>
+<p>Alternatively, a command can be executed before or after a test runs
+like for moving student’s code before execution and deleting it when
+test is done.</p>
+<p>A long running command can be started before a test like a socket server
+that listens for input.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Identifier of the command. If multiple words, use “_” (underscores) to
+concatenate them</p></li>
+<li><p><strong>command_builder</strong> (<em>function</em>) – A function that gets called with submission, <a href="#id1"><span class="problematic" id="id2">*</span></a>args and <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs</p></li>
+<li><p><strong>long_running</strong> (<em>bool</em><em>, </em><em>optional</em>) – Is the function long running? Default is False</p></li>
+<li><p><strong>working_directory</strong> (<em>str</em><em>, </em><em>optional</em>) – Directory from where the command is executed</p></li>
+<li><p><strong>timeout</strong> (<em>float</em><em>, </em><em>optional</em>) – Seconds to wait before the process completes</p></li>
+<li><p><strong>log_directory</strong> (<em>str</em><em>, </em><em>optional</em>) – Writes log at specified directory. Default is current working directory</p></li>
+<li><p><strong>args</strong> (<em>tuple</em><em>, </em><em>optional</em>) – Arguments passed to command_builder</p></li>
+<li><p><strong>kwargs</strong> (<em>namedtuple</em><em>, </em><em>optional</em>) – Named arguments passed to command_builder</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="gradefast.command.Command.name">
+<code class="sig-name descname">name</code><a class="headerlink" href="#gradefast.command.Command.name" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.command.Command.command_builder">
+<code class="sig-name descname">command_builder</code><a class="headerlink" href="#gradefast.command.Command.command_builder" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.command.Command.long_running">
+<code class="sig-name descname">long_running</code><a class="headerlink" href="#gradefast.command.Command.long_running" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.command.Command.cwd">
+<code class="sig-name descname">cwd</code><a class="headerlink" href="#gradefast.command.Command.cwd" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.command.Command.timeout">
+<code class="sig-name descname">timeout</code><a class="headerlink" href="#gradefast.command.Command.timeout" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.command.Command.args">
+<code class="sig-name descname">args</code><a class="headerlink" href="#gradefast.command.Command.args" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.command.Command.kwargs">
+<code class="sig-name descname">kwargs</code><a class="headerlink" href="#gradefast.command.Command.kwargs" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>namedtuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.command.Command.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">submission</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/command.html#Command.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.command.Command.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the command on a single submission. Creates log files that contains output
+(stdout) and error (stderr) obtained from running the command.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>submission</strong> (<cite>~gradefast.submission.Submission</cite>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.command.Command.kill">
+<code class="sig-name descname">kill</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/command.html#Command.kill"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.command.Command.kill" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kills the running command</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>out, err</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="evaluate.html" class="btn btn-neutral float-right" title="Evaluate Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="test.html" class="btn btn-neutral float-left" title="Test Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Omkar Manjrekar
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

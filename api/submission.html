@@ -1,0 +1,922 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Submission Module &mdash; Gradefast 0.1.12 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Test Module" href="test.html" />
+    <link rel="prev" title="Api Reference" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Gradefast
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.12
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../what_is_gradefast.html">What is Gradefast?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/index.html">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes/index.html">Recipes</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Api Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Submission Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="test.html">Test Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command.html">Command Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluate.html">Evaluate Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aggregate.html">Aggregate Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="result.html">Result Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">Utils Module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Download and Install</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Gradefast</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Api Reference</a> &raquo;</li>
+        
+      <li>Submission Module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/submission.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-gradefast.submission">
+<span id="submission-module"></span><h1>Submission Module<a class="headerlink" href="#module-gradefast.submission" title="Permalink to this headline">¶</a></h1>
+<p>Contains <a class="reference internal" href="#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a> and <a class="reference internal" href="#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a> classes that represent <cite>submission</cite>
+of a single <cite>team</cite> (or student) and <cite>many teams</cite> (or many students), respectively.</p>
+<p><a class="reference internal" href="#gradefast.submission.LoadSubmissions" title="gradefast.submission.LoadSubmissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadSubmissions</span></code></a> is a utility class to quickly populate a <a class="reference internal" href="#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a> from
+sources like <cite>web portal</cite>, <cite>filesystem</cite> or <cite>databases</cite>.</p>
+<dl class="class">
+<dt id="gradefast.submission.Submission">
+<em class="property">class </em><code class="sig-prename descclassname">gradefast.submission.</code><code class="sig-name descname">Submission</code><span class="sig-paren">(</span><em class="sig-param">team_id: int</em>, <em class="sig-param">items: dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#Submission"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.Submission" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a team (or student) submission information</p>
+<p>A <a class="reference internal" href="#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a> contains information about a team’s uploaded task items like images,
+text files or zips, on the web, filesystem or databases. Gradefast uses this information
+in utility classes like <code class="xref py py-class docutils literal notranslate"><span class="pre">Download</span></code> to download files locally. It
+also uses it to search and provide files to a <a class="reference internal" href="test.html#gradefast.test.GFTest" title="gradefast.test.GFTest"><code class="xref py py-class docutils literal notranslate"><span class="pre">GFTest</span></code></a> when executed
+from within an <code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluate</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>team_id</strong> (<em>int</em>) – Identifier of a team (or student)</p></li>
+<li><p><strong>items</strong> (<em>dict</em>) – Dictionary of uploaded items. <code class="docutils literal notranslate"><span class="pre">e.g.</span> <span class="pre">{'zip':</span> <span class="pre">{'url':</span> <span class="pre">'https://e-yantra.org/some.zip'},</span>
+<span class="pre">'png':</span> <span class="pre">{'url':</span> <span class="pre">'https://e-yantra.org/some.zip'}}</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="gradefast.submission.Submission.team_id">
+<code class="sig-name descname">team_id</code><a class="headerlink" href="#gradefast.submission.Submission.team_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identifier of a team (or student)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.submission.Submission.items">
+<code class="sig-name descname">items</code><a class="headerlink" href="#gradefast.submission.Submission.items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary of uploaded items. <code class="docutils literal notranslate"><span class="pre">e.g.</span> <span class="pre">{'zip':</span> <span class="pre">{'url':</span> <span class="pre">'https://e-yantra.org/some.zip'},</span>
+<span class="pre">'png':</span> <span class="pre">{'url':</span> <span class="pre">'https://e-yantra.org/some.zip'}}</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">team_id</span> <span class="o">=</span> <span class="mi">75</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">items</span> <span class="o">=</span>  <span class="p">{</span><span class="s1">&#39;png&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;http://eyntra.org/test.png&#39;</span><span class="p">,</span> <span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="s1">&#39;path/to/png.png&#39;</span><span class="p">},</span>
+<span class="gp">... </span><span class="s1">&#39;zoo&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;http://eyntra.org/zoo.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="s1">&#39;path/to/zoo.txt&#39;</span><span class="p">}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Submission</span><span class="p">(</span><span class="n">team_id</span><span class="p">,</span> <span class="n">items</span><span class="p">)</span>
+<span class="go">Submission({&#39;team_id&#39;: 75, &#39;items&#39;: {&#39;png&#39;: {&#39;url&#39;: &#39;http://eyntra.org/test.png&#39;, &#39;path&#39;:</span>
+<span class="go">&#39;path/to/png.png&#39;}, &#39;zoo&#39;: {&#39;url&#39;: &#39;http://eyntra.org/zoo.txt&#39;, &#39;path&#39;: &#39;path/to/zoo.txt&#39;}}})</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="gradefast.submission.Submission.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#Submission.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.Submission.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts from <a class="reference internal" href="#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a> to a <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">team_id</span> <span class="o">=</span> <span class="mi">75</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">items</span> <span class="o">=</span>  <span class="p">{</span><span class="s1">&#39;png&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;http://eyntra.org/test.png&#39;</span><span class="p">,</span> <span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="s1">&#39;path/to/png.png&#39;</span><span class="p">},</span>
+<span class="gp">... </span><span class="s1">&#39;zoo&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;http://eyntra.org/zoo.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="s1">&#39;path/to/zoo.txt&#39;</span><span class="p">}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">submission</span> <span class="o">=</span> <span class="n">Submission</span><span class="p">(</span><span class="n">team_id</span><span class="p">,</span> <span class="n">items</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">submission</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="go">{&#39;team_id&#39;: 75, &#39;items&#39;: {&#39;png&#39;: {&#39;url&#39;: &#39;http://eyntra.org/test.png&#39;, &#39;path&#39;:</span>
+<span class="go">&#39;path/to/png.png&#39;}, &#39;zoo&#39;: {&#39;url&#39;: &#39;http://eyntra.org/zoo.txt&#39;, &#39;path&#39;: &#39;path/to/zoo.txt&#39;}}}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.submission.Submission.from_dict">
+<em class="property">static </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param">submission_dict: dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#Submission.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.Submission.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <a class="reference internal" href="#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a> from a <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>submission_dict</strong> (<em>dict</em>) – Should contain <cite>keys</cite> <cite>team_id</cite>, and <cite>items</cite>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A <a class="reference internal" href="#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a> built from the submission dictionary</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">submission_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;team_id&#39;</span><span class="p">:</span> <span class="mi">75</span><span class="p">,</span> <span class="s1">&#39;items&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;png&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;http://eyntra.org/</span>
+<span class="gp">... </span><span class="n">test</span><span class="o">.</span><span class="n">png</span><span class="s1">&#39;, &#39;</span><span class="n">path</span><span class="s1">&#39;: &#39;</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">png</span><span class="o">.</span><span class="n">png</span><span class="s1">&#39;}, &#39;</span><span class="n">zoo</span><span class="s1">&#39;: {&#39;</span><span class="n">url</span><span class="s1">&#39;: &#39;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">eyntra</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">zoo</span><span class="o">.</span><span class="n">txt</span><span class="s1">&#39;,</span>
+<span class="gp">... </span><span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="s1">&#39;path/to/zoo.txt&#39;</span><span class="p">}}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Submission</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">submission_dict</span><span class="p">)</span>
+<span class="go">Submission({&#39;team_id&#39;: 75, &#39;items&#39;: {&#39;png&#39;: {&#39;url&#39;: &#39;http://eyntra.org/test.png&#39;,</span>
+<span class="go">&#39;path&#39;: &#39;path/to/png.png&#39;}, &#39;zoo&#39;: {&#39;url&#39;: &#39;http://eyntra.org/zoo.txt&#39;, &#39;path&#39;:</span>
+<span class="go">&#39;path/to/zoo.txt&#39;}}})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="gradefast.submission.SubmissionGroup">
+<em class="property">class </em><code class="sig-prename descclassname">gradefast.submission.</code><code class="sig-name descname">SubmissionGroup</code><span class="sig-paren">(</span><em class="sig-param">task_name: str, theme_name: str, submissions: Union[list, dict]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#SubmissionGroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.SubmissionGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Groups many <a class="reference internal" href="#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a> together</p>
+<p>A <a class="reference internal" href="#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a> clubs multiple <a class="reference internal" href="#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a> together and includes
+additional information like <code class="docutils literal notranslate"><span class="pre">task_name</span></code> and <code class="docutils literal notranslate"><span class="pre">theme_name</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task_name</strong> (<em>str</em>) – </p></li>
+<li><p><strong>theme_name</strong> (<em>str</em>) – </p></li>
+<li><p><strong>submissions</strong> (<em>list</em><em>, </em><em>dict</em>) – List or dictionary of submissions. If dictionary, key should be a team_id
+and value should be a <a class="reference internal" href="#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="gradefast.submission.SubmissionGroup.task_name">
+<code class="sig-name descname">task_name</code><a class="headerlink" href="#gradefast.submission.SubmissionGroup.task_name" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.submission.SubmissionGroup.theme_name">
+<code class="sig-name descname">theme_name</code><a class="headerlink" href="#gradefast.submission.SubmissionGroup.theme_name" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.submission.SubmissionGroup.dict_of_submissions">
+<code class="sig-name descname">dict_of_submissions</code><a class="headerlink" href="#gradefast.submission.SubmissionGroup.dict_of_submissions" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary of submissions where <cite>key</cite> is a team_id and <cite>value</cite> is a <a class="reference internal" href="#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmisisonGroup</span></code> is an iterator. Try not to mutate it and expect it to work fabulously thereafter.</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">team_id1</span> <span class="o">=</span> <span class="mi">75</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">items1</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;png&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;someurl&#39;</span><span class="p">,</span> <span class="s1">&#39;downloaded&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span> <span class="s1">&#39;py&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="s1">&#39;latest&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">submission1</span> <span class="o">=</span> <span class="n">Submission</span><span class="p">(</span><span class="n">team_id1</span><span class="p">,</span> <span class="n">items1</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">team_id2</span> <span class="o">=</span> <span class="mi">987</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">items2</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ipynb&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;pqwdm&#39;</span><span class="p">,</span> <span class="s1">&#39;downloaded&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span> <span class="s1">&#39;png&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;uuhsnad&#39;</span><span class="p">}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">submission2</span> <span class="o">=</span> <span class="n">Submission</span><span class="p">(</span><span class="n">team_id2</span><span class="p">,</span> <span class="n">items2</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">team_id3</span> <span class="o">=</span> <span class="mi">453</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">items3</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;py&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;gnlkj&#39;</span><span class="p">,</span> <span class="s1">&#39;downloaded&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span> <span class="s1">&#39;ipynb&#39;</span><span class="p">:</span> <span class="p">{}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">submission3</span> <span class="o">=</span> <span class="n">Submission</span><span class="p">(</span><span class="n">team_id3</span><span class="p">,</span> <span class="n">items3</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">SubmissionGroup</span><span class="p">(</span><span class="s1">&#39;Task0&#39;</span><span class="p">,</span> <span class="s1">&#39;Homecoming&#39;</span><span class="p">,</span> <span class="p">{</span><span class="n">submission</span><span class="o">.</span><span class="n">team_id</span><span class="p">:</span> <span class="n">submission</span>
+<span class="gp">... </span><span class="k">for</span> <span class="n">submission</span> <span class="ow">in</span> <span class="p">[</span><span class="n">submission1</span><span class="p">,</span> <span class="n">submission2</span><span class="p">,</span> <span class="n">submission3</span><span class="p">]})</span>
+<span class="go">SubmissionGroup(task_name: Task0, theme_name: Homecoming, dict_of_submissions: {75:</span>
+<span class="go">Submission({&#39;team_id&#39;: 75, &#39;items&#39;: {&#39;png&#39;: {&#39;url&#39;: &#39;someurl&#39;, &#39;downloaded&#39;: True},</span>
+<span class="go">&#39;py&#39;: {&#39;url&#39;: &#39;hello&#39;, &#39;latest&#39;: True}}}), 987: Submission({&#39;team_id&#39;: 987, &#39;items&#39;:</span>
+<span class="go">{&#39;ipynb&#39;: {&#39;url&#39;: &#39;pqwdm&#39;, &#39;downloaded&#39;: False}, &#39;png&#39;: {&#39;url&#39;: &#39;uuhsnad&#39;}}}), 453:</span>
+<span class="go">Submission({&#39;team_id&#39;: 453, &#39;items&#39;: {&#39;py&#39;: {&#39;url&#39;: &#39;gnlkj&#39;, &#39;downloaded&#39;: False},</span>
+<span class="go">&#39;ipynb&#39;: {}}})})</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="gradefast.submission.SubmissionGroup.from_dict">
+<em class="property">static </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param">group_dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#SubmissionGroup.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.SubmissionGroup.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <a class="reference internal" href="#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a> from a <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>group_dict</strong> (<em>dict</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">submission_group_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;task_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Task0&#39;</span><span class="p">,</span> <span class="s1">&#39;theme_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Homecoming&#39;</span><span class="p">,</span>
+<span class="gp">... </span><span class="s1">&#39;dict_of_submissions&#39;</span><span class="p">:</span> <span class="p">{</span><span class="mi">75</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;team_id&#39;</span><span class="p">:</span> <span class="mi">75</span><span class="p">,</span> <span class="s1">&#39;items&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;png&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;someurl&#39;</span><span class="p">,</span>
+<span class="gp">... </span><span class="s1">&#39;downloaded&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span> <span class="s1">&#39;py&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="s1">&#39;latest&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}}},</span> <span class="mi">987</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;team_id&#39;</span><span class="p">:</span> <span class="mi">987</span><span class="p">,</span>
+<span class="gp">... </span><span class="s1">&#39;items&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;ipynb&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;pqwdm&#39;</span><span class="p">,</span> <span class="s1">&#39;downloaded&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span> <span class="s1">&#39;png&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;uuhsnad&#39;</span><span class="p">}}},</span>
+<span class="gp">... </span><span class="mi">453</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;team_id&#39;</span><span class="p">:</span> <span class="mi">453</span><span class="p">,</span> <span class="s1">&#39;items&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;py&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;gnlkj&#39;</span><span class="p">,</span> <span class="s1">&#39;downloaded&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span> <span class="s1">&#39;ipynb&#39;</span><span class="p">:</span>
+<span class="gp">... </span><span class="p">{}}}}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">SubmissionGroup</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">submission_group_dict</span><span class="p">)</span>
+<span class="go">SubmissionGroup(task_name: Task0, theme_name: Homecoming, dict_of_submissions: {75:</span>
+<span class="go">Submission({&#39;team_id&#39;: 75, &#39;items&#39;: {&#39;png&#39;: {&#39;url&#39;: &#39;someurl&#39;, &#39;downloaded&#39;: True},</span>
+<span class="go">&#39;py&#39;: {&#39;url&#39;: &#39;hello&#39;, &#39;latest&#39;: True}}}), 987: Submission({&#39;team_id&#39;: 987, &#39;items&#39;:</span>
+<span class="go">{&#39;ipynb&#39;: {&#39;url&#39;: &#39;pqwdm&#39;, &#39;downloaded&#39;: False}, &#39;png&#39;: {&#39;url&#39;: &#39;uuhsnad&#39;}}}), 453:</span>
+<span class="go">Submission({&#39;team_id&#39;: 453, &#39;items&#39;: {&#39;py&#39;: {&#39;url&#39;: &#39;gnlkj&#39;, &#39;downloaded&#39;: False},</span>
+<span class="go">&#39;ipynb&#39;: {}}})})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.submission.SubmissionGroup.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#SubmissionGroup.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.SubmissionGroup.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts from <a class="reference internal" href="#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a> to a <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">submission_group</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="go">{&#39;task_name&#39;: &#39;Task0&#39;, &#39;theme_name&#39;: &#39;Homecoming&#39;, &#39;dict_of_submissions&#39;: {75:</span>
+<span class="go">{&#39;team_id&#39;: 75, &#39;items&#39;: {&#39;png&#39;: {&#39;url&#39;: &#39;someurl&#39;, &#39;downloaded&#39;: True}, &#39;py&#39;:</span>
+<span class="go">{&#39;url&#39;: &#39;hello&#39;, &#39;latest&#39;: True}}}, 987: {&#39;team_id&#39;: 987, &#39;items&#39;: {&#39;ipynb&#39;:</span>
+<span class="go">{&#39;url&#39;: &#39;pqwdm&#39;, &#39;downloaded&#39;: False}, &#39;png&#39;: {&#39;url&#39;: &#39;uuhsnad&#39;}}}, 453: {&#39;team_id&#39;:</span>
+<span class="go">453, &#39;items&#39;: {&#39;py&#39;: {&#39;url&#39;: &#39;gnlkj&#39;, &#39;downloaded&#39;: False}, &#39;ipynb&#39;: {}}}}}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.submission.SubmissionGroup.from_json">
+<em class="property">static </em><code class="sig-name descname">from_json</code><span class="sig-paren">(</span><em class="sig-param">file_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#SubmissionGroup.from_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.SubmissionGroup.from_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a <a class="reference internal" href="#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a> from a json file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<em>str</em>) – Path to json file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">SubmissionGroup</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="s1">&#39;path/to/json/file&#39;</span><span class="p">)</span>
+<span class="go">SubmissionGroup(task_name: Task0, theme_name: Homecoming, dict_of_submissions: {75:</span>
+<span class="go">Submission({&#39;team_id&#39;: 75, &#39;items&#39;: {&#39;png&#39;: {&#39;url&#39;: &#39;someurl&#39;, &#39;downloaded&#39;: True},</span>
+<span class="go">&#39;py&#39;: {&#39;url&#39;: &#39;hello&#39;, &#39;latest&#39;: True}}}), 987: Submission({&#39;team_id&#39;: 987, &#39;items&#39;:</span>
+<span class="go">{&#39;ipynb&#39;: {&#39;url&#39;: &#39;pqwdm&#39;, &#39;downloaded&#39;: False}, &#39;png&#39;: {&#39;url&#39;: &#39;uuhsnad&#39;}}}), 453:</span>
+<span class="go">Submission({&#39;team_id&#39;: 453, &#39;items&#39;: {&#39;py&#39;: {&#39;url&#39;: &#39;gnlkj&#39;, &#39;downloaded&#39;: False},</span>
+<span class="go">&#39;ipynb&#39;: {}}})})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.submission.SubmissionGroup.to_json">
+<code class="sig-name descname">to_json</code><span class="sig-paren">(</span><em class="sig-param">save_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#SubmissionGroup.to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.SubmissionGroup.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a <a class="reference internal" href="#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a> object to json file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>save_path</strong> (<em>str</em>) – Path to json file or directory</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">submission_group</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="s1">&#39;path/to/json/file&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="gradefast.submission.LoadSubmissions">
+<em class="property">class </em><code class="sig-prename descclassname">gradefast.submission.</code><code class="sig-name descname">LoadSubmissions</code><span class="sig-paren">(</span><em class="sig-param">cookie: str = '', task_url: str = '', task_name: str = '', theme_name: str = '', fs_location: str = '', types: list = ['zip'], after_date='', before_date='', scraper: object = 'default2019'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#LoadSubmissions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.LoadSubmissions" title="Permalink to this definition">¶</a></dt>
+<dd><p>A utility class to load submission information from web portal, filesystem or databases</p>
+<p>Use this class to populate information about submission from web page or filesystem. Unless
+you want to create only a few <a class="reference internal" href="#gradefast.submission.Submission" title="gradefast.submission.Submission"><code class="xref py py-class docutils literal notranslate"><span class="pre">Submission</span></code></a> objects for testing, <a class="reference internal" href="#gradefast.submission.LoadSubmissions.get_submissions" title="gradefast.submission.LoadSubmissions.get_submissions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_submissions()</span></code></a>
+of this class should be the preferred way to load and create a <a class="reference internal" href="#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#gradefast.submission.LoadSubmissions" title="gradefast.submission.LoadSubmissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadSubmissions</span></code></a> is never instantiated directly. Use either <a class="reference internal" href="#gradefast.submission.LoadSubmissions.from_url" title="gradefast.submission.LoadSubmissions.from_url"><code class="xref py py-attr docutils literal notranslate"><span class="pre">LoadSubmissions.from_url</span></code></a>
+or <a class="reference internal" href="#gradefast.submission.LoadSubmissions.from_fs" title="gradefast.submission.LoadSubmissions.from_fs"><code class="xref py py-attr docutils literal notranslate"><span class="pre">LoadSubmissions.from_fs</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cookie</strong> (<em>str</em><em>, </em><em>optional</em>) – HTTP cookie obtained from the logged in session on the web portal.</p></li>
+<li><p><strong>task_url</strong> (<em>str</em><em>, </em><em>optional</em>) – Url of the web page showing information to download files.
+<code class="docutils literal notranslate"><span class="pre">e.g.</span> <span class="pre">'http://old.e-yantra.org/admin/grade/task0'</span></code></p></li>
+<li><p><strong>task_name</strong> (<em>str</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>theme_name</strong> (<em>str</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>fs_location</strong> (<em>str</em><em>, </em><em>optional</em>) – Filesystem location where the downloaded files were stored. You can use this option for
+testing by creating the directory structure according to downloading conventions</p></li>
+<li><p><strong>types</strong> (<em>list</em><em>, </em><em>optional</em>) – List of items to download from all the items available. <code class="docutils literal notranslate"><span class="pre">e.g.</span> <span class="pre">['zip',</span>
+<span class="pre">'png2',</span> <span class="pre">'txt1']</span></code>. Default is [‘zip’]</p></li>
+<li><p><strong>after_date</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>datetime</em><em>]</em><em>, </em><em>optional</em>) – If specified, submissions uploaded only at or after provided datetime or date string will
+be considered in submission_group</p></li>
+<li><p><strong>before_date</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>datetime</em><em>]</em><em>, </em><em>optional</em>) – If specified, submissions uploaded only at or before provided datetime or date string will
+be considered in submission_group</p></li>
+<li><p><strong>scraper</strong> (str, <a class="reference internal" href="#gradefast.submission.Scraper" title="gradefast.submission.Scraper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scraper</span></code></a>, optional) – If ‘default’, then use <a class="reference internal" href="#gradefast.submission.DefaultScraper" title="gradefast.submission.DefaultScraper"><code class="xref py py-class docutils literal notranslate"><span class="pre">DefaultScraper</span></code></a>, else use provided <a class="reference internal" href="#gradefast.submission.Scraper" title="gradefast.submission.Scraper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scraper</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="gradefast.submission.LoadSubmissions.cookie">
+<code class="sig-name descname">cookie</code><a class="headerlink" href="#gradefast.submission.LoadSubmissions.cookie" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP cookie obtained from the logged in session on the web portal</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.submission.LoadSubmissions.task_url">
+<code class="sig-name descname">task_url</code><a class="headerlink" href="#gradefast.submission.LoadSubmissions.task_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Url of the web page showing information to download files.
+<code class="docutils literal notranslate"><span class="pre">e.g.</span> <span class="pre">'http://old.e-yantra.org/admin/grade/task0'</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.submission.LoadSubmissions.task_name">
+<code class="sig-name descname">task_name</code><a class="headerlink" href="#gradefast.submission.LoadSubmissions.task_name" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.submission.LoadSubmissions.theme_name">
+<code class="sig-name descname">theme_name</code><a class="headerlink" href="#gradefast.submission.LoadSubmissions.theme_name" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.submission.LoadSubmissions.fs_location">
+<code class="sig-name descname">fs_location</code><a class="headerlink" href="#gradefast.submission.LoadSubmissions.fs_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filesystem location where the downloaded files were stored. You can use this option for
+testing by creating the directory structure according to downloading conventions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.submission.LoadSubmissions.types">
+<code class="sig-name descname">types</code><a class="headerlink" href="#gradefast.submission.LoadSubmissions.types" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of items to download from all the items available. <code class="docutils literal notranslate"><span class="pre">e.g.</span> <span class="pre">['zip',</span> <span class="pre">'png2',</span> <span class="pre">'txt1']</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.submission.LoadSubmissions.after_date">
+<code class="sig-name descname">after_date</code><a class="headerlink" href="#gradefast.submission.LoadSubmissions.after_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>If specified, submissions uploaded only at or after provided datetime or date string will
+be considered in submission_group</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Union[str, datetime]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.submission.LoadSubmissions.before_date">
+<code class="sig-name descname">before_date</code><a class="headerlink" href="#gradefast.submission.LoadSubmissions.before_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>If specified, submissions uploaded only at or before provided datetime or date string will
+be considered in submission_group</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Union[str, datetime]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="gradefast.submission.LoadSubmissions.scraper">
+<code class="sig-name descname">scraper</code><a class="headerlink" href="#gradefast.submission.LoadSubmissions.scraper" title="Permalink to this definition">¶</a></dt>
+<dd><p>If ‘default’, then use <a class="reference internal" href="#gradefast.submission.DefaultScraper" title="gradefast.submission.DefaultScraper"><code class="xref py py-class docutils literal notranslate"><span class="pre">DefaultScraper</span></code></a>, else use provided <a class="reference internal" href="#gradefast.submission.Scraper" title="gradefast.submission.Scraper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scraper</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str, <a class="reference internal" href="#gradefast.submission.Scraper" title="gradefast.submission.Scraper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scraper</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.submission.LoadSubmissions.from_url">
+<em class="property">static </em><code class="sig-name descname">from_url</code><span class="sig-paren">(</span><em class="sig-param">task_url: str, cookie: str, task_name: str, theme_name: str, types: list = ['zip'], before_date: Union[str, datetime.datetime] = '', after_date: Union[str, datetime.datetime] = '', scraper: object = 'default2019'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#LoadSubmissions.from_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.LoadSubmissions.from_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <a class="reference internal" href="#gradefast.submission.LoadSubmissions" title="gradefast.submission.LoadSubmissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadSubmissions</span></code></a> object with information necessary to fetch submissions
+from a webpage</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task_url</strong> (<em>str</em>) – </p></li>
+<li><p><strong>cookie</strong> (<em>str</em>) – </p></li>
+<li><p><strong>task_name</strong> (<em>str</em>) – </p></li>
+<li><p><strong>theme_name</strong> (<em>str</em>) – </p></li>
+<li><p><strong>types</strong> (<em>list</em>) – </p></li>
+<li><p><strong>before_date</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>datetime</em><em>]</em>) – </p></li>
+<li><p><strong>after_date</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>datetime</em><em>]</em>) – </p></li>
+<li><p><strong>scraper</strong> (str or <a class="reference internal" href="#gradefast.submission.Scraper" title="gradefast.submission.Scraper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scraper</span></code></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gradefast.submission.LoadSubmissions" title="gradefast.submission.LoadSubmissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadSubmissions</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">task_url</span> <span class="o">=</span> <span class="s1">&#39;http://old.e-yantra.org/admin/grade/task0&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">task_name</span> <span class="o">=</span> <span class="s1">&#39;Task0&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">theme_name</span> <span class="o">=</span> <span class="s1">&#39;Homecoming&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">types</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="s1">&#39;ipynb&#39;</span><span class="p">,</span> <span class="s1">&#39;txt&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scraper</span> <span class="o">=</span> <span class="s1">&#39;default2019&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cookie</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;eyrc18_session&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
+<span class="gp">... </span><span class="n">eyJpdiI6Ikk1T1JtRnl3WFdlM2l5TXBDc0RITHc9PSIsInZhbHVlIjoiemZ0b2JzaEh</span><span class="o">...</span><span class="n">DE1ZiJ9</span><span class="s1">&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">LoadSubmissions</span><span class="o">.</span><span class="n">from_url</span><span class="p">(</span><span class="n">task_url</span><span class="p">,</span> <span class="n">cookie</span><span class="p">,</span> <span class="n">task_name</span><span class="p">,</span>
+<span class="gp">... </span><span class="n">theme_name</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="n">types</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
+<span class="go">&lt;gradefast.submission.LoadSubmissions object at 0x7ff510f4d550&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.submission.LoadSubmissions.from_fs">
+<em class="property">static </em><code class="sig-name descname">from_fs</code><span class="sig-paren">(</span><em class="sig-param">fs_location: str</em>, <em class="sig-param">task_name: str</em>, <em class="sig-param">theme_name: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#LoadSubmissions.from_fs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.LoadSubmissions.from_fs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <a class="reference internal" href="#gradefast.submission.LoadSubmissions" title="gradefast.submission.LoadSubmissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadSubmissions</span></code></a> object with information necessary to fetch submissions
+from a filesystem location</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fs_location</strong> (<em>str</em>) – </p></li>
+<li><p><strong>task_name</strong> (<em>str</em>) – </p></li>
+<li><p><strong>theme_name</strong> (<em>str</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gradefast.submission.LoadSubmissions" title="gradefast.submission.LoadSubmissions"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadSubmissions</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">LoadSubmissions</span><span class="o">.</span><span class="n">from_fs</span><span class="p">(</span><span class="s1">&#39;Task2&#39;</span><span class="p">,</span> <span class="s1">&#39;Planter Bot&#39;</span><span class="p">,</span> <span class="s1">&#39;tests/resources/HC_TASK0&#39;</span><span class="p">)</span>
+<span class="go">&lt;gradefast.submission.LoadSubmissions object at 0x7ff510f4fe4&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.submission.LoadSubmissions.get_file_item_name">
+<code class="sig-name descname">get_file_item_name</code><span class="sig-paren">(</span><em class="sig-param">team_id</em>, <em class="sig-param">file_full_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#LoadSubmissions.get_file_item_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.LoadSubmissions.get_file_item_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns file item name from full file path</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file_full_path</strong> (<em>str</em>) – Full path of the submission item</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>In gradefast, all submission file items are named as &lt;team_id&gt;_&lt;file_item_name&gt;.&lt;extension&gt;.
+For an unzipped folder, the extension part is excluded. &lt;team_id&gt; is always a <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>.</p>
+<p>Following are some examples of files: 4_zip.zip, 98_png.png, 257_txt3.txt, 36_text_file.txt,
+8_test_task_1a.py</p>
+<p>For the same files, following are the file_item_names: zip, png, txt3, text_file, test_task_1a.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>file_item_name</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.submission.LoadSubmissions.make_submissions_from_fs">
+<code class="sig-name descname">make_submissions_from_fs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#LoadSubmissions.make_submissions_from_fs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.LoadSubmissions.make_submissions_from_fs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <a class="reference internal" href="#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a> from given file system location where
+the submission files are downloaded</p>
+<p>Assumes that files and extracted folders are named according to gradefast’s
+convention. Gradefast falls back to using this method if there is no submission_group.json
+in the provided <a class="reference internal" href="#gradefast.submission.LoadSubmissions.fs_location" title="gradefast.submission.LoadSubmissions.fs_location"><code class="xref py py-attr docutils literal notranslate"><span class="pre">fs_location</span></code></a> attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.submission.LoadSubmissions.get_submissions">
+<code class="sig-name descname">get_submissions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#LoadSubmissions.get_submissions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.LoadSubmissions.get_submissions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a <a class="reference internal" href="#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a> after populating it with information from
+webpage or filesystem</p>
+<p>Based on the method used for fetching, <cite>url</cite> or <cite>fs</cite>, the resulting <a class="reference internal" href="#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a>
+will differ. For example, a <a class="reference internal" href="#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a> created from manually made directory
+structure won’t contain a url key in <a class="reference internal" href="#gradefast.submission.Submission.items" title="gradefast.submission.Submission.items"><code class="xref py py-attr docutils literal notranslate"><span class="pre">items</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#gradefast.submission.SubmissionGroup" title="gradefast.submission.SubmissionGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubmissionGroup</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">load_submissions</span><span class="o">.</span><span class="n">get_submissions</span><span class="p">()</span> <span class="c1"># calling get_submissions() on load_submissions object</span>
+<span class="go">SubmissionGroup(...)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="gradefast.submission.Scraper">
+<em class="property">class </em><code class="sig-prename descclassname">gradefast.submission.</code><code class="sig-name descname">Scraper</code><span class="sig-paren">(</span><em class="sig-param">task_url: str, cookie: str, types: list = ['zip', 'png', 'ipynb'], before_date: Union[str, datetime.datetime] = '', after_date: Union[str, datetime.datetime] = ''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#Scraper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.Scraper" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="gradefast.submission.Scraper.scrape">
+<em class="property">abstract </em><code class="sig-name descname">scrape</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#Scraper.scrape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.Scraper.scrape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scrapes important information from the page as a dictionary</p>
+<p>The dictionary contains team_id as key and all information
+as a dictionary again if needed</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="gradefast.submission.DefaultScraper">
+<em class="property">class </em><code class="sig-prename descclassname">gradefast.submission.</code><code class="sig-name descname">DefaultScraper</code><span class="sig-paren">(</span><em class="sig-param">task_url: str, cookie: str, types: list = ['zip'], before_date='', after_date=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#DefaultScraper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.DefaultScraper" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="gradefast.submission.DefaultScraper.download">
+<code class="sig-name descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#DefaultScraper.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.DefaultScraper.download" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads and returns a given web_page after parsing it with bs4.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ServerOrScraperException</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Web page after parsing it with beautiful soup 4</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">BeautifulSoup</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.submission.DefaultScraper.compare_dates">
+<code class="sig-name descname">compare_dates</code><span class="sig-paren">(</span><em class="sig-param">date1</em>, <em class="sig-param">date2</em>, <em class="sig-param">method='greater'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#DefaultScraper.compare_dates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.DefaultScraper.compare_dates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns greater or smaller date</p>
+<p>If default=’greater’, checks if date1 is greater than date2 and
+returns True</p>
+<p>If default=’small’, checks if date1 is smaller than date2 and
+returns True</p>
+<p>If default=’equal’, checks if date1 is equal to date2 and
+returns True</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>date1</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code>) – </p></li>
+<li><p><strong>date2</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.submission.DefaultScraper.parse_info_as_dict">
+<code class="sig-name descname">parse_info_as_dict</code><span class="sig-paren">(</span><em class="sig-param">file_item_atags_list: list</em>, <em class="sig-param">method: str = 'latest'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#DefaultScraper.parse_info_as_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.DefaultScraper.parse_info_as_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse information from HTML markups of file_item atags as a dictionary</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.submission.DefaultScraper.parse">
+<code class="sig-name descname">parse</code><span class="sig-paren">(</span><em class="sig-param">web_page</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#DefaultScraper.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.DefaultScraper.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses required (as much as) information from the given webpage</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.submission.DefaultScraper.scrape">
+<code class="sig-name descname">scrape</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#DefaultScraper.scrape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.DefaultScraper.scrape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scrape submission information from theme uploads page</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="gradefast.submission.DefaultScraper2019">
+<em class="property">class </em><code class="sig-prename descclassname">gradefast.submission.</code><code class="sig-name descname">DefaultScraper2019</code><span class="sig-paren">(</span><em class="sig-param">task_url: str, cookie: str, types: list = ['zip'], before_date='', after_date=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#DefaultScraper2019"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.DefaultScraper2019" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="gradefast.submission.DefaultScraper2019.download">
+<code class="sig-name descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#DefaultScraper2019.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.DefaultScraper2019.download" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads and returns a given web_page after parsing it with bs4.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ServerOrScraperException</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Web page after parsing it with beautiful soup 4</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">BeautifulSoup</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.submission.DefaultScraper2019.compare_dates">
+<code class="sig-name descname">compare_dates</code><span class="sig-paren">(</span><em class="sig-param">date1</em>, <em class="sig-param">date2</em>, <em class="sig-param">method='greater'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#DefaultScraper2019.compare_dates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.DefaultScraper2019.compare_dates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns greater or smaller date</p>
+<p>If default=’greater’, checks if date1 is greater than date2 and
+returns True</p>
+<p>If default=’small’, checks if date1 is smaller than date2 and
+returns True</p>
+<p>If default=’equal’, checks if date1 is equal to date2 and
+returns True</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>date1</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code>) – </p></li>
+<li><p><strong>date2</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.submission.DefaultScraper2019.parse_info_as_dict">
+<code class="sig-name descname">parse_info_as_dict</code><span class="sig-paren">(</span><em class="sig-param">file_item_atags_list: list</em>, <em class="sig-param">method: str = 'latest'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#DefaultScraper2019.parse_info_as_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.DefaultScraper2019.parse_info_as_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse information from HTML markups of file_item atags as a dictionary</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.submission.DefaultScraper2019.parse">
+<code class="sig-name descname">parse</code><span class="sig-paren">(</span><em class="sig-param">web_page</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#DefaultScraper2019.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.DefaultScraper2019.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses required (as much as) information from the given webpage</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gradefast.submission.DefaultScraper2019.scrape">
+<code class="sig-name descname">scrape</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gradefast/submission.html#DefaultScraper2019.scrape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gradefast.submission.DefaultScraper2019.scrape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scrape submission information from theme uploads page</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="test.html" class="btn btn-neutral float-right" title="Test Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Api Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Omkar Manjrekar
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+Utils Module
+-----------------
+
+.. automodule:: gradefast.utils
+    :members:
+    :member-order: bysource

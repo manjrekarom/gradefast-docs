@@ -1,0 +1,6 @@
+Evaluate Module
+----------------
+
+.. automodule:: gradefast.evaluate
+    :members:
+    :member-order: bysource
